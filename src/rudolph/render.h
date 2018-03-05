@@ -12,7 +12,7 @@ class RenderTarget {
 };
 
 /**
- * Manages drawing components.
+ * Manages drawable components and applies window/viewport transformations.
  */
 class Renderer {
 public:
