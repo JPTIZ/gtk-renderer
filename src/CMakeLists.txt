@@ -8,10 +8,10 @@ set(CMAKE_MODULE_PATH
 
 find_package(GTK3)
 
-add_executable(gtk-renderer
-    main.cpp
-)
+include_directories(${GTK3_INCLUDE_DIRS})
+link_directories(${GTK3_LIBRARY_DIRS})
+add_definitions(${GTK3_CFLAGS_OTHER})
 
-target_link_libraries(gtk-renderer
-    gtk3
-)
+add_executable(gtk-renderer main.cpp)
+
+target_link_libraries(gtk-renderer ${GTK3_LIBRARIES})
