@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include "rudolph/window.h"
+#include "rudolph/rudolph.h"
 
 static void print_hello (GtkWidget* widget, gpointer data) {
     g_print("Hello World\n");
@@ -190,7 +191,5 @@ int main (int argc, char* argv[]) {
     return 0;
     */
 
-    rudolph::MainWindow{rudolph::geometry::Size{800, 600}}.show();
-
-    while (true) {}
+    rudolph::main(argc, argv);
 }

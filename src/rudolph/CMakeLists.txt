@@ -1,18 +1,16 @@
 cmake_minimum_required(VERSION 3.0)
-project(app CXX)
-set(SOURCE
+project(rudolph CXX)
+
+set(SOURCES
     window.cpp
+    rudolph.cpp
 )
 
-UTILS_LIBRARY(app ${SOURCE})
-
-target_link_libraries(app
-    engine
-    ${SFML_LIBRARIES}
-    ${OPENGL_LIBRARIES}
+add_library(rudolph STATIC
+    ${SOURCES}
 )
-target_include_directories(app PUBLIC
-    ${engine_SOURCE_DIR}
-    ${SFML_INCLUDE_DIR}
-    ${OPENGL_INCLUDE_DIR}
+
+target_include_directories(rudolph
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
 )
