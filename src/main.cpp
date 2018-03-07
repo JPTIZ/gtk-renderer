@@ -1,4 +1,6 @@
 #include <gtk/gtk.h>
+#include "rudolph/window.h"
+#include "rudolph/rudolph.h"
 
 static void print_hello (GtkWidget* widget, gpointer data) {
     g_print("Hello World\n");
@@ -101,7 +103,7 @@ static gboolean motion_notify_event_cb(GtkWidget *widget,
                                        gpointer data) {
     if (surface == NULL)
         return FALSE;
-    
+
     int x, y;
     GdkModifierType state;
 
@@ -133,7 +135,7 @@ static void close_window(void) {
 }
 
 int main (int argc, char* argv[]) {
-
+    /*
     gtk_init(&argc, &argv);
 
     GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -187,4 +189,7 @@ int main (int argc, char* argv[]) {
     gtk_main();
 
     return 0;
+    */
+
+    rudolph::main(argc, argv);
 }
