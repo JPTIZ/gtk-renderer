@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace std {
+namespace utils {
 
 template <typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args&& ...args)

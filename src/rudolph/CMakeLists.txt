@@ -4,6 +4,8 @@ project(rudolph CXX)
 set(SOURCES
     window.cpp
     rudolph.cpp
+    render.cpp
+    "objects/shapes.cpp"
 )
 
 add_library(rudolph STATIC

@@ -13,21 +13,21 @@ using Point2D = geometry::Point;
 class Point {
 public:
     Point(int x, int y):
-        location{x, y}
+        point{x, y}
     {}
 
     void draw(RenderTarget&) const;
 
     int x() const {
-        return location.x;
+        return point.x;
     }
 
     int y() const {
-        return location.y;
+        return point.y;
     }
 
 private:
-    Point2D location;
+    Point2D point;
 };
 
 class Line {
@@ -45,8 +45,6 @@ private:
 
 class Polygon {
 public:
-    Polygon();
-
     void draw(RenderTarget&) const;
 
 private:
