@@ -6,6 +6,7 @@
 
 #include <gtk/gtk.h>
 
+#include "render.h"
 #include "geometry.h"
 
 namespace rudolph {
@@ -13,17 +14,18 @@ namespace rudolph {
 class MainWindow {
     using Size = geometry::Size;
 public:
-    MainWindow(Size);
+    MainWindow(Size, GtkBuilder*);
 
     void show();
     void close();
 
-    auto size() const {
+    Size size() const {
         return _size;
     }
 
 private:
     Size _size{0, 0};
+    Renderer renderer;
     GtkWidget* gtk_window;
 };
 

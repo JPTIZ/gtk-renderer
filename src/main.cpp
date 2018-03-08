@@ -2,14 +2,6 @@
 #include "rudolph/window.h"
 #include "rudolph/rudolph.h"
 
-static void print_hello (GtkWidget* widget, gpointer data) {
-    g_print("Hello World\n");
-}
-
-static void print2 (GtkWidget* widget, GdkEvent* event, gpointer data) {
-    g_print("Print 2\n");
-}
-
 static cairo_surface_t* surface = NULL;
 
 static void clear_surface() {
@@ -36,6 +28,7 @@ static gboolean configure_event_cb (GtkWidget* widget,
                                                 gtk_widget_get_allocated_width(widget),
                                                 gtk_widget_get_allocated_height(widget)
                                                 );
+
     // Initialize surface to white
     clear_surface();
 
@@ -135,14 +128,9 @@ static void close_window(void) {
 }
 
 int main (int argc, char* argv[]) {
-    /*
-    gtk_init(&argc, &argv);
+    rudolph::main(argc, argv);
 
-    GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "Grid");
-    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-    g_signal_connect(window, "destroy", G_CALLBACK(close_window), NULL);
-    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+    /*
 
     GtkWidget* grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(window), grid);
@@ -162,14 +150,9 @@ int main (int argc, char* argv[]) {
     g_signal_connect(button, "clicked", G_CALLBACK(gtk_main_quit), NULL);
     gtk_grid_attach(GTK_GRID(grid), button, 0, 1, 2, 1);
 
-    GtkWidget* frame = gtk_frame_new("Display");
-    gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-    gtk_frame_set_label_align(GTK_FRAME(frame), 0.1, 0.5);
-    gtk_grid_attach(GTK_GRID(grid), frame, 2, 0, 1, 2);
+    return 0;
 
     GtkWidget* canvas = gtk_drawing_area_new();
-    gtk_widget_set_size_request(canvas, 200, 100);
-    gtk_container_add(GTK_CONTAINER(frame), canvas);
 
     // Signals used to handle the backing surface
     g_signal_connect(canvas, "draw", G_CALLBACK(draw_cb), NULL);
@@ -184,12 +167,6 @@ int main (int argc, char* argv[]) {
                                   GDK_POINTER_MOTION_MASK |
                                   GDK_POINTER_MOTION_HINT_MASK);
 
-    gtk_widget_show_all(window);
-
-    gtk_main();
-
-    return 0;
     */
 
-    rudolph::main(argc, argv);
 }

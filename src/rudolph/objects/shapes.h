@@ -3,55 +3,57 @@
 
 #include <vector>
 #include "../render.h"
+#include "../geometry.h"
 
-namespace rudolph::objects {
+namespace rudolph {
+namespace objects {
 
-class Point: render::Drawable {
+using Point2D = geometry::Point;
+
+class Point {
 public:
     Point(int x, int y):
-        _x{x}, _y{y}
+        location{x, y}
     {}
 
-    void draw(render::RenderTarget&) const override;
+    void draw(RenderTarget&) const;
 
-    auto x() const {
-        return _x;
+    int x() const {
+        return location.x;
     }
 
-    auto y() const {
-        return _y;
+    int y() const {
+        return location.y;
     }
 
 private:
-    int _x;
-    int _y;
+    Point2D location;
 };
 
-class Line: render::Drawable {
+class Line {
 public:
-    Line(Point a, Point b):
+    Line(Point2D a, Point2D b):
         _a{a}, _b{b}
     {}
 
-    void draw(render::RenderTarget&) const override;
+    void draw(RenderTarget&) const;
 
 private:
-    Point _a;
-    Point _b;
+    Point2D _a;
+    Point2D _b;
 };
 
-class Polygon: render::Drawable {
+class Polygon {
 public:
-    Polygon() {
+    Polygon();
 
-    }
-
-    void draw(render::RenderTarget&) const override;
+    void draw(RenderTarget&) const;
 
 private:
-    std::vector _points
+    std::vector<Point2D> _points;
 };
 
+}
 }
 
 #endif
