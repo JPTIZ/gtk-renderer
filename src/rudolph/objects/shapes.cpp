@@ -1,5 +1,9 @@
 #include "shapes.h"
 
+#include <iostream>
+
+using namespace rudolph::objects;
+
 void Point::draw(RenderTarget& target) const {
     std::cout << "Drawing point in (" << location.x << ", " << location.y << ")\n";
 }

@@ -28,6 +28,7 @@ static gboolean configure_event_cb (GtkWidget* widget,
                                                 gtk_widget_get_allocated_width(widget),
                                                 gtk_widget_get_allocated_height(widget)
                                                 );
+
     // Initialize surface to white
     clear_surface();
 
