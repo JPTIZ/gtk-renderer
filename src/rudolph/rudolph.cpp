@@ -1,6 +1,6 @@
 #include "rudolph.h"
 
-#include "gtk/gtk.h"
+#include <gtk/gtk.h>
 
 #include "window.h"
 

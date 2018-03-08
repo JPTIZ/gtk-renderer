@@ -18,7 +18,7 @@ public:
     void show();
     void close();
 
-    auto size() const {
+    Size size() const {
         return _size;
     }
 
