@@ -50,10 +50,6 @@ MainWindow::MainWindow(Size size):
 
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
-
-    renderer.clear();
-    renderer.add_object(objects::Point{10, 10});
-    renderer.refresh();
 }
 
 void MainWindow::close() {

@@ -11,6 +11,13 @@
 
 namespace rudolph {
 
+
+class RenderTarget;
+ 
+gboolean config_event(GtkWidget* widget,
+                      GdkEventConfigure* event,
+                      gpointer* data);
+
 /**
  * Drawable canvas.
  *
@@ -19,16 +26,17 @@ namespace rudolph {
 class RenderTarget {
     using Point = geometry::Point;
 public:
-    RenderTarget(cairo_surface_t& surface, GtkWidget* parent):
-        surface{surface},
+    RenderTarget(GtkWidget* parent):
         parent{parent}
-    {}
+    {
+        g_signal_connect(parent, "configure-event", G_CALLBACK(config_event), this);
+    }
 
     void draw_point(Point);
     void draw_line(Point, Point);
 
+    cairo_surface_t* surface;
 private:
-    cairo_surface_t& surface;
     GtkWidget* parent;
 };
 
@@ -92,15 +100,7 @@ public:
      * @param parent Parent GtkWindow.
      */
     Renderer(GtkWidget* parent):
-        surface{
-            gdk_window_create_similar_surface(
-                gtk_widget_get_window(parent),
-                CAIRO_CONTENT_COLOR,
-                gtk_widget_get_allocated_width(parent),
-                gtk_widget_get_allocated_height(parent)
-            )
-        },
-        target{*surface, parent},
+        target{parent},
         parent{parent}
     {
     }
