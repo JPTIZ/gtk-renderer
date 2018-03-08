@@ -22,6 +22,13 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 # Project sub-dirs
 add_subdirectory(rudolph)
 
+macro(copy file)
+    get_filename_component(base ${file} NAME)
+    configure_file(${file} ${PROJECT_BINARY_DIR}/${base} COPYONLY)
+endmacro()
+
+copy("${PROJECT_SOURCE_DIR}/rudolph/gui/mainwindow.ui")
+
 # Final linkings
 add_executable(gtk-renderer main.cpp)
 
