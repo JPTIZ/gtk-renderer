@@ -13,12 +13,12 @@ namespace rudolph {
 class MainWindow {
     using Size = geometry::Size;
 public:
-    MainWindow(Size);
+    MainWindow(Size, GtkBuilder*);
 
     void show();
     void close();
 
-    auto size() const {
+    Size size() const {
         return _size;
     }
 

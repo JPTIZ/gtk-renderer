@@ -1,7 +1,8 @@
 #ifndef RUDOLPH_RENDER_H
 #define RUDOLPH_RENDER_H
 
-namespace rudolph::render {
+namespace rudolph {
+namespace render {
 
 /**
  * Drawable canvas.
@@ -28,5 +29,5 @@ public:
 };
 
 }
-
+}
 #endif

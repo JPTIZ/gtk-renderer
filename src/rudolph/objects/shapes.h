@@ -4,7 +4,8 @@
 #include <vector>
 #include "../render.h"
 
-namespace rudolph::objects {
+namespace rudolph{
+namespace objects {
 
 class Point: render::Drawable {
 public:
@@ -14,11 +15,11 @@ public:
 
     void draw(render::RenderTarget&) const override;
 
-    auto x() const {
+    int x() const {
         return _x;
     }
 
-    auto y() const {
+    int y() const {
         return _y;
     }
 
@@ -42,16 +43,14 @@ private:
 
 class Polygon: render::Drawable {
 public:
-    Polygon() {
-
-    }
+    Polygon();
 
     void draw(render::RenderTarget&) const override;
 
 private:
-    std::vector _points
+    std::vector<Point> _points;
 };
 
 }
-
+}
 #endif
