@@ -4,16 +4,6 @@
 
 #include <utility>
 
-/*
-static gboolean draw_cb(GtkWidget *widget,
-         cairo_t   *cr,
-         gpointer   data) {
-    cairo_set_source_surface(cr, surface, 0, 0);
-    cairo_paint(cr);
-
-    return false;
-}
-*/
 
 namespace {
     using namespace rudolph;
@@ -99,24 +89,21 @@ void RenderTarget::draw_line(Point a, Point b) {
     cairo_stroke(cr);
     cairo_destroy(cr);
 
-    gtk_widget_queue_draw_area(parent, region.x, region.y, region.width, region.height);
+    gtk_widget_queue_draw_area(
+            parent,
+            region.x,
+            region.y,
+            region.width + 4,
+            region.height + 4
+    );
 }
 
 void Renderer::refresh() {
     for (auto obj: objects) {
-        obj.draw(target);
+        obj.second.draw(target);
     }
 }
 
 void Renderer::clear() {
-    /*
-    auto cr = cairo_create(surface);
-
-    cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_paint(cr);
-
-    cairo_destroy(cr);
-
-    gtk_widget_queue_draw_area(parent, 0, 0, 600, 600);
-    */
+    // TODO
 }

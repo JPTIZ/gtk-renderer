@@ -124,8 +124,13 @@ public:
     void clear();
 
     template <typename T>
-    void add_object(T x) {
-        objects.push_back(Drawable(std::move(x)));
+    void add_object(std::string name, T x) {
+        objects.push_back(
+            std::make_pair(
+                std::move(name),
+                Drawable(std::move(x))
+            )
+        );
     }
 
     void surface(cairo_surface_t* surface) {
@@ -139,7 +144,7 @@ public:
 private:
     GtkWidget* parent;
     RenderTarget target;
-    std::vector<Drawable> objects;
+    std::vector<std::pair<std::string, Drawable>> objects;
 };
 
 }
