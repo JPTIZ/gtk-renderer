@@ -100,6 +100,7 @@ private:
  * Manages drawable components and applies window/viewport transformations.
  */
 class Renderer {
+    using DisplayList = std::vector<std::pair<std::string, Drawable>>;
 public:
     /**
      * Creates a renderer for a given window.
@@ -133,6 +134,10 @@ public:
         );
     }
 
+    DisplayList objects() const {
+        return objects_;
+    }
+
     void surface(cairo_surface_t* surface) {
         target.surface(surface);
     }
@@ -144,7 +149,7 @@ public:
 private:
     GtkWidget* parent;
     RenderTarget target;
-    std::vector<std::pair<std::string, Drawable>> objects;
+    DisplayList objects;
 };
 
 }

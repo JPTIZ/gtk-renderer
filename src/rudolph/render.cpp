@@ -99,7 +99,7 @@ void RenderTarget::draw_line(Point a, Point b) {
 }
 
 void Renderer::refresh() {
-    for (auto obj: objects) {
+    for (auto obj: objects_) {
         obj.second.draw(target);
     }
 }
