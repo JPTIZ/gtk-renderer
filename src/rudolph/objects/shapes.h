@@ -36,6 +36,11 @@ public:
         _a{a}, _b{b}
     {}
 
+    Line(int x1, int y1, int x2, int y2):
+        _a{x1, y1},
+        _b{x2, y2}
+    {}
+
     void draw(RenderTarget&) const;
 
 private:
@@ -45,6 +50,10 @@ private:
 
 class Polygon {
 public:
+    Polygon(std::vector<Point2D> points):
+        _points{points}
+    {}
+
     void draw(RenderTarget&) const;
 
 private:

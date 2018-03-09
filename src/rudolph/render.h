@@ -13,10 +13,11 @@ namespace rudolph {
 
 
 class RenderTarget;
- 
+
 gboolean config_event(GtkWidget* widget,
                       GdkEventConfigure* event,
                       gpointer* data);
+gboolean draw_event(GtkWidget* widget, cairo_t* cr, gpointer* data);
 
 /**
  * Drawable canvas.
@@ -28,15 +29,21 @@ class RenderTarget {
 public:
     RenderTarget(GtkWidget* parent):
         parent{parent}
-    {
-        g_signal_connect(parent, "configure-event", G_CALLBACK(config_event), this);
-    }
+    {}
 
     void draw_point(Point);
     void draw_line(Point, Point);
 
-    cairo_surface_t* surface;
+    cairo_surface_t* surface() const {
+        return surface_;
+    }
+
+    void surface(cairo_surface_t* surface) {
+        surface_ = surface;
+    }
+
 private:
+    cairo_surface_t* surface_ = nullptr;
     GtkWidget* parent;
 };
 
@@ -103,11 +110,13 @@ public:
         target{parent},
         parent{parent}
     {
+        g_signal_connect(parent, "draw", G_CALLBACK(draw_event), this);
+        g_signal_connect(parent, "configure-event", G_CALLBACK(config_event), this);
     }
 
     ~Renderer() {
-        if (surface) {
-            cairo_surface_destroy(surface);
+        if (surface()) {
+            cairo_surface_destroy(surface());
         }
     }
 
@@ -119,8 +128,15 @@ public:
         objects.push_back(Drawable(std::move(x)));
     }
 
+    void surface(cairo_surface_t* surface) {
+        target.surface(surface);
+    }
+
+    cairo_surface_t* surface() const {
+        return target.surface();
+    }
+
 private:
-    cairo_surface_t* surface;
     GtkWidget* parent;
     RenderTarget target;
     std::vector<Drawable> objects;

@@ -14,6 +14,7 @@ struct Size {
     {}
 };
 
+
 struct Point {
     int x{0};
     int y{0};
@@ -21,6 +22,21 @@ struct Point {
     Point(int x, int y):
         x{x},
         y{y}
+    {}
+};
+
+
+struct Rect {
+    int x{0};
+    int y{0};
+    int width{0};
+    int height{0};
+
+    Rect(int x, int y, int w, int h):
+        x{x},
+        y{y},
+        width{w},
+        height{h}
     {}
 };
 

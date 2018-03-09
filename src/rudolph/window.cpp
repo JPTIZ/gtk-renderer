@@ -50,6 +50,17 @@ MainWindow::MainWindow(Size size):
 
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
+    using namespace objects;
+    renderer.add_object(Point{10, 10});
+    renderer.add_object(Line{100, 20, 110, 30});
+    auto points = std::vector<Point2D>{
+        Point2D{150, 150},
+        Point2D{175, 175},
+        Point2D{160, 200},
+        Point2D{140, 200},
+        Point2D{125, 175},
+    };
+    renderer.add_object(Polygon(points));
 }
 
 void MainWindow::close() {
