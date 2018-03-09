@@ -14,10 +14,11 @@ namespace rudolph {
 class MainWindow {
     using Size = geometry::Size;
 public:
-    MainWindow(Size, GtkBuilder*);
+    MainWindow(Size);
 
     void show();
     void close();
+    void update_list();
 
     Size size() const {
         return _size;
@@ -25,8 +26,9 @@ public:
 
 private:
     Size _size{0, 0};
-    Renderer renderer;
+    GtkBuilder* gtk_builder;
     GtkWidget* gtk_window;
+    Renderer renderer;
 };
 
 }

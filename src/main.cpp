@@ -16,9 +16,9 @@ static void clear_surface() {
 }
 
 // Create a new surface to store our scribbles
-static gboolean configure_event_cb (GtkWidget* widget,
-                                    GdkEventConfigure* event,
-                                    gpointer data) {
+static gboolean configure_event_cb(GtkWidget* widget,
+                                   GdkEventConfigure* event,
+                                   gpointer data) {
     if (surface) {
         cairo_surface_destroy(surface);
     }
@@ -127,46 +127,6 @@ static void close_window(void) {
     gtk_main_quit();
 }
 
-int main (int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
     rudolph::main(argc, argv);
-
-    /*
-
-    GtkWidget* grid = gtk_grid_new();
-    gtk_container_add(GTK_CONTAINER(window), grid);
-    gtk_grid_set_row_homogeneous(GTK_GRID(grid), TRUE);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 5);
-
-    GtkWidget* button = gtk_button_new_with_label("Button 1");
-    g_signal_connect(button, "clicked", G_CALLBACK(print_hello), NULL);
-    gtk_grid_attach(GTK_GRID(grid), button, 0, 0, 1, 1);
-
-    button = gtk_button_new_with_label("Button 2");
-    g_signal_connect(button, "clicked", G_CALLBACK(print2), NULL);
-    gtk_grid_attach(GTK_GRID(grid), button, 1, 0, 1, 1);
-
-    button = gtk_button_new_with_label("Quit");
-    g_signal_connect(button, "clicked", G_CALLBACK(gtk_main_quit), NULL);
-    gtk_grid_attach(GTK_GRID(grid), button, 0, 1, 2, 1);
-
-    return 0;
-
-    GtkWidget* canvas = gtk_drawing_area_new();
-
-    // Signals used to handle the backing surface
-    g_signal_connect(canvas, "draw", G_CALLBACK(draw_cb), NULL);
-    g_signal_connect(canvas, "configure-event", G_CALLBACK(configure_event_cb), NULL);
-
-    // Event signals
-    g_signal_connect(canvas, "motion-notify-event", G_CALLBACK(motion_notify_event_cb), NULL);
-    g_signal_connect(canvas, "button-press-event", G_CALLBACK(button_press_event_cb), NULL);
-
-    gtk_widget_set_events(canvas, gtk_widget_get_events(canvas) |
-                                  GDK_BUTTON_PRESS_MASK |
-                                  GDK_POINTER_MOTION_MASK |
-                                  GDK_POINTER_MOTION_HINT_MASK);
-
-    */
-
 }

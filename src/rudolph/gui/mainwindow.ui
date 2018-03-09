@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.20.0 -->
 <interface>
-  <requires lib="gtk+" version="3.20"/>
+  <requires lib="gtk+" version="3.10"/>
+  <object class="GtkListStore" id="list_store">
+    <columns>
+      <!-- column-name drawableObject -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+    </data>
+  </object>
   <object class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
     <property name="height_request">600</property>
@@ -9,8 +17,12 @@
     <property name="border_width">10</property>
     <property name="title" translatable="yes">Rudolf Paintiz</property>
     <property name="resizable">False</property>
+    <property name="window_position">center-always</property>
+    <property name="default_width">800</property>
+    <property name="default_height">600</property>
+    <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
     <child>
-      <object class="GtkGrid">
+      <object class="GtkGrid" id="grid1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="row_spacing">5</property>
@@ -24,30 +36,86 @@
             <property name="label_xalign">0.10000000149011612</property>
             <property name="shadow_type">in</property>
             <child>
-              <object class="GtkAlignment">
+              <object class="GtkAlignment" id="align1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="left_padding">12</property>
+                <property name="left_padding">10</property>
                 <child>
-                  <object class="GtkGrid">
+                  <object class="GtkGrid" id="grid2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="row_spacing">2</property>
+                    <property name="row_spacing">5</property>
                     <property name="column_spacing">2</property>
+                    <property name="row_homogeneous">True</property>
                     <child>
-                      <object class="GtkScrolledWindow" id="scroll_display_file">
-                        <property name="width_request">150</property>
+                      <object class="GtkButton" id="btn_new">
+                        <property name="label" translatable="yes">New</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrolledWindow" id="scrolled1">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="shadow_type">in</property>
+                        <property name="min_content_width">170</property>
                         <child>
-                          <placeholder/>
+                          <object class="GtkTreeView" id="treeview1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">list_store</property>
+                            <property name="headers_visible">False</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="tv_col1">
+                                <property name="title">Object</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="tv_crt1"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
                         </child>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">0</property>
-                        <property name="height">5</property>
+                        <property name="height">8</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_edit">
+                        <property name="label" translatable="yes">Edit</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_del">
+                        <property name="label" translatable="yes">Delete</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -70,7 +138,7 @@
               </object>
             </child>
             <child type="label">
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes"> Display File</property>
@@ -89,12 +157,12 @@
             <property name="label_xalign">0.10000000149011612</property>
             <property name="shadow_type">in</property>
             <child>
-              <object class="GtkAlignment">
+              <object class="GtkAlignment" id="align2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="left_padding">12</property>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="gtkbox1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
@@ -102,7 +170,7 @@
                       <placeholder/>
                     </child>
                     <child>
-                      <object class="GtkGrid">
+                      <object class="GtkGrid" id="grid3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
@@ -225,7 +293,7 @@
               </object>
             </child>
             <child type="label">
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes"> Window </property>
@@ -244,20 +312,21 @@
             <property name="label_xalign">0.05000000074505806</property>
             <property name="shadow_type">in</property>
             <child>
-              <object class="GtkAlignment">
+              <object class="GtkAlignment" id="align3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="left_padding">12</property>
                 <child>
                   <object class="GtkDrawingArea" id="canvas">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <signal name="configure-event" handler="on_configure_event" swapped="no"/>
+                    <signal name="draw" handler="on_draw" swapped="no"/>
                   </object>
                 </child>
               </object>
             </child>
             <child type="label">
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="label3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes"> Viewport </property>
@@ -270,15 +339,6 @@
             <property name="width">2</property>
             <property name="height">2</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
         </child>
       </object>
     </child>
