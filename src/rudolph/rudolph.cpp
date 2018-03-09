@@ -1,7 +1,5 @@
 #include "rudolph.h"
 
-#include <iostream>
-
 #include <gtk/gtk.h>
 
 #include "window.h"
