@@ -34,4 +34,6 @@
 # CMake
 build/
 
+# Temporary files
 for-vpl/vpl
+**/.*.swp
