@@ -1,5 +1,10 @@
 #include "rudolph.h"
 
+<<<<<<< HEAD
+=======
+#include <iostream>
+
+>>>>>>> dev/cairo
 #include <gtk/gtk.h>
 
 #include "window.h"
@@ -11,7 +16,7 @@ void rudolph::init(int& argc, char**& argv) {
 void rudolph::main(int& argc, char**& argv) {
     init(argc, argv);
 
-    auto window = MainWindow{rudolph::geometry::Size{800, 600}};
+    auto window = MainWindow{geometry::Size{800, 600}};
     window.show();
 
     gtk_main();

@@ -6,6 +6,7 @@
 
 #include <gtk/gtk.h>
 
+#include "render.h"
 #include "geometry.h"
 
 namespace rudolph {
@@ -17,6 +18,7 @@ public:
 
     void show();
     void close();
+    void update_list();
 
     Size size() const {
         return _size;
@@ -24,7 +26,9 @@ public:
 
 private:
     Size _size{0, 0};
+    GtkBuilder* gtk_builder;
     GtkWidget* gtk_window;
+    Renderer renderer;
 };
 
 }
