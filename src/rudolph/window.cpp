@@ -61,6 +61,18 @@ void MainWindow::show() {
         Point2D{125, 175},
     };
     renderer.add_object("polígono 1", Polygon(points));
+
+    update_list();
+}
+
+void MainWindow::update_list() {
+    auto list = (GtkListStore*)get_component(gtk_builder, "list_store");
+    auto iter = GtkTreeIter{};
+    for (auto obj: renderer.objects()) {
+        auto name = obj.first;
+        gtk_list_store_append(list, &iter);
+        gtk_list_store_set(list, &iter, 0, name.c_str(), -1);
+    }
 }
 
 void MainWindow::close() {

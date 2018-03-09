@@ -18,6 +18,7 @@ public:
 
     void show();
     void close();
+    void update_list();
 
     Size size() const {
         return _size;

@@ -126,7 +126,7 @@ public:
 
     template <typename T>
     void add_object(std::string name, T x) {
-        objects.push_back(
+        objects_.push_back(
             std::make_pair(
                 std::move(name),
                 Drawable(std::move(x))
@@ -149,7 +149,7 @@ public:
 private:
     GtkWidget* parent;
     RenderTarget target;
-    DisplayList objects;
+    DisplayList objects_;
 };
 
 }
