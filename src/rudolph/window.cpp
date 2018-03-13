@@ -13,12 +13,8 @@ void in_close(GtkWidget* btn, gpointer* data) {
     reinterpret_cast<MainWindow*>(data)->close();
 }
 
-struct GtkInitError: std::runtime_error {
-    using runtime_error::runtime_error;
-};
-
 GtkWidget* create_gtk_window(GtkBuilder* gtk_builder, Size size) {
-    GError* err = nullptr;
+    auto err = (GError*)nullptr;
     if (not gtk_builder_add_from_file(gtk_builder, "mainwindow.ui", &err)) {
         throw GtkInitError(
                 std::string{"failed to initialize main window from UI file: "} +

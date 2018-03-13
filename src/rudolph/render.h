@@ -11,13 +11,10 @@
 
 namespace rudolph {
 
+using Viewport = geometry::Rect;
+using Window = geometry::Rect;
 
 class RenderTarget;
-
-gboolean config_event(GtkWidget* widget,
-                      GdkEventConfigure* event,
-                      gpointer* data);
-gboolean draw_event(GtkWidget* widget, cairo_t* cr, gpointer* data);
 
 /**
  * Drawable canvas.
@@ -107,13 +104,7 @@ public:
      *
      * @param parent Parent GtkWindow.
      */
-    Renderer(GtkWidget* parent):
-        target{parent},
-        parent{parent}
-    {
-        g_signal_connect(parent, "draw", G_CALLBACK(draw_event), this);
-        g_signal_connect(parent, "configure-event", G_CALLBACK(config_event), this);
-    }
+    Renderer(GtkWidget* parent);
 
     ~Renderer() {
         if (surface()) {

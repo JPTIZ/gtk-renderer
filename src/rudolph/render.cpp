@@ -1,6 +1,6 @@
 #include "render.h"
 
-#include <geometry.h>
+#include "geometry.h"
 
 #include <utility>
 
@@ -9,42 +9,50 @@ namespace {
     using namespace rudolph;
 
     using Rect = geometry::Rect;
+
+    gboolean draw_event(GtkWidget* widget, cairo_t* cr, gpointer* data)
+    {
+        auto renderer = reinterpret_cast<Renderer*>(data);
+        auto surface = renderer->surface();
+
+        cairo_set_source_surface(cr, surface, 0, 0);
+        cairo_paint(cr);
+
+        renderer->refresh();
+
+        return false;
+    }
+
+    gboolean config_event(GtkWidget* widget,
+                          GdkEventConfigure* event,
+                          gpointer* data)
+    {
+        auto target = reinterpret_cast<Renderer*>(data);
+
+        auto surface = gdk_window_create_similar_surface(
+                           gtk_widget_get_window(widget),
+                           CAIRO_CONTENT_COLOR,
+                           gtk_widget_get_allocated_width(widget),
+                           gtk_widget_get_allocated_height(widget)
+                       );
+
+        auto cr = cairo_create(surface);
+        cairo_set_source_rgb(cr, 1, 1, 1);
+        cairo_paint(cr);
+        cairo_destroy(cr);
+
+        target->surface(surface);
+
+        return true;
+    }
 }
 
-gboolean rudolph::draw_event(GtkWidget* widget, cairo_t* cr, gpointer* data)
+Renderer::Renderer(GtkWidget* parent):
+    target{parent},
+    parent{parent}
 {
-    auto renderer = reinterpret_cast<Renderer*>(data);
-    auto surface = renderer->surface();
-
-    cairo_set_source_surface(cr, surface, 0, 0);
-    cairo_paint(cr);
-
-    renderer->refresh();
-
-    return FALSE;
-}
-
-gboolean rudolph::config_event(GtkWidget* widget,
-                      GdkEventConfigure* event,
-                      gpointer* data)
-{
-    auto target = reinterpret_cast<Renderer*>(data);
-
-    auto surface = gdk_window_create_similar_surface(
-                       gtk_widget_get_window(widget),
-                       CAIRO_CONTENT_COLOR,
-                       gtk_widget_get_allocated_width(widget),
-                       gtk_widget_get_allocated_height(widget)
-                   );
-
-    auto cr = cairo_create(surface);
-    cairo_set_source_rgb(cr, 1, 1, 1);
-    cairo_paint(cr);
-    cairo_destroy(cr);
-
-    target->surface(surface);
-
-    return true;
+    g_signal_connect(parent, "draw", G_CALLBACK(draw_event), this);
+    g_signal_connect(parent, "configure-event", G_CALLBACK(config_event), this);
 }
 
 void RenderTarget::draw_point(Point p) {
