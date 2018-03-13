@@ -51,7 +51,7 @@ private:
 class Polygon {
 public:
     Polygon(std::vector<Point2D> points):
-        _points{points}
+        _points{std::move(points)}
     {}
 
     void draw(RenderTarget&) const;

@@ -69,7 +69,6 @@ void RenderTarget::draw_point(Point p) {
     cairo_rectangle(cr, region.x, region.y, region.width, region.height);
     cairo_fill(cr);
 
-    cairo_stroke(cr);
     cairo_destroy(cr);
 
     gtk_widget_queue_draw_area(parent, region.x, region.y, region.width, region.height);
@@ -87,12 +86,10 @@ void RenderTarget::draw_line(Point a, Point b) {
     auto cr = cairo_create(surface());
 
     cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_set_line_width(cr, 1);
+    cairo_set_line_width(cr, .5);
 
-    cairo_move_to(cr, a.x, a.y);
-    cairo_line_to(cr, b.x, b.y);
-
-    cairo_close_path(cr);
+    cairo_move_to(cr, a.x, a.y + .5);
+    cairo_line_to(cr, b.x, b.y + .5);
 
     cairo_stroke(cr);
     cairo_destroy(cr);
@@ -101,8 +98,8 @@ void RenderTarget::draw_line(Point a, Point b) {
             parent,
             region.x,
             region.y,
-            region.width + 4,
-            region.height + 4
+            region.width,
+            region.height + 1
     );
 }
 
