@@ -7,14 +7,11 @@
 #include <gtk/gtk.h>
 
 #include "geometry.h"
+#include "objects/camerawindow.h"
+#include "objects/viewport.h"
 #include "../utils.h"
 
 namespace rudolph {
-
-using Viewport = geometry::Rect;
-using Window = geometry::Rect;
-
-class RenderTarget;
 
 /**
  * Drawable canvas.
@@ -22,14 +19,13 @@ class RenderTarget;
  * Abstracts the idea of an output drawing target.
  */
 class RenderTarget {
-    using Point = geometry::Point;
+    using Point2D = geometry::Point;
 public:
-    RenderTarget(GtkWidget* parent):
-        parent{parent}
-    {}
+    RenderTarget(GtkWidget* parent);
 
-    void draw_point(Point);
-    void draw_line(Point, Point);
+    Point2D camera_to_viewport(int xw, int yw);
+    void draw_point(Point2D);
+    void draw_line(Point2D, Point2D);
 
     cairo_surface_t* surface() const {
         return surface_;
@@ -42,55 +38,8 @@ public:
 private:
     cairo_surface_t* surface_ = nullptr;
     GtkWidget* parent;
-};
-
-class Drawable {
-public:
-    template <typename T>
-    Drawable(T t):
-        data{utils::make_unique<ModelImpl<T>>(std::move(t))}
-    {}
-
-    Drawable(const Drawable& other):
-        data{other.data->copy()}
-    {}
-
-    Drawable(Drawable&& other):
-        data{std::move(other.data)}
-    {}
-
-    void draw(RenderTarget& target) const {
-        data->draw(target);
-    }
-
-private:
-    /**
-     * DrawableImpl components' interface
-     */
-    struct Model {
-        virtual ~Model() = default;
-        virtual std::unique_ptr<Model> copy() const = 0;
-        virtual void draw(RenderTarget&) const = 0;
-    };
-
-    template <typename T>
-    struct ModelImpl: Model {
-        ModelImpl(T x):
-            x{x}
-        {}
-
-        std::unique_ptr<Model> copy() const override {
-            return utils::make_unique<ModelImpl>(*this);
-        }
-
-        void draw(RenderTarget& target) const override {
-            x.draw(target);
-        }
-
-        T x;
-    };
-
-    std::unique_ptr<Model> data;
+    CameraWindow* camera_window;
+    Viewport* viewport;
 };
 
 /**
@@ -98,7 +47,8 @@ private:
  */
 class Renderer {
     using DisplayList = std::vector<std::pair<std::string, Drawable>>;
-public:
+
+  public:
     /**
      * Creates a renderer for a given window.
      *

@@ -10,7 +10,7 @@ namespace {
 
     using Rect = geometry::Rect;
 
-    gboolean draw_event(GtkWidget* widget, cairo_t* cr, gpointer* data)
+    gboolean on_draw(GtkWidget* widget, cairo_t* cr, gpointer* data)
     {
         auto renderer = reinterpret_cast<Renderer*>(data);
         auto surface = renderer->surface();
@@ -23,7 +23,7 @@ namespace {
         return false;
     }
 
-    gboolean config_event(GtkWidget* widget,
+    gboolean on_config_event(GtkWidget* widget,
                           GdkEventConfigure* event,
                           gpointer* data)
     {
@@ -51,8 +51,32 @@ Renderer::Renderer(GtkWidget* parent):
     target{parent},
     parent{parent}
 {
-    g_signal_connect(parent, "draw", G_CALLBACK(draw_event), this);
-    g_signal_connect(parent, "configure-event", G_CALLBACK(config_event), this);
+    g_signal_connect(parent, "draw", G_CALLBACK(on_draw), this);
+    g_signal_connect(parent, "configure-event", G_CALLBACK(on_config_event), this);
+}
+
+RenderTarget::RenderTarget(GtkWidget *parent):
+        parent{parent}
+{
+    GtkRequisition parent_size;
+    gtk_widget_get_prefered_size(parent, NULL, &parent_size);
+
+    camera_window.set_width((int)parent_size.width);
+    camera_window.set_height((int)parent_size.height);
+
+    viewport.set_width((int)parent_size.width);
+    viewport.set_height((int)parent_size.height);
+}
+
+Point2D RenderTarget::camera_to_viewport(int xw, int yw, CameraWindow camera_window, Viewport viewport)
+{
+    int xv = (xw - camera_window.bottom_left.x) / (camera_window.top_right.x - camera_window.bottom_left.x);
+    xv *= viewport.bottom_right.x - viewport.top_left.x;
+
+    int yv = 1 - (yw - camera_window.bottom_left.y) / (camera_window.top_right.y - camera_window.bottom_left.y);
+    yv *= viewport.bottom_right.y - viewport.top_left.y;
+
+    return Point2D{xv, yv};
 }
 
 void RenderTarget::draw_point(Point p) {

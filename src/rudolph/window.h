@@ -1,5 +1,5 @@
-#ifndef RUDOLPH_RUDOLPH_WINDOW_H
-#define RUDOLPH_RUDOLPH_WINDOW_H
+#ifndef RUDOLPH_WINDOW_H
+#define RUDOLPH_WINDOW_H
 
 #include <memory>
 #include <utility>
