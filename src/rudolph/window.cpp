@@ -48,8 +48,8 @@ void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
     
     using namespace objects;
-    renderer.add_object("ponto 1", Point{10, 10});
-    renderer.add_object("linha 1", Line{100, 20, 110, 30});
+    renderer.add_object(Point{10, 10});
+    renderer.add_object(Line{100, 20, 110, 30});
     auto points = std::vector<Point2D>{
         Point2D{150, 150},
         Point2D{175, 175},
@@ -57,7 +57,7 @@ void MainWindow::show() {
         Point2D{140, 200},
         Point2D{125, 175},
     };
-    renderer.add_object("polígono 1", Polygon(points));
+    renderer.add_object(Polygon(points));
 
     update_list();
 }
@@ -65,8 +65,8 @@ void MainWindow::show() {
 void MainWindow::update_list() {
     auto list = (GtkListStore*)get_component(gtk_builder, "list_store");
     auto iter = GtkTreeIter{};
-    for (auto obj: renderer.objects()) {
-        auto name = obj.first;
+    for (auto obj: renderer.display_file()) {
+        auto name = obj.name();
         gtk_list_store_append(list, &iter);
         gtk_list_store_set(list, &iter, 0, name.c_str(), -1);
     }

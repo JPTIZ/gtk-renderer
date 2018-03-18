@@ -7,6 +7,7 @@
 #include <gtk/gtk.h>
 
 #include "geometry.h"
+#include "drawable.h"
 #include "objects/camerawindow.h"
 #include "objects/viewport.h"
 #include "../utils.h"
@@ -46,8 +47,6 @@ private:
  * Manages drawable components and applies window/viewport transformations.
  */
 class Renderer {
-    using DisplayList = std::vector<std::pair<std::string, Drawable>>;
-
   public:
     /**
      * Creates a renderer for a given window.
@@ -66,17 +65,12 @@ class Renderer {
     void clear();
 
     template <typename T>
-    void add_object(std::string name, T x) {
-        objects_.push_back(
-            std::make_pair(
-                std::move(name),
-                Drawable(std::move(x))
-            )
-        );
+    void add_object(T x) {
+        _display_file.push_back( Drawable(std::move(x)) );
     }
 
-    DisplayList objects() const {
-        return objects_;
+    std::vector<Drawable> display_file() const {
+        return _display_file;
     }
 
     void surface(cairo_surface_t* surface) {
@@ -90,7 +84,7 @@ class Renderer {
 private:
     GtkWidget* parent;
     RenderTarget target;
-    DisplayList objects_;
+    std::vector<Drawable> _display_file;
 };
 
 }

@@ -2,9 +2,11 @@
 #define RUDOLPH_DRAWABLE_H
 
 #include "../utils.h"
-#include "render.h"
+#include <string>
 
 namespace rudolph {
+
+class RenderTarget;
 
 class Drawable {
 public:
@@ -25,6 +27,10 @@ public:
         data->draw(target);
     }
 
+    /*std::string name() const {
+        return data->name();
+    }*/
+
 private:
     /**
      * DrawableImpl components' interface
@@ -33,6 +39,7 @@ private:
         virtual ~Model() = default;
         virtual std::unique_ptr<Model> copy() const = 0;
         virtual void draw(RenderTarget&) const = 0;
+        // virtual std::string name() const = 0;
     };
 
     template <typename T>
@@ -48,6 +55,10 @@ private:
         void draw(RenderTarget& target) const override {
             x.draw(target);
         }
+
+        /*void std::string name() const override {
+            return x.name();
+        }*/
 
         T x;
     };
