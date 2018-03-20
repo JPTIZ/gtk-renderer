@@ -16,4 +16,6 @@ add_library(rudolph STATIC
 target_include_directories(rudolph
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
+    PRIVATE
+        ${GTK3_INCLUDE_DIRS}
 )

@@ -25,6 +25,26 @@ struct Point {
     {}
 };
 
+inline Point operator-(const Point& p) {
+    return Point{-p.x, -p.y};
+}
+
+inline Point operator+(const Point& lhs, const Point& rhs) {
+    return Point{rhs.x + lhs.x, rhs.y + lhs.y};
+}
+
+inline Point operator-(const Point& lhs, const Point& rhs) {
+    return rhs + (-lhs);
+}
+
+inline Point operator*(const Point& p, int value) {
+    return Point{p.x * value, p.y * value};
+}
+
+inline Point operator*(const Point& p, double value) {
+    return Point{int(p.x * value), int(p.y * value)};
+}
+
 
 struct Rect {
     int x{0};
@@ -39,6 +59,14 @@ struct Rect {
         height{h}
     {}
 };
+
+inline Rect operator+(const Rect& r, const Point& p) {
+    return Rect{r.x + p.x, r.y + p.y, r.width, r.height};
+}
+
+inline Rect operator-(const Rect& r, const Point& p) {
+    return r + (-p);
+}
 
 }
 }
