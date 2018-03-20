@@ -25,6 +25,7 @@ public:
     RenderTarget(GtkWidget* parent);
 
     Point2D camera_to_viewport(int xw, int yw);
+    Point2D camera_to_viewport(Point2D p);
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
 

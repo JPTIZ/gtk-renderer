@@ -27,9 +27,9 @@ public:
         data->draw(target);
     }
 
-    /*std::string name() const {
+    std::string name() const {
         return data->name();
-    }*/
+    }
 
 private:
     /**
@@ -39,7 +39,7 @@ private:
         virtual ~Model() = default;
         virtual std::unique_ptr<Model> copy() const = 0;
         virtual void draw(RenderTarget&) const = 0;
-        // virtual std::string name() const = 0;
+        virtual std::string name() const = 0;
     };
 
     template <typename T>
@@ -56,9 +56,9 @@ private:
             x.draw(target);
         }
 
-        /*void std::string name() const override {
+        std::string name() const override {
             return x.name();
-        }*/
+        }
 
         T x;
     };
