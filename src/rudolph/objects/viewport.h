@@ -1,6 +1,8 @@
 #ifndef RUDOLPH_VIEWPORT_H
 #define RUDOLPH_VIEWPORT_H
 
+#include <cmath>
+
 #include "../geometry.h"
 
 namespace rudolph {
@@ -32,6 +34,14 @@ public:
 
     void set_height(int height) {
         _bottom_right.y = _top_left.y - height;
+    }
+
+    int width() const {
+        return std::abs((_bottom_right - _top_left).x);
+    }
+
+    int height() const {
+        return std::abs((_bottom_right - _top_left).y);
     }
 
   private:

@@ -40,6 +40,8 @@ public:
     }
 
 private:
+    double ratio() const;
+
     cairo_surface_t* surface_ = nullptr;
     GtkWidget* parent;
     CameraWindow camera_window;
