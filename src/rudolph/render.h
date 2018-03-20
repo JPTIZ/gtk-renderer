@@ -21,6 +21,7 @@ namespace rudolph {
  */
 class RenderTarget {
     using Point2D = geometry::Point;
+    using Size = geometry::Size;
 public:
     RenderTarget(GtkWidget* parent);
 
@@ -28,6 +29,7 @@ public:
     Point2D camera_to_viewport(Point2D p);
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
+    void resize(Size size);
 
     cairo_surface_t* surface() const {
         return surface_;
@@ -40,15 +42,16 @@ public:
 private:
     cairo_surface_t* surface_ = nullptr;
     GtkWidget* parent;
-    CameraWindow* camera_window;
-    Viewport* viewport;
+    CameraWindow camera_window;
+    Viewport viewport;
 };
 
 /**
  * Manages drawable components and applies window/viewport transformations.
  */
 class Renderer {
-  public:
+    using Size = geometry::Size;
+public:
     /**
      * Creates a renderer for a given window.
      *
@@ -64,6 +67,7 @@ class Renderer {
 
     void refresh();
     void clear();
+    void resize(Size size);
 
     template <typename T>
     void add_object(T x) {

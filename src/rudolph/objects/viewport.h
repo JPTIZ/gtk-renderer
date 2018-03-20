@@ -13,6 +13,11 @@ public:
         _bottom_right{bottom_right}
     {}
 
+    Viewport(geometry::Size size):
+        _top_left{0, 0},
+        _bottom_right{size.width, size.height}
+    {}
+
     Point2D top_left() const {
         return _top_left;
     }

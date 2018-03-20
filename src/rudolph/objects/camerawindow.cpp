@@ -3,10 +3,10 @@
 namespace rudolph {
 
 void CameraWindow::move(int dx, int dy) {
-    _bottom_left.x += dx;
-    _bottom_left.y += dy;
-    _top_right.x += dx;
-    _top_right.y += dy;
+    auto d = Point2D{dx, dy};
+
+    _bottom_left += d;
+    _top_right += d;
 }
 
 void CameraWindow::zoom(double step) {

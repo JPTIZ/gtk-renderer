@@ -9,21 +9,34 @@ class CameraWindow {
     using Point2D = geometry::Point;
 public:
     CameraWindow():
-        _bottom_left{Point2D{0, 0}},
-        _top_right{Point2D{200, 100}}
+        _top_right{Point2D{200, 100}},
+        _bottom_left{Point2D{0, 0}}
     {}
 
     CameraWindow(Point2D bottom_left, Point2D top_right):
-        _bottom_left{bottom_left},
-        _top_right{top_right}
+        _top_right{top_right},
+        _bottom_left{bottom_left}
     {}
+
+    CameraWindow(geometry::Size size):
+        _top_right{0, 0},
+        _bottom_left{size.width, size.height}
+    {}
+
+    Point2D top_right() const {
+        return _top_right;
+    }
 
     Point2D bottom_left() const {
         return _bottom_left;
     }
 
-    Point2D top_right() const {
-        return _top_right;
+    int width() const {
+        return (_bottom_left - _top_right).x;
+    }
+
+    int height() const {
+        return (_bottom_left - _top_right).y;
     }
 
     void move(int dx, int dy);
@@ -32,8 +45,8 @@ public:
     void set_height(int height);
 
   private:
-    Point2D _bottom_left;
     Point2D _top_right;
+    Point2D _bottom_left;
 };
 
 }
