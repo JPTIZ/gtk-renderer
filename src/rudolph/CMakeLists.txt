@@ -6,6 +6,7 @@ set(SOURCES
     rudolph.cpp
     render.cpp
     "objects/shapes.cpp"
+    "objects/camerawindow.cpp"
 )
 
 add_library(rudolph STATIC

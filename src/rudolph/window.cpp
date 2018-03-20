@@ -4,10 +4,10 @@
 
 #include <utility>
 
-namespace {
+namespace rudolph {
 
-using namespace rudolph;
-using namespace rudolph::geometry;
+using namespace rudolph::objects;
+using Size = geometry::Size;
 
 void on_close(GtkWidget* btn, gpointer* data) {
     reinterpret_cast<MainWindow*>(data)->close();
@@ -33,8 +33,6 @@ GtkWidget* get_component(GtkBuilder* gtk_builder, std::string id) {
     return GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), id.c_str()));
 }
 
-}
-
 MainWindow::MainWindow(Size size):
     _size{size},
     gtk_builder{gtk_builder_new()},
@@ -47,7 +45,6 @@ MainWindow::MainWindow(Size size):
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
     
-    using namespace objects;
     renderer.add_object(Point{10, 10});
     renderer.add_object(Line{100, 20, 110, 30});
     auto points = std::vector<Point2D>{
@@ -74,4 +71,6 @@ void MainWindow::update_list() {
 
 void MainWindow::close() {
     gtk_main_quit();
+}
+
 }
