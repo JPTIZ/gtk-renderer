@@ -4,6 +4,7 @@
 #include "objects/shapes.h"
 
 #include <utility>
+#include <iostream>
 
 namespace {
     using namespace rudolph;
@@ -96,36 +97,38 @@ void Renderer::resize(Size size)
 
 RenderTarget::RenderTarget(GtkWidget *parent):
     parent{parent},
-    camera_window{parent_size(parent)},
-    viewport{parent_size(parent)}
+    camera_window{Size{512, 560}},
+    viewport{Size{512, 560}}
 {}
 
-Point2D RenderTarget::camera_to_viewport(int xw, int yw) {
-    auto camera_d = camera_window.bottom_left() - camera_window.top_right();
-    auto viewport_d = viewport.bottom_right() - viewport.top_left();
+Point2D RenderTarget::world_to_viewport(int xw, int yw) {
+    auto camera_d = Point2D{camera_window.top_right().x - camera_window.bottom_left().x, camera_window.top_right().y - camera_window.bottom_left().y};
+    auto viewport_d = Point2D{viewport.bottom_right().x - viewport.top_left().x, viewport.bottom_right().y - viewport.top_left().y};
 
-    auto xv = viewport_d.x * (xw - camera_window.bottom_left().x) / -camera_d.x;
+    auto pw = Point2D{xw, yw};
 
-    auto yv = viewport_d.y * (1 - (yw - camera_window.bottom_left().y) / -camera_d.y);
+    auto xv = pw.x * viewport_d.x / camera_d.x;
+    auto yv = viewport_d.y - (viewport_d.y / camera_d.y * pw.y);
 
     return Point2D{xv, yv};
 }
 
-Point2D RenderTarget::camera_to_viewport(Point2D p) {
-    return camera_to_viewport(p.x, p.y);
+Point2D RenderTarget::world_to_viewport(Point2D p) {
+    return world_to_viewport(p.x, p.y);
 }
 
 void RenderTarget::draw_point(Point2D p) {
-    auto vpoint = camera_to_viewport(p);
+    auto vpoint = world_to_viewport(p);
     auto x = vpoint.x;
     auto y = vpoint.y;
 
-    auto region = Rect{x, y, 1, 1};
+    auto thickness = ratio();
+    auto region = Rect{x, y, (int)thickness, (int)thickness};
 
     auto cr = cairo_create(surface());
 
     cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_set_line_width(cr, 1);
+    cairo_set_line_width(cr, thickness);
 
     cairo_rectangle(cr, region.x, region.y, region.width, region.height);
     cairo_fill(cr);
@@ -136,8 +139,9 @@ void RenderTarget::draw_point(Point2D p) {
 }
 
 void RenderTarget::draw_line(Point2D a, Point2D b) {
-    auto va = camera_to_viewport(a);
-    auto vb = camera_to_viewport(b);
+    
+    auto va = world_to_viewport(a);
+    auto vb = world_to_viewport(b);
 
     auto min_x = std::min(va.x, vb.x);
     auto min_y = std::min(va.y, vb.y);
@@ -149,21 +153,22 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
 
     auto cr = cairo_create(surface());
 
+    auto thickness = 0.5 * ratio();
     cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_set_line_width(cr, .5);
+    cairo_set_line_width(cr, thickness);
 
-    cairo_move_to(cr, va.x, va.y + .5);
-    cairo_line_to(cr, vb.x, vb.y + .5);
+    cairo_move_to(cr, va.x, va.y + thickness);
+    cairo_line_to(cr, vb.x, vb.y + thickness);
 
     cairo_stroke(cr);
     cairo_destroy(cr);
 
     gtk_widget_queue_draw_area(
             parent,
-            region.x - 1,
-            region.y - 1,
-            region.width + 1,
-            region.height + 1
+            region.x,
+            region.y,
+            region.width,
+            region.height
     );
 }
 
@@ -172,4 +177,16 @@ void RenderTarget::resize(Size size) {
     camera_window.set_height(size.height);
     viewport.set_width(size.width);
     viewport.set_height(size.height);
+}
+
+double RenderTarget::ratio() const {
+    // This function is actually pretty stupid and serves only for lines to look thicker.
+    auto wv = viewport.width();
+    auto hv = viewport.height();
+
+    auto ww = camera_window.width();
+    auto hw = camera_window.height();
+
+    auto thickness = (wv / ww + hv / hw) / 2;
+    return (thickness>0.5)?thickness:1;
 }

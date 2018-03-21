@@ -19,6 +19,7 @@ public:
     void show();
     void close();
     void update_list();
+    void configure_gui();
 
     Size size() const {
         return _size;

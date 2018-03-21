@@ -1,7 +1,7 @@
 #include "window.h"
 
 #include "objects/shapes.h"
-
+#include <iostream>
 #include <utility>
 
 namespace rudolph {
@@ -33,6 +33,42 @@ GtkWidget* get_component(GtkBuilder* gtk_builder, std::string id) {
     return GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), id.c_str()));
 }
 
+void on_btn_up(GtkWidget *widget, gpointer data) {
+    std::cout << "btn up" << std::endl;
+}
+
+void on_btn_down(GtkWidget *widget, gpointer data) {
+    std::cout << "btn down" << std::endl;
+}
+
+void on_btn_left(GtkWidget *widget, gpointer data) {
+    std::cout << "btn left" << std::endl;
+}
+
+void on_btn_right(GtkWidget *widget, gpointer data) {
+    std::cout << "btn right" << std::endl;
+}
+
+void on_btn_in(GtkWidget *widget, gpointer data) {
+    std::cout << "btn in" << std::endl;
+}
+
+void on_btn_out(GtkWidget *widget, gpointer data) {
+    std::cout << "btn out" << std::endl;
+}
+
+void on_btn_new(GtkWidget *widget, gpointer data) {
+    std::cout << "btn new" << std::endl;
+}
+
+void on_btn_edit(GtkWidget *widget, gpointer data) {
+    std::cout << "btn edit" << std::endl;
+}
+
+void on_btn_del(GtkWidget *widget, gpointer data) {
+    std::cout << "btn del" << std::endl;
+}
+
 MainWindow::MainWindow(Size size):
     _size{size},
     gtk_builder{gtk_builder_new()},
@@ -40,6 +76,39 @@ MainWindow::MainWindow(Size size):
     renderer{get_component(gtk_builder, "canvas")}
 {
     g_signal_connect(gtk_window, "destroy", G_CALLBACK(on_close), this);
+
+    configure_gui();
+}
+
+void MainWindow::configure_gui()
+{
+    // Signals for each and every button
+    GtkWidget *button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_up"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_up), NULL);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_down"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_down), NULL);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_left"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_left), NULL);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_right"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_right), NULL);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_in"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_in), NULL);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_out"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_out), NULL);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_new"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_new), NULL);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_edit"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_edit), NULL);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_del"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_del), NULL);
 }
 
 void MainWindow::show() {
