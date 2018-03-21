@@ -31,6 +31,8 @@ public:
     void draw_line(Point2D, Point2D);
     void resize(Size size);
 
+    void move_camera(int dx, int dy);
+
     cairo_surface_t* surface() const {
         return surface_;
     }
@@ -85,6 +87,10 @@ public:
 
     cairo_surface_t* surface() const {
         return target.surface();
+    }
+
+    RenderTarget& render_target() {
+        return target;
     }
 
 private:

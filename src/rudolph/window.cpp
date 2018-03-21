@@ -33,8 +33,11 @@ GtkWidget* get_component(GtkBuilder* gtk_builder, std::string id) {
     return GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), id.c_str()));
 }
 
-void on_btn_up(GtkWidget *widget, gpointer data) {
+void on_btn_up(GtkWidget *widget, gpointer* data) {
     std::cout << "btn up" << std::endl;
+    Renderer& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    RenderTarget& rt = r.render_target();
+    rt.move_camera(0, 10);
 }
 
 void on_btn_down(GtkWidget *widget, gpointer data) {
@@ -84,7 +87,7 @@ void MainWindow::configure_gui()
 {
     // Signals for each and every button
     GtkWidget *button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_up"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_up), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_up), this);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_down"));
     g_signal_connect(button, "clicked", G_CALLBACK(on_btn_down), NULL);
@@ -116,6 +119,8 @@ void MainWindow::show() {
     
     renderer.add_object(Point{10, 10});
     renderer.add_object(Line{100, 20, 110, 30});
+    renderer.add_object(Line{300, 400, 200, 380});
+    renderer.add_object(Point{320, 420});
     auto points = std::vector<Point2D>{
         Point2D{150, 150},
         Point2D{175, 175},
@@ -126,6 +131,7 @@ void MainWindow::show() {
     renderer.add_object(Polygon(points));
 
     update_list();
+
 }
 
 void MainWindow::update_list() {

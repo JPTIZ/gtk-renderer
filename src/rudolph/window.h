@@ -25,6 +25,10 @@ public:
         return _size;
     }
 
+    Renderer& get_renderer() {
+        return renderer;
+    }
+
 private:
     Size _size{0, 0};
     GtkBuilder* gtk_builder;

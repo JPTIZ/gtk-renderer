@@ -105,10 +105,10 @@ Point2D RenderTarget::world_to_viewport(int xw, int yw) {
     auto camera_d = Point2D{camera_window.top_right().x - camera_window.bottom_left().x, camera_window.top_right().y - camera_window.bottom_left().y};
     auto viewport_d = Point2D{viewport.bottom_right().x - viewport.top_left().x, viewport.bottom_right().y - viewport.top_left().y};
 
-    auto pw = Point2D{xw, yw};
+    auto pcam = Point2D{xw - camera_window.bottom_left().x, yw - camera_window.bottom_left().y};
 
-    auto xv = pw.x * viewport_d.x / camera_d.x;
-    auto yv = viewport_d.y - (viewport_d.y / camera_d.y * pw.y);
+    auto xv = pcam.x * viewport_d.x / camera_d.x;
+    auto yv = viewport_d.y - (viewport_d.y / camera_d.y * pcam.y);
 
     return Point2D{xv, yv};
 }
@@ -177,6 +177,10 @@ void RenderTarget::resize(Size size) {
     camera_window.set_height(size.height);
     viewport.set_width(size.width);
     viewport.set_height(size.height);
+}
+
+void RenderTarget::move_camera(int dx, int dy) {
+    camera_window.move(dx, dy);
 }
 
 double RenderTarget::ratio() const {
