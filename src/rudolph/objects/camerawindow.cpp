@@ -21,7 +21,7 @@ void CameraWindow::set_width(int width) {
 }
 
 void CameraWindow::set_height(int height) {
-    _bottom_left.y = _top_right.y + height;
+    _top_right.y = _bottom_left.y + height;
 }
 
 }

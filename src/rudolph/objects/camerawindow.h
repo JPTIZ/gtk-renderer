@@ -1,8 +1,6 @@
 #ifndef RUDOLPH_CAMERA_H
 #define RUDOLPH_CAMERA_H
 
-#include <cmath>
-
 #include "../geometry.h"
 
 namespace rudolph {
@@ -34,11 +32,11 @@ public:
     }
 
     int width() const {
-        return std::abs((_bottom_left - _top_right).x);
+        return (_top_right - _bottom_left).x;
     }
 
     int height() const {
-        return std::abs((_bottom_left - _top_right).y);
+        return (_top_right - _bottom_left).y;
     }
 
     void move(int dx, int dy);
