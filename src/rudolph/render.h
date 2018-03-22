@@ -25,11 +25,13 @@ class RenderTarget {
 public:
     RenderTarget(GtkWidget* parent);
 
-    Point2D camera_to_viewport(int xw, int yw);
-    Point2D camera_to_viewport(Point2D p);
+    Point2D world_to_viewport(int xw, int yw);
+    Point2D world_to_viewport(Point2D p);
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
     void resize(Size size);
+
+    void move_camera(int dx, int dy);
 
     cairo_surface_t* surface() const {
         return surface_;
@@ -86,6 +88,10 @@ public:
 
     cairo_surface_t* surface() const {
         return target.surface();
+    }
+
+    RenderTarget& render_target() {
+        return target;
     }
 
 private:

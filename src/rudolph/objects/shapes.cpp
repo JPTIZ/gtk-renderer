@@ -5,6 +5,10 @@
 namespace rudolph {
 namespace objects {
 
+unsigned int Point::points_id = 0;
+unsigned int Line::lines_id = 0;
+unsigned int Polygon::polygons_id = 0;
+
 void Point::draw(RenderTarget& target) const {
     target.draw_point(point);
 }

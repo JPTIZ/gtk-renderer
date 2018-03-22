@@ -21,8 +21,8 @@ public:
     {}
 
     CameraWindow(geometry::Size size):
-        _top_right{0, 0},
-        _bottom_left{size.width, size.height}
+        _top_right{size.width, size.height},
+        _bottom_left{0, 0}
     {}
 
     Point2D top_right() const {
