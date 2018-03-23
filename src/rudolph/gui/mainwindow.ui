@@ -294,7 +294,7 @@
               <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes"> Window </property>
+                <property name="label" translatable="yes"> Navigation </property>
               </object>
             </child>
           </object>
@@ -318,7 +318,7 @@
                     <property name="width_request">2</property>
                     <property name="height_request">2</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <signal name="configure-event" handler="on_configure_event" swapped="no"/>
                     <signal name="draw" handler="on_draw" swapped="no"/>
                   </object>

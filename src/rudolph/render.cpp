@@ -39,7 +39,6 @@ namespace {
                           gpointer* data)
     {
         auto renderer = reinterpret_cast<Renderer*>(data);
-
         auto surface = gdk_window_create_similar_surface(
                            gtk_widget_get_window(widget),
                            CAIRO_CONTENT_COLOR,
@@ -67,6 +66,30 @@ namespace {
         return true;
     }
 
+    gboolean on_key_press(
+            GtkWidget* widget,
+            GdkEventKey* event,
+            gpointer* data)
+    {
+        auto renderer = reinterpret_cast<Renderer*>(data);
+        auto& target = renderer->render_target();
+        switch (event->keyval) {
+            case GDK_KEY_Up:
+                target.move_camera(0, -10);
+                break;
+            case GDK_KEY_Down:
+                target.move_camera(0, 10);
+                break;
+            case GDK_KEY_Left:
+                target.move_camera(10, 0);
+                break;
+            case GDK_KEY_Right:
+                target.move_camera(-10, 0);
+                break;
+        }
+        return true;
+    }
+
     Size parent_size(GtkWidget* parent) {
         GtkRequisition parent_size;
         gtk_widget_get_preferred_size(parent, nullptr, &parent_size);
@@ -81,6 +104,7 @@ Renderer::Renderer(GtkWidget* parent):
     g_signal_connect(parent, "draw", G_CALLBACK(on_draw), this);
     g_signal_connect(parent, "configure-event", G_CALLBACK(on_config_event), this);
     g_signal_connect(parent, "size-allocate", G_CALLBACK(on_resize), this);
+    g_signal_connect(parent, "key_press_event", G_CALLBACK(on_key_press), this);
 }
 
 void Renderer::refresh()
@@ -129,12 +153,12 @@ void RenderTarget::draw_point(Point2D p) {
     auto x = vpoint.x;
     auto y = vpoint.y;
 
-    auto region = Rect{x, y, (int)zoom_ratio_, (int)zoom_ratio_};
+    auto region = Rect{x, y, 1, 1};
 
     auto cr = cairo_create(surface());
 
     cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_set_line_width(cr, zoom_ratio_);
+    cairo_set_line_width(cr, 1);
 
     cairo_rectangle(cr, region.x, region.y, region.width, region.height);
     cairo_fill(cr);
@@ -158,12 +182,11 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
 
     auto cr = cairo_create(surface());
 
-    auto thickness = zoom_ratio();
     cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_set_line_width(cr, thickness);
+    cairo_set_line_width(cr, 1);
 
-    cairo_move_to(cr, va.x, va.y + thickness);
-    cairo_line_to(cr, vb.x, vb.y + thickness);
+    cairo_move_to(cr, va.x, va.y);
+    cairo_line_to(cr, vb.x, vb.y);
 
     cairo_stroke(cr);
     cairo_destroy(cr);
@@ -189,9 +212,9 @@ double RenderTarget::zoom_ratio() const {
 void RenderTarget::invalidate(Rect region) {
     gtk_widget_queue_draw_area(
             parent,
-            region.x - 2 * zoom_ratio_,
-            region.y - 2 * zoom_ratio_,
-            region.width + 4 * zoom_ratio_,
-            region.height + 4 * zoom_ratio_
+            region.x - 1,
+            region.y - 1,
+            region.width + 2,
+            region.height + 2
     );
 }
