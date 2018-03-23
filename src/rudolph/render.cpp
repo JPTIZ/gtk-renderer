@@ -13,15 +13,25 @@ namespace {
     using Size = geometry::Size;
     using Point2D = geometry::Point;
 
+    void clear(cairo_surface_t* surface) {
+        auto cr = cairo_create(surface);
+        cairo_set_source_rgb(cr, 1, 1, 1);
+        cairo_paint(cr);
+        cairo_destroy(cr);
+    }
+
     gboolean on_draw(GtkWidget* widget, cairo_t* cr, gpointer* data)
     {
         auto renderer = reinterpret_cast<Renderer*>(data);
         auto surface = renderer->surface();
 
         cairo_set_source_surface(cr, surface, 0, 0);
-        cairo_paint(cr);
+
+        clear(surface);
 
         renderer->refresh();
+
+        cairo_paint(cr);
 
         return false;
     }
@@ -39,10 +49,7 @@ namespace {
                            gtk_widget_get_allocated_height(widget)
                        );
 
-        auto cr = cairo_create(surface);
-        cairo_set_source_rgb(cr, 1, 1, 1);
-        cairo_paint(cr);
-        cairo_destroy(cr);
+        clear(surface);
 
         renderer->surface(surface);
         renderer->resize({event->width, event->height});
