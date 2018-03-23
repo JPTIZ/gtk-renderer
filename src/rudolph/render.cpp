@@ -86,7 +86,24 @@ namespace {
             case GDK_KEY_Right:
                 target.move_camera(-10, 0);
                 break;
+            case GDK_KEY_Page_Up:
+                target.zoom(0.1);
+                break;
+            case GDK_KEY_Page_Down:
+                target.zoom(-0.1);
+                break;
         }
+        return true;
+    }
+
+    gboolean on_scroll(
+            GtkWidget* widget,
+            GdkEventScroll* event,
+            gpointer* data)
+    {
+        std::cout << "scrollou: " << event->delta_y << std::endl;
+        auto target = reinterpret_cast<Renderer*>(data)->render_target();
+        target.zoom(event->delta_y);
         return true;
     }
 
@@ -104,7 +121,8 @@ Renderer::Renderer(GtkWidget* parent):
     g_signal_connect(parent, "draw", G_CALLBACK(on_draw), this);
     g_signal_connect(parent, "configure-event", G_CALLBACK(on_config_event), this);
     g_signal_connect(parent, "size-allocate", G_CALLBACK(on_resize), this);
-    g_signal_connect(parent, "key_press_event", G_CALLBACK(on_key_press), this);
+    g_signal_connect(parent, "key-press-event", G_CALLBACK(on_key_press), this);
+    g_signal_connect(parent, "scroll_event", G_CALLBACK(on_scroll), this);
 }
 
 void Renderer::refresh()
