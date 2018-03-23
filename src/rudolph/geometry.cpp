@@ -34,4 +34,12 @@ Point geometry::operator*(const Point& p, double value) {
     return Point{int(p.x * value), int(p.y * value)};
 }
 
+Point geometry::operator*(int value, const Point& p) {
+    return Point{p.x * value, p.y * value};
+}
+
+Point geometry::operator*(double value, const Point& p) {
+    return Point{int(p.x * value), int(p.y * value)};
+}
+
 }

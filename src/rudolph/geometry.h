@@ -34,6 +34,8 @@ Point operator+(const Point&, const Point&);
 Point operator-(const Point&, const Point&);
 Point operator*(const Point&, int);
 Point operator*(const Point&, double);
+Point operator*(int value, const Point& p);
+Point operator*(double value, const Point& p);
 
 
 struct Rect {

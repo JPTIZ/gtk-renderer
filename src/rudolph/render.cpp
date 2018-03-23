@@ -26,11 +26,9 @@ namespace {
         auto surface = renderer->surface();
 
         cairo_set_source_surface(cr, surface, 0, 0);
-
         clear(surface);
 
         renderer->refresh();
-
         cairo_paint(cr);
 
         return false;
@@ -110,15 +108,16 @@ RenderTarget::RenderTarget(GtkWidget *parent):
 {}
 
 Point2D RenderTarget::world_to_viewport(int xw, int yw) {
-    auto camera_d = camera_window.top_right() - camera_window.bottom_left();
+    auto window = camera_window;
+    auto camera_d = window.top_right() - window.bottom_left();
     auto viewport_d = viewport.bottom_right() - viewport.top_left();
 
-    auto pcam = Point2D{xw, yw} - camera_window.bottom_left();
+    auto pcam = Point2D{xw, yw} - window.bottom_left();
 
     auto xv = pcam.x * viewport_d.x / camera_d.x;
     auto yv = viewport_d.y - (viewport_d.y / camera_d.y * pcam.y);
 
-    return Point2D{xv, yv};
+    return Point2D{xv, yv - 100} * zoom_ratio_;
 }
 
 Point2D RenderTarget::world_to_viewport(Point2D p) {
@@ -130,26 +129,22 @@ void RenderTarget::draw_point(Point2D p) {
     auto x = vpoint.x;
     auto y = vpoint.y;
 
-    auto thickness = ratio();
-    auto region = Rect{x, y, (int)thickness, (int)thickness};
+    auto region = Rect{x, y, (int)zoom_ratio_, (int)zoom_ratio_};
 
     auto cr = cairo_create(surface());
 
     cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_set_line_width(cr, thickness);
+    cairo_set_line_width(cr, zoom_ratio_);
 
     cairo_rectangle(cr, region.x, region.y, region.width, region.height);
     cairo_fill(cr);
 
     cairo_destroy(cr);
 
-    gtk_widget_queue_draw_area(
-        parent,
-        region.x, region.y, region.width, region.height);
+    invalidate(region);
 }
 
 void RenderTarget::draw_line(Point2D a, Point2D b) {
-
     auto va = world_to_viewport(a);
     auto vb = world_to_viewport(b);
 
@@ -163,7 +158,7 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
 
     auto cr = cairo_create(surface());
 
-    auto thickness = 0.5 * ratio();
+    auto thickness = zoom_ratio();
     cairo_set_source_rgb(cr, 1, 0, 0);
     cairo_set_line_width(cr, thickness);
 
@@ -173,32 +168,30 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
     cairo_stroke(cr);
     cairo_destroy(cr);
 
-    gtk_widget_queue_draw_area(
-            parent,
-            region.x,
-            region.y,
-            region.width,
-            region.height
-    );
+    invalidate(region);
 }
 
 void RenderTarget::resize(Size size) {
     viewport.set_width(size.width);
     viewport.set_height(size.height);
+    camera_window.set_width(size.width);
+    camera_window.set_height(size.height);
 }
 
 void RenderTarget::move_camera(int dx, int dy) {
     camera_window.move(dx, dy);
 }
 
-double RenderTarget::ratio() const {
-    // This function is actually pretty stupid and serves only for lines to look thicker.
-    auto wv = viewport.width();
-    auto hv = viewport.height();
+double RenderTarget::zoom_ratio() const {
+    return zoom_ratio_;
+}
 
-    auto ww = camera_window.width();
-    auto hw = camera_window.height();
-
-    auto thickness = (wv / ww + hv / hw) / 2;
-    return thickness > 0.5 ? thickness : 1;
+void RenderTarget::invalidate(Rect region) {
+    gtk_widget_queue_draw_area(
+            parent,
+            region.x - 2 * zoom_ratio_,
+            region.y - 2 * zoom_ratio_,
+            region.width + 4 * zoom_ratio_,
+            region.height + 4 * zoom_ratio_
+    );
 }

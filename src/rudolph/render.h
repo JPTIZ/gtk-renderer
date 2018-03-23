@@ -22,6 +22,7 @@ namespace rudolph {
 class RenderTarget {
     using Point2D = geometry::Point;
     using Size = geometry::Size;
+    using Rect = geometry::Rect;
 public:
     RenderTarget(GtkWidget* parent);
 
@@ -30,8 +31,8 @@ public:
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
     void resize(Size size);
-
     void move_camera(int dx, int dy);
+    void invalidate(Rect);
 
     cairo_surface_t* surface() const {
         return surface_;
@@ -41,12 +42,19 @@ public:
         surface_ = surface;
     }
 
+    void zoom(double ratio) {
+        zoom_ratio_ += ratio;
+    }
+
+    double zoom_ratio() const;
+
 private:
-    double ratio() const;
     cairo_surface_t* surface_ = nullptr;
     GtkWidget* parent;
     CameraWindow camera_window;
     Viewport viewport;
+
+    double zoom_ratio_ = 1.0;
 };
 
 /**

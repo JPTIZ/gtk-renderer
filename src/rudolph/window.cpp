@@ -35,29 +35,44 @@ GtkWidget* get_component(GtkBuilder* gtk_builder, std::string id) {
 
 void on_btn_up(GtkWidget *widget, gpointer* data) {
     std::cout << "btn up" << std::endl;
-    Renderer& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
-    RenderTarget& rt = r.render_target();
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.move_camera(0, -10);
+}
+
+void on_btn_down(GtkWidget *widget, gpointer* data) {
+    std::cout << "btn down" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
     rt.move_camera(0, 10);
 }
 
-void on_btn_down(GtkWidget *widget, gpointer data) {
-    std::cout << "btn down" << std::endl;
-}
-
-void on_btn_left(GtkWidget *widget, gpointer data) {
+void on_btn_left(GtkWidget *widget, gpointer* data) {
     std::cout << "btn left" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.move_camera(10, 0);
 }
 
-void on_btn_right(GtkWidget *widget, gpointer data) {
+void on_btn_right(GtkWidget *widget, gpointer* data) {
     std::cout << "btn right" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.move_camera(-10, 0);
 }
 
-void on_btn_in(GtkWidget *widget, gpointer data) {
+void on_btn_in(GtkWidget *widget, gpointer* data) {
     std::cout << "btn in" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.zoom(0.1);
 }
 
 void on_btn_out(GtkWidget *widget, gpointer data) {
     std::cout << "btn out" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.zoom(-0.1);
 }
 
 void on_btn_new(GtkWidget *widget, gpointer data) {
@@ -90,33 +105,33 @@ void MainWindow::configure_gui()
     g_signal_connect(button, "clicked", G_CALLBACK(on_btn_up), this);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_down"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_down), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_down), this);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_left"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_left), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_left), this);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_right"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_right), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_right), this);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_in"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_in), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_in), this);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_out"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_out), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_out), this);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_new"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_new), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_new), this);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_edit"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_edit), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_edit), this);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_del"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_del), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_del), this);
 }
 
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
-    
+
     renderer.add_object(Point{10, 10});
     renderer.add_object(Line{100, 20, 110, 30});
     renderer.add_object(Line{300, 400, 200, 380});
