@@ -7,8 +7,6 @@
       <!-- column-name drawableObject -->
       <column type="gchararray"/>
     </columns>
-    <data>
-    </data>
   </object>
   <object class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -72,7 +70,7 @@
                             <property name="model">list_store</property>
                             <property name="headers_visible">False</property>
                             <child internal-child="selection">
-                              <object class="GtkTreeSelection"/>
+                              <object class="GtkTreeSelection" id="treesel1"/>
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="tv_col1">
@@ -296,7 +294,7 @@
               <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes"> Window </property>
+                <property name="label" translatable="yes"> Navigation </property>
               </object>
             </child>
           </object>
@@ -317,8 +315,10 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkDrawingArea" id="canvas">
+                    <property name="width_request">2</property>
+                    <property name="height_request">2</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <signal name="configure-event" handler="on_configure_event" swapped="no"/>
                     <signal name="draw" handler="on_draw" swapped="no"/>
                   </object>

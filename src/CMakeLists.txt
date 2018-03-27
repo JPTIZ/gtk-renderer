@@ -15,8 +15,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # - GTK+3.0
 find_package(GTK3)
 
-include_directories(${GTK3_INCLUDE_DIRS})
-link_directories(${GTK3_LIBRARY_DIRS})
 add_definitions(${GTK3_CFLAGS_OTHER})
 
 # Project sub-dirs
@@ -31,5 +29,6 @@ copy("${PROJECT_SOURCE_DIR}/rudolph/gui/mainwindow.ui")
 
 # Final linkings
 add_executable(gtk-renderer main.cpp)
+target_include_directories(gtk-renderer PRIVATE ${GTK3_INCLUDE_DIRS})
 
-target_link_libraries(gtk-renderer ${GTK3_LIBRARIES} rudolph)
+target_link_libraries(gtk-renderer rudolph ${GTK3_LIBRARIES})

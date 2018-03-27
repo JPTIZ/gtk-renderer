@@ -4,11 +4,21 @@
 #include "objects/shapes.h"
 
 #include <utility>
+#include <iostream>
 
 namespace {
     using namespace rudolph;
 
     using Rect = geometry::Rect;
+    using Size = geometry::Size;
+    using Point2D = geometry::Point;
+
+    void clear(cairo_surface_t* surface) {
+        auto cr = cairo_create(surface);
+        cairo_set_source_rgb(cr, 1, 1, 1);
+        cairo_paint(cr);
+        cairo_destroy(cr);
+    }
 
     gboolean on_draw(GtkWidget* widget, cairo_t* cr, gpointer* data)
     {
@@ -16,9 +26,10 @@ namespace {
         auto surface = renderer->surface();
 
         cairo_set_source_surface(cr, surface, 0, 0);
-        cairo_paint(cr);
+        clear(surface);
 
         renderer->refresh();
+        cairo_paint(cr);
 
         return false;
     }
@@ -27,8 +38,7 @@ namespace {
                           GdkEventConfigure* event,
                           gpointer* data)
     {
-        auto target = reinterpret_cast<Renderer*>(data);
-
+        auto renderer = reinterpret_cast<Renderer*>(data);
         auto surface = gdk_window_create_similar_surface(
                            gtk_widget_get_window(widget),
                            CAIRO_CONTENT_COLOR,
@@ -36,17 +46,73 @@ namespace {
                            gtk_widget_get_allocated_height(widget)
                        );
 
-        auto cr = cairo_create(surface);
-        cairo_set_source_rgb(cr, 1, 1, 1);
-        cairo_paint(cr);
-        cairo_destroy(cr);
+        clear(surface);
 
-        target->surface(surface);
+        renderer->surface(surface);
+        renderer->resize({event->width, event->height});
 
         return true;
     }
+
+    gboolean on_resize(
+            GtkWidget* widget,
+            GtkAllocation* event,
+            gpointer* data)
+    {
+        auto renderer = reinterpret_cast<Renderer*>(data);
+
+        renderer->resize({event->width, event->height});
+
+        return true;
+    }
+
+    gboolean on_key_press(
+            GtkWidget* widget,
+            GdkEventKey* event,
+            gpointer* data)
+    {
+        auto renderer = reinterpret_cast<Renderer*>(data);
+        auto& target = renderer->render_target();
+        switch (event->keyval) {
+            case GDK_KEY_Up:
+                target.move_camera(0, -10);
+                break;
+            case GDK_KEY_Down:
+                target.move_camera(0, 10);
+                break;
+            case GDK_KEY_Left:
+                target.move_camera(10, 0);
+                break;
+            case GDK_KEY_Right:
+                target.move_camera(-10, 0);
+                break;
+            case GDK_KEY_Page_Up:
+                target.zoom(0.1);
+                break;
+            case GDK_KEY_Page_Down:
+                target.zoom(-0.1);
+                break;
+        }
+        return true;
+    }
+
+    gboolean on_scroll(
+            GtkWidget* widget,
+            GdkEventScroll* event,
+            gpointer* data)
+    {
+        std::cout << "scrollou: " << event->delta_y << std::endl;
+        auto target = reinterpret_cast<Renderer*>(data)->render_target();
+        target.zoom(event->delta_y);
+        return true;
+    }
+
+    Size parent_size(GtkWidget* parent) {
+        GtkRequisition parent_size;
+        gtk_widget_get_preferred_size(parent, nullptr, &parent_size);
+        return Size{parent_size.width, parent_size.height};
+    }
 }
-using Point2D = geometry::Point;
 
 Renderer::Renderer(GtkWidget* parent):
     target{parent},
@@ -54,6 +120,9 @@ Renderer::Renderer(GtkWidget* parent):
 {
     g_signal_connect(parent, "draw", G_CALLBACK(on_draw), this);
     g_signal_connect(parent, "configure-event", G_CALLBACK(on_config_event), this);
+    g_signal_connect(parent, "size-allocate", G_CALLBACK(on_resize), this);
+    g_signal_connect(parent, "key-press-event", G_CALLBACK(on_key_press), this);
+    g_signal_connect(parent, "scroll_event", G_CALLBACK(on_scroll), this);
 }
 
 void Renderer::refresh()
@@ -69,41 +138,36 @@ void Renderer::clear()
     // TODO
 }
 
-RenderTarget::RenderTarget(GtkWidget *parent):
-        parent{parent}
+void Renderer::resize(Size size)
 {
-    GtkRequisition parent_size;
-    gtk_widget_get_preferred_size(parent, NULL, &parent_size);
-
-    camera_window->set_width((int)parent_size.width);
-    camera_window->set_height((int)parent_size.height);
-
-    viewport->set_width((int)parent_size.width);
-    viewport->set_height((int)parent_size.height);
+    target.resize(size);
 }
 
-Point2D RenderTarget::camera_to_viewport(int xw, int yw) {
-    int xv = (xw - camera_window->bottom_left().x) / (camera_window->top_right().x - camera_window->bottom_left().x);
-    xv *= viewport->bottom_right().x - viewport->top_left().x;
+RenderTarget::RenderTarget(GtkWidget *parent):
+    parent{parent},
+    camera_window{Size{800, 600}},
+    viewport{Size{800, 600}}
+{}
 
-    int yv = 1 - (yw - camera_window->bottom_left().y) / (camera_window->top_right().y - camera_window->bottom_left().y);
-    yv *= viewport->bottom_right().y - viewport->top_left().y;
+Point2D RenderTarget::world_to_viewport(int xw, int yw) {
+    auto window = camera_window;
+    auto camera_d = window.top_right() - window.bottom_left();
+    auto viewport_d = viewport.bottom_right() - viewport.top_left();
 
-    return Point2D{xv, yv};
+    auto pcam = Point2D{xw, yw} - window.bottom_left();
+
+    auto xv = pcam.x * viewport_d.x / camera_d.x;
+    auto yv = viewport_d.y - (viewport_d.y / camera_d.y * pcam.y);
+
+    return Point2D{xv, yv - 100} * zoom_ratio_;
 }
 
-Point2D RenderTarget::camera_to_viewport(Point2D p) {
-    int xv = (p.x - camera_window->bottom_left().x) / (camera_window->top_right().x - camera_window->bottom_left().x);
-    xv *= viewport->bottom_right().x - viewport->top_left().x;
-
-    int yv = 1 - (p.y - camera_window->bottom_left().y) / (camera_window->top_right().y - camera_window->bottom_left().y);
-    yv *= viewport->bottom_right().y - viewport->top_left().y;
-
-    return Point2D{xv, yv};
+Point2D RenderTarget::world_to_viewport(Point2D p) {
+    return world_to_viewport(p.x, p.y);
 }
 
 void RenderTarget::draw_point(Point2D p) {
-    Point2D vpoint = camera_to_viewport(p);
+    auto vpoint = world_to_viewport(p);
     auto x = vpoint.x;
     auto y = vpoint.y;
 
@@ -119,12 +183,12 @@ void RenderTarget::draw_point(Point2D p) {
 
     cairo_destroy(cr);
 
-    gtk_widget_queue_draw_area(parent, region.x, region.y, region.width, region.height);
+    invalidate(region);
 }
 
 void RenderTarget::draw_line(Point2D a, Point2D b) {
-    Point2D va = camera_to_viewport(a);
-    Point2D vb = camera_to_viewport(b);
+    auto va = world_to_viewport(a);
+    auto vb = world_to_viewport(b);
 
     auto min_x = std::min(va.x, vb.x);
     auto min_y = std::min(va.y, vb.y);
@@ -137,19 +201,38 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
     auto cr = cairo_create(surface());
 
     cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_set_line_width(cr, .5);
+    cairo_set_line_width(cr, 1);
 
-    cairo_move_to(cr, va.x, va.y + .5);
-    cairo_line_to(cr, vb.x, vb.y + .5);
+    cairo_move_to(cr, va.x, va.y);
+    cairo_line_to(cr, vb.x, vb.y);
 
     cairo_stroke(cr);
     cairo_destroy(cr);
 
+    invalidate(region);
+}
+
+void RenderTarget::resize(Size size) {
+    viewport.set_width(size.width);
+    viewport.set_height(size.height);
+    camera_window.set_width(size.width);
+    camera_window.set_height(size.height);
+}
+
+void RenderTarget::move_camera(int dx, int dy) {
+    camera_window.move(dx, dy);
+}
+
+double RenderTarget::zoom_ratio() const {
+    return zoom_ratio_;
+}
+
+void RenderTarget::invalidate(Rect region) {
     gtk_widget_queue_draw_area(
             parent,
             region.x - 1,
             region.y - 1,
-            region.width + 1,
-            region.height + 1
+            region.width + 2,
+            region.height + 2
     );
 }

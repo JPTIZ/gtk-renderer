@@ -5,7 +5,9 @@ set(SOURCES
     window.cpp
     rudolph.cpp
     render.cpp
+    geometry.cpp
     "objects/shapes.cpp"
+    "objects/camerawindow.cpp"
 )
 
 add_library(rudolph STATIC
@@ -15,4 +17,6 @@ add_library(rudolph STATIC
 target_include_directories(rudolph
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
+    PRIVATE
+        ${GTK3_INCLUDE_DIRS}
 )

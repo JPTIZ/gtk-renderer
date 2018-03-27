@@ -1,13 +1,13 @@
 #include "window.h"
 
 #include "objects/shapes.h"
-
+#include <iostream>
 #include <utility>
 
-namespace {
+namespace rudolph {
 
-using namespace rudolph;
-using namespace rudolph::geometry;
+using namespace rudolph::objects;
+using Size = geometry::Size;
 
 void on_close(GtkWidget* btn, gpointer* data) {
     reinterpret_cast<MainWindow*>(data)->close();
@@ -33,6 +33,58 @@ GtkWidget* get_component(GtkBuilder* gtk_builder, std::string id) {
     return GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), id.c_str()));
 }
 
+void on_btn_up(GtkWidget *widget, gpointer* data) {
+    std::cout << "btn up" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.move_camera(0, -10);
+}
+
+void on_btn_down(GtkWidget *widget, gpointer* data) {
+    std::cout << "btn down" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.move_camera(0, 10);
+}
+
+void on_btn_left(GtkWidget *widget, gpointer* data) {
+    std::cout << "btn left" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.move_camera(10, 0);
+}
+
+void on_btn_right(GtkWidget *widget, gpointer* data) {
+    std::cout << "btn right" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.move_camera(-10, 0);
+}
+
+void on_btn_in(GtkWidget *widget, gpointer* data) {
+    std::cout << "btn in" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.zoom(0.1);
+}
+
+void on_btn_out(GtkWidget *widget, gpointer data) {
+    std::cout << "btn out" << std::endl;
+    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& rt = r.render_target();
+    rt.zoom(-0.1);
+}
+
+void on_btn_new(GtkWidget *widget, gpointer data) {
+    std::cout << "btn new" << std::endl;
+}
+
+void on_btn_edit(GtkWidget *widget, gpointer data) {
+    std::cout << "btn edit" << std::endl;
+}
+
+void on_btn_del(GtkWidget *widget, gpointer data) {
+    std::cout << "btn del" << std::endl;
 }
 
 MainWindow::MainWindow(Size size):
@@ -42,14 +94,48 @@ MainWindow::MainWindow(Size size):
     renderer{get_component(gtk_builder, "canvas")}
 {
     g_signal_connect(gtk_window, "destroy", G_CALLBACK(on_close), this);
+
+    configure_gui();
+}
+
+void MainWindow::configure_gui()
+{
+    // Signals for each and every button
+    GtkWidget *button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_up"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_up), this);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_down"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_down), this);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_left"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_left), this);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_right"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_right), this);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_in"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_in), this);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_out"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_out), this);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_new"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_new), this);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_edit"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_edit), this);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_del"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_del), this);
 }
 
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
-    
-    using namespace objects;
+
     renderer.add_object(Point{10, 10});
     renderer.add_object(Line{100, 20, 110, 30});
+    renderer.add_object(Line{300, 400, 200, 380});
+    renderer.add_object(Point{320, 420});
     auto points = std::vector<Point2D>{
         Point2D{150, 150},
         Point2D{175, 175},
@@ -60,6 +146,7 @@ void MainWindow::show() {
     renderer.add_object(Polygon(points));
 
     update_list();
+
 }
 
 void MainWindow::update_list() {
@@ -74,4 +161,6 @@ void MainWindow::update_list() {
 
 void MainWindow::close() {
     gtk_main_quit();
+}
+
 }
