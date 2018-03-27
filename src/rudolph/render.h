@@ -46,6 +46,10 @@ public:
         zoom_ratio_ += ratio;
     }
 
+    int step() const {
+        return _step;
+    }
+
     double zoom_ratio() const;
 
 private:
@@ -54,6 +58,7 @@ private:
     CameraWindow camera_window;
     Viewport viewport;
 
+    int _step = 10;
     double zoom_ratio_ = 1.0;
 };
 

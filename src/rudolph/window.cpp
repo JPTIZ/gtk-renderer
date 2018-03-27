@@ -37,42 +37,42 @@ void on_btn_up(GtkWidget *widget, gpointer* data) {
     std::cout << "btn up" << std::endl;
     auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
     auto& rt = r.render_target();
-    rt.move_camera(0, -10);
+    rt.move_camera(0, -1);
 }
 
 void on_btn_down(GtkWidget *widget, gpointer* data) {
     std::cout << "btn down" << std::endl;
     auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
     auto& rt = r.render_target();
-    rt.move_camera(0, 10);
+    rt.move_camera(0, 1);
 }
 
 void on_btn_left(GtkWidget *widget, gpointer* data) {
     std::cout << "btn left" << std::endl;
     auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
     auto& rt = r.render_target();
-    rt.move_camera(10, 0);
+    rt.move_camera(1, 0);
 }
 
 void on_btn_right(GtkWidget *widget, gpointer* data) {
     std::cout << "btn right" << std::endl;
     auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
     auto& rt = r.render_target();
-    rt.move_camera(-10, 0);
+    rt.move_camera(-1, 0);
 }
 
 void on_btn_in(GtkWidget *widget, gpointer* data) {
     std::cout << "btn in" << std::endl;
     auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
     auto& rt = r.render_target();
-    rt.zoom(0.1);
+    rt.zoom(reinterpret_cast<MainWindow*>(data)->step()/100);
 }
 
 void on_btn_out(GtkWidget *widget, gpointer data) {
     std::cout << "btn out" << std::endl;
     auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
     auto& rt = r.render_target();
-    rt.zoom(-0.1);
+    rt.zoom(-reinterpret_cast<MainWindow*>(data)->step());
 }
 
 void on_btn_new(GtkWidget *widget, gpointer data) {

@@ -75,16 +75,16 @@ namespace {
         auto& target = renderer->render_target();
         switch (event->keyval) {
             case GDK_KEY_Up:
-                target.move_camera(0, -10);
+                target.move_camera(0, -1);
                 break;
             case GDK_KEY_Down:
-                target.move_camera(0, 10);
+                target.move_camera(0, 1);
                 break;
             case GDK_KEY_Left:
-                target.move_camera(10, 0);
+                target.move_camera(1, 0);
                 break;
             case GDK_KEY_Right:
-                target.move_camera(-10, 0);
+                target.move_camera(-1, 0);
                 break;
             case GDK_KEY_Page_Up:
                 target.zoom(0.1);
@@ -220,7 +220,7 @@ void RenderTarget::resize(Size size) {
 }
 
 void RenderTarget::move_camera(int dx, int dy) {
-    camera_window.move(dx, dy);
+    camera_window.move(dx * _step, dy * _step);
 }
 
 double RenderTarget::zoom_ratio() const {
