@@ -1,6 +1,8 @@
 #ifndef RUDOLPH_VIEWPORT_H
 #define RUDOLPH_VIEWPORT_H
 
+#include <iostream>
+
 #include "../geometry.h"
 
 namespace rudolph {
@@ -40,6 +42,11 @@ public:
 
     void set_height(int height) {
         _bottom_right.y = _top_left.y + height;
+    }
+
+    void resize(int width, int height) {
+        set_width(width);
+        set_height(height);
     }
 
   private:

@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include <gtk/gtk.h>
+#include "gtk/gtk.h"
 
 #include "geometry.h"
 #include "drawable.h"
@@ -22,19 +22,26 @@ namespace rudolph {
 class RenderTarget {
     using Point2D = geometry::Point;
     using Size = geometry::Size;
-    using Rect = geometry::Rect;
 public:
-    RenderTarget(GtkWidget*);
+    RenderTarget();
     ~RenderTarget();
 
     Point2D world_to_viewport(int xw, int yw);
     Point2D world_to_viewport(Point2D p);
+
+    void clear();
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
     void resize(Size size);
     void move_camera(int dx, int dy);
-    void invalidate(Rect);
-    void set_target(GtkWidget*);
+
+    CameraWindow& window() {
+        return camera_window;
+    }
+
+    const CameraWindow& window() const {
+        return camera_window;
+    }
 
     cairo_surface_t* surface() const {
         return back_buffer_;
@@ -46,16 +53,10 @@ public:
 
     double zoom_ratio() const;
 
-    GtkWidget* parent_() const {
-        return parent;
-    }
-
 private:
-    cairo_surface_t* back_buffer_ = nullptr;
-    GtkWidget* parent;
     CameraWindow camera_window;
     Viewport viewport;
-
+    cairo_surface_t* back_buffer_ = nullptr;
     double zoom_ratio_ = 1.0;
 };
 
@@ -64,21 +65,25 @@ private:
  */
 class Renderer {
     using Size = geometry::Size;
+    using Rect = geometry::Rect;
 public:
     /**
      * Creates a renderer for a given window.
      *
      * @param parent Parent GtkWindow.
      */
-    Renderer(GtkWidget* parent);
+    Renderer(GtkWidget*);
+
+    void resize(Size size);
 
     void refresh();
     void clear();
-    void resize(Size size);
+    void invalidate();
+    void invalidate(Rect);
 
     template <typename T>
     void add_object(T x) {
-        _display_file.push_back( Drawable(std::move(x)) );
+        _display_file.push_back(Drawable(std::move(x)));
     }
 
     std::vector<Drawable> display_file() const {

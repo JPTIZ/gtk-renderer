@@ -43,7 +43,7 @@ namespace {
         clear(surface);
 
         renderer.refresh();
-        renderer.render_target().invalidate(Rect{0, 0, 800, 600});
+        renderer.invalidate();
 
         cairo_paint(cr);
 
@@ -56,7 +56,6 @@ namespace {
                           gpointer* data)
     {
         auto renderer = reinterpret_cast<RenderTarget*>(data);
-        renderer->set_target(widget);
         renderer->resize({event->width, event->height});
 
         return true;
@@ -125,8 +124,8 @@ namespace {
 
 
 Renderer::Renderer(GtkWidget* parent):
-    target{parent},
-    parent{parent}
+    parent{parent},
+    target{}
 {
     g_signal_connect(parent, "draw", G_CALLBACK(on_draw), this);
     g_signal_connect(parent, "configure-event", G_CALLBACK(on_config_event), &target);
@@ -138,7 +137,7 @@ Renderer::Renderer(GtkWidget* parent):
 
 void Renderer::refresh()
 {
-    for (auto obj : _display_file)
+    for (auto obj: _display_file)
     {
         obj.draw(target);
     }
@@ -147,7 +146,7 @@ void Renderer::refresh()
 
 void Renderer::clear()
 {
-    // TODO
+    target.clear();
 }
 
 
@@ -157,11 +156,13 @@ void Renderer::resize(Size size)
 }
 
 
-RenderTarget::RenderTarget(GtkWidget *parent):
-    parent{parent},
+RenderTarget::RenderTarget():
     camera_window{Size{800, 600}},
     viewport{Size{800, 600}},
-    back_buffer_{cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 800, 600)}
+    back_buffer_{
+        cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+                                   viewport.width(),
+                                   viewport.height())}
 {}
 
 
@@ -180,12 +181,17 @@ Point2D RenderTarget::world_to_viewport(int xw, int yw) {
     auto xv = pcam.x * viewport_d.x / camera_d.x;
     auto yv = viewport_d.y - (viewport_d.y / camera_d.y * pcam.y);
 
-    return Point2D{xv, yv - 100} * zoom_ratio_;
+    return Point2D{xv, yv} * zoom_ratio_;
 }
 
 
 Point2D RenderTarget::world_to_viewport(Point2D p) {
     return world_to_viewport(p.x, p.y);
+}
+
+
+void RenderTarget::clear() {
+    ::clear(back_buffer_);
 }
 
 
@@ -196,7 +202,7 @@ void RenderTarget::draw_point(Point2D p) {
 
     auto region = Rect{x, y, 1, 1};
 
-    auto cr = cairo_create(surface());
+    auto cr = cairo_create(back_buffer_);
 
     cairo_set_source_rgb(cr, 1, 0, 0);
     cairo_set_line_width(cr, 1);
@@ -205,8 +211,6 @@ void RenderTarget::draw_point(Point2D p) {
     cairo_fill(cr);
 
     cairo_destroy(cr);
-
-    invalidate(region);
 }
 
 
@@ -222,7 +226,7 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
 
     auto region = Rect{min_x, min_y, max_x - min_x, max_y - min_y};
 
-    auto cr = cairo_create(surface());
+    auto cr = cairo_create(back_buffer_);
 
     cairo_set_source_rgb(cr, 1, 0, 0);
     cairo_set_line_width(cr, 1);
@@ -232,16 +236,16 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
 
     cairo_stroke(cr);
     cairo_destroy(cr);
-
-    invalidate(region);
 }
 
 
 void RenderTarget::resize(Size size) {
-    viewport.set_width(size.width);
-    viewport.set_height(size.height);
-    camera_window.set_width(size.width);
-    camera_window.set_height(size.height);
+    viewport.resize(size.width, size.height);
+
+    cairo_surface_destroy(back_buffer_);
+    back_buffer_ = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+                                              viewport.width(),
+                                              viewport.height());
 }
 
 
@@ -254,8 +258,14 @@ double RenderTarget::zoom_ratio() const {
     return zoom_ratio_;
 }
 
+void Renderer::invalidate() {
+    invalidate(Rect{0, 0,
+                    gtk_widget_get_allocated_width(parent),
+                    gtk_widget_get_allocated_height(parent)});
+}
 
-void RenderTarget::invalidate(Rect region) {
+
+void Renderer::invalidate(Rect region) {
     gtk_widget_queue_draw_area(
             parent,
             region.x - 1,
@@ -263,9 +273,4 @@ void RenderTarget::invalidate(Rect region) {
             region.width + 2,
             region.height + 2
     );
-}
-
-
-void RenderTarget::set_target(GtkWidget* widget) {
-    back_buffer_ = surface_from_widget(widget);
 }
