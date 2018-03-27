@@ -24,7 +24,8 @@ class RenderTarget {
     using Size = geometry::Size;
     using Rect = geometry::Rect;
 public:
-    RenderTarget(GtkWidget* parent);
+    RenderTarget(GtkWidget*);
+    ~RenderTarget();
 
     Point2D world_to_viewport(int xw, int yw);
     Point2D world_to_viewport(Point2D p);
@@ -33,13 +34,10 @@ public:
     void resize(Size size);
     void move_camera(int dx, int dy);
     void invalidate(Rect);
+    void set_target(GtkWidget*);
 
     cairo_surface_t* surface() const {
-        return surface_;
-    }
-
-    void surface(cairo_surface_t* surface) {
-        surface_ = surface;
+        return back_buffer_;
     }
 
     void zoom(double ratio) {
@@ -48,8 +46,12 @@ public:
 
     double zoom_ratio() const;
 
+    GtkWidget* parent_() const {
+        return parent;
+    }
+
 private:
-    cairo_surface_t* surface_ = nullptr;
+    cairo_surface_t* back_buffer_ = nullptr;
     GtkWidget* parent;
     CameraWindow camera_window;
     Viewport viewport;
@@ -70,12 +72,6 @@ public:
      */
     Renderer(GtkWidget* parent);
 
-    ~Renderer() {
-        if (surface()) {
-            cairo_surface_destroy(surface());
-        }
-    }
-
     void refresh();
     void clear();
     void resize(Size size);
@@ -87,10 +83,6 @@ public:
 
     std::vector<Drawable> display_file() const {
         return _display_file;
-    }
-
-    void surface(cairo_surface_t* surface) {
-        target.surface(surface);
     }
 
     cairo_surface_t* surface() const {
