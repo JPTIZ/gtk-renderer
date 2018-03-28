@@ -101,9 +101,11 @@ namespace {
             GdkEventScroll* event,
             gpointer* data)
     {
-        std::cout << "scrollou: " << event->delta_y << std::endl;
+        double delta = (event->direction * 2 - 1);
+        delta /= 10;
+        //std::cout << "scrollou: " << delta << std::endl;
         auto target = reinterpret_cast<Renderer*>(data)->render_target();
-        target.zoom(event->delta_y);
+        target.zoom(delta);
         return true;
     }
 
@@ -122,7 +124,9 @@ Renderer::Renderer(GtkWidget* parent):
     g_signal_connect(parent, "configure-event", G_CALLBACK(on_config_event), this);
     g_signal_connect(parent, "size-allocate", G_CALLBACK(on_resize), this);
     g_signal_connect(parent, "key-press-event", G_CALLBACK(on_key_press), this);
-    g_signal_connect(parent, "scroll_event", G_CALLBACK(on_scroll), this);
+
+    gtk_widget_add_events(GTK_WIDGET(parent), GDK_SCROLL_MASK);
+    g_signal_connect(parent, "scroll-event", G_CALLBACK(on_scroll), this);
 }
 
 void Renderer::refresh()

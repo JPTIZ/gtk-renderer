@@ -1,6 +1,8 @@
 #include "window.h"
 
 #include "objects/shapes.h"
+#include "dialog.h"
+
 #include <iostream>
 #include <utility>
 
@@ -65,18 +67,20 @@ void on_btn_in(GtkWidget *widget, gpointer* data) {
     std::cout << "btn in" << std::endl;
     auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
     auto& rt = r.render_target();
-    rt.zoom(reinterpret_cast<MainWindow*>(data)->step()/100);
+    rt.zoom(0.1);
 }
 
 void on_btn_out(GtkWidget *widget, gpointer data) {
     std::cout << "btn out" << std::endl;
     auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
     auto& rt = r.render_target();
-    rt.zoom(-reinterpret_cast<MainWindow*>(data)->step());
+    rt.zoom(-0.1);
 }
 
 void on_btn_new(GtkWidget *widget, gpointer data) {
     std::cout << "btn new" << std::endl;
+    DialogWindow new_dialog{geometry::Size{200, 300}, "newobject.ui"};
+    new_dialog.show();
 }
 
 void on_btn_edit(GtkWidget *widget, gpointer data) {

@@ -26,6 +26,7 @@ macro(copy file)
 endmacro()
 
 copy("${PROJECT_SOURCE_DIR}/rudolph/gui/mainwindow.ui")
+copy("${PROJECT_SOURCE_DIR}/rudolph/gui/newobject.ui")
 
 # Final linkings
 add_executable(gtk-renderer main.cpp)

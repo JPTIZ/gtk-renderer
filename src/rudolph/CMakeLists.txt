@@ -6,6 +6,7 @@ set(SOURCES
     rudolph.cpp
     render.cpp
     geometry.cpp
+    dialog.cpp
     "objects/shapes.cpp"
     "objects/camerawindow.cpp"
 )
