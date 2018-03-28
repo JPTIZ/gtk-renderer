@@ -94,6 +94,75 @@ void on_btn_del(GtkWidget *widget, gpointer data) {
     std::cout << "btn del" << std::endl;
 }
 
+bool update_tree_selection(GtkTreeView*& tree,
+                           GtkTreeSelection*& selection,
+                           GdkEventButton*& event) {
+    GtkTreePath* path;
+    GtkTreeViewColumn* column;
+
+    if (not gtk_tree_view_get_path_at_pos(tree,
+                                          event->x, event->y,
+                                          &path,
+                                          &column,
+                                          nullptr,
+                                          nullptr)) {
+        return false;
+    }
+
+    if (column != gtk_tree_view_get_column(tree, 0)) {
+        gtk_tree_path_free(path);
+        return false;
+    }
+
+    gtk_tree_selection_unselect_all(selection);
+    gtk_tree_selection_select_path(selection, path);
+    gtk_tree_path_free(path);
+
+    return true;
+}
+
+std::string extract_tree_value(GtkTreeModel* model,
+                               GtkTreeIter& iter) {
+    char* value;
+    gtk_tree_model_get(model, &iter, 0, &value, -1);
+    auto str = std::string{value};
+    g_free(value);
+    return str;
+}
+
+void show_popup(GtkTreeView*& tree,
+                GtkMenu*& popup,
+                GtkTreeSelection*& selection,
+                gpointer* data)
+{
+    GtkTreeIter iter;
+    GtkTreeModel* model;
+
+    if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
+        auto value = extract_tree_value(model, iter);
+    }
+
+    gtk_menu_popup_at_pointer(popup, nullptr);
+}
+
+bool on_mouse_press(GtkWidget* widget, GdkEventButton* event, gpointer* data) {
+    auto tree = GTK_TREE_VIEW(widget);
+    auto popup = GTK_MENU(reinterpret_cast<GMenu*>(data));
+
+    if (event->type == GDK_BUTTON_PRESS and event->button == 3) {
+        auto selection = gtk_tree_view_get_selection(tree);
+
+        if (not update_tree_selection(tree, selection, event)) {
+            return false;
+        }
+
+        show_popup(tree, popup, selection, data);
+
+        return true;
+    }
+    return false;
+}
+
 std::string gtkentry_value(GtkBuilder* builder, const std::string& id) {
     return gtk_entry_get_text(
             reinterpret_cast<GtkEntry*>(get_component(builder, id))
@@ -107,6 +176,9 @@ MainWindow::MainWindow(Size size):
     renderer{get_component(gtk_builder, "canvas")}
 {
     g_signal_connect(gtk_window, "destroy", G_CALLBACK(on_close), this);
+    g_signal_connect(get_component(gtk_builder, "treeview1"),
+                     "button-press-event", G_CALLBACK(on_mouse_press),
+                     GTK_MENU(get_component(gtk_builder, "displayfile_popup")));
 
     configure_gui();
 }

@@ -362,4 +362,15 @@
             </object>
         </child>
     </object>
+    <object class="GtkMenu" id="displayfile_popup">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+            <object class="GtkMenuItem" id="displayfile_popup_translate">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name='label' translatable='yes'>Translate</property>
+            </object>
+        </child>
+    </object>
 </interface>
