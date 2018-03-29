@@ -20,6 +20,7 @@ public:
     void close();
     void update_list();
     void configure_gui();
+    void refresh();
 
     Size size() const {
         return _size;

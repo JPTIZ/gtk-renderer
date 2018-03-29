@@ -28,6 +28,8 @@ GtkWidget* create_gtk_window(GtkBuilder* gtk_builder, Size size) {
     gtk_window_set_default_size(GTK_WINDOW(gtk_window), size.width, size.height);
     gtk_window_set_title(GTK_WINDOW(gtk_window), "Rudolph Software Rendeer");
 
+    auto window = gtk_builder_get_object(gtk_builder, "main_window");
+
     return gtk_window;
 }
 
@@ -37,42 +39,47 @@ GtkWidget* get_component(GtkBuilder* gtk_builder, std::string id) {
 
 void on_btn_up(GtkWidget *widget, gpointer* data) {
     std::cout << "btn up" << std::endl;
-    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
     rt.move_camera(0, -1);
 }
 
 void on_btn_down(GtkWidget *widget, gpointer* data) {
     std::cout << "btn down" << std::endl;
-    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
     rt.move_camera(0, 1);
 }
 
 void on_btn_left(GtkWidget *widget, gpointer* data) {
     std::cout << "btn left" << std::endl;
-    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
     rt.move_camera(1, 0);
 }
 
 void on_btn_right(GtkWidget *widget, gpointer* data) {
     std::cout << "btn right" << std::endl;
-    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
     rt.move_camera(-1, 0);
 }
 
 void on_btn_in(GtkWidget *widget, gpointer* data) {
     std::cout << "btn in" << std::endl;
-    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
     rt.zoom(0.1);
 }
 
+void update_window_size(GtkWidget* widget, gpointer* data) {
+    auto& window = *reinterpret_cast<MainWindow*>(data);
+    window.refresh();
+}
+
 void on_btn_out(GtkWidget *widget, gpointer data) {
     std::cout << "btn out" << std::endl;
-    auto& r = reinterpret_cast<MainWindow*>(data)->get_renderer();
+    auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
     rt.zoom(-0.1);
 }
@@ -91,6 +98,12 @@ void on_btn_del(GtkWidget *widget, gpointer data) {
     std::cout << "btn del" << std::endl;
 }
 
+std::string gtkentry_value(GtkBuilder* builder, const std::string& id) {
+    return gtk_entry_get_text(
+            reinterpret_cast<GtkEntry*>(get_component(builder, id))
+    );
+}
+
 MainWindow::MainWindow(Size size):
     _size{size},
     gtk_builder{gtk_builder_new()},
@@ -104,33 +117,39 @@ MainWindow::MainWindow(Size size):
 
 void MainWindow::configure_gui()
 {
-    // Signals for each and every button
-    GtkWidget *button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_up"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_up), this);
+    auto button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_up"));
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_up), &renderer);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_down"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_down), this);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_down), &renderer);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_left"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_left), this);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_left), &renderer);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_right"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_right), this);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_right), &renderer);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_in"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_in), this);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_in), &renderer);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_out"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_out), this);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_out), &renderer);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_new"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_new), this);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_new), &renderer);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_edit"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_edit), this);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_edit), &renderer);
 
     button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_del"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_del), this);
+    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_del), &renderer);
+
+    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_update_window"));
+    g_signal_connect(button, "clicked", G_CALLBACK(update_window_size), this);
+
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "800");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_height")), "600");
+    update_window_size(nullptr, (void**)this);
 }
 
 void MainWindow::show() {
@@ -153,8 +172,16 @@ void MainWindow::show() {
 
 }
 
+void MainWindow::refresh() {
+    auto window_size = Size{
+        std::stoi(gtkentry_value(gtk_builder, "edt_window_width")),
+        std::stoi(gtkentry_value(gtk_builder, "edt_window_height"))
+    };
+    renderer.render_target().window().resize(window_size);
+}
+
 void MainWindow::update_list() {
-    auto list = (GtkListStore*)get_component(gtk_builder, "list_store");
+    auto list = GTK_LIST_STORE(get_component(gtk_builder, "list_store"));
     auto iter = GtkTreeIter{};
     for (auto obj: renderer.display_file()) {
         auto name = obj.name();

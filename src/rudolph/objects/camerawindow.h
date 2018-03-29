@@ -44,6 +44,15 @@ public:
     void set_width(int width);
     void set_height(int height);
 
+    void resize(int width, int height) {
+        set_width(width);
+        set_height(height);
+    }
+
+    void resize(geometry::Size size) {
+        resize(size.width, size.height);
+    }
+
   private:
     Point2D _top_right;
     Point2D _bottom_left;
