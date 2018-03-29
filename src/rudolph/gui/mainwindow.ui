@@ -257,7 +257,7 @@
                                                         <child>
                                                             <object class="GtkLabel" id="lbl_window_size">
                                                                 <property name="visible">True</property>
-                                                                <property name="can_focus">True</property>
+                                                                <property name="can_focus">False</property>
                                                                 <property name="label" translatable="yes">Window:</property>
                                                             </object>
                                                         </child>
@@ -295,6 +295,36 @@
                                                     </packing>
                                                 </child>
                                                 <!-- /Window size -->
+                                                <!-- Command line -->
+                                                <child>
+                                                    <object class="GtkGrid" id="cmdgrid">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <child>
+                                                            <object class="GtkLabel" id="cmdlbl">
+                                                                <property name="visible">True</property>
+                                                                <property name="label" translatable="yes">Command:</property>
+                                                            </object>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkEntry" id="edt_cmdline">
+                                                                <property name="visible">True</property>
+                                                            </object>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkButton" id="btn_exec_cmdline">
+                                                                <property name="visible">True</property>
+                                                                <property name="label" translatable="yes">Execute</property>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">4</property>
+                                                        <property name="width">4</property>
+                                                    </packing>
+                                                </child>
+                                                <!-- /Command line -->
                                             </object>
                                             <packing>
                                                 <property name="expand">False</property>
