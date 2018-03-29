@@ -2,6 +2,7 @@
 
 #include "objects/shapes.h"
 #include <iostream>
+#include <functional>
 #include <utility>
 
 namespace rudolph {
@@ -183,36 +184,56 @@ MainWindow::MainWindow(Size size):
     configure_gui();
 }
 
+template <typename F>
+struct Event {
+    using Signature = F;
+    using Callback = std::function<Signature>;
+
+    std::string element_id;
+    std::string event;
+    void* parameters;
+
+    Event(std::string id,
+          std::string event,
+          Callback callback,
+          void* params):
+      element_id{id},
+      event{event},
+      callback_{callback},
+      parameters{params}
+    {}
+
+    Signature* callback() {
+        return *callback_.template target<Signature*>();
+    }
+
+private:
+    Callback callback_;
+};
+
 void MainWindow::configure_gui()
 {
-    auto button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_up"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_up), &renderer);
+    auto button_events = std::vector<Event<void(GtkWidget*, void**)>>{
+        {"btn_up", "clicked", on_btn_up, &renderer},
+        {"btn_down", "clicked", on_btn_down, &renderer},
+        {"btn_left", "clicked", on_btn_left, &renderer},
+        {"btn_right", "clicked", on_btn_right, &renderer},
+        {"btn_in", "clicked", on_btn_in, &renderer},
+        //{"btn_out", "clicked", on_btn_out, &renderer},
+        //{"btn_new", "clicked", on_btn_new, &renderer},
+        //{"btn_edit", "clicked", on_btn_edit, &renderer},
+        //{"btn_del", "clicked", on_btn_del, &renderer},
+    };
 
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_down"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_down), &renderer);
+    for (auto event: button_events) {
+        g_signal_connect(
+                GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), event.element_id.c_str())),
+                event.event.c_str(),
+                G_CALLBACK(*event.callback()),
+                event.parameters);
+    }
 
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_left"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_left), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_right"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_right), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_in"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_in), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_out"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_out), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_new"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_new), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_edit"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_edit), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_del"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_del), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_update_window"));
+    auto button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_update_window"));
     g_signal_connect(button, "clicked", G_CALLBACK(update_window_size), this);
 
     gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "800");
