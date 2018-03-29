@@ -82,16 +82,16 @@ namespace {
         auto& target = renderer->render_target();
         switch (event->keyval) {
             case GDK_KEY_Up:
-                target.move_camera(0, -10);
+                target.move_camera(0, -1);
                 break;
             case GDK_KEY_Down:
-                target.move_camera(0, 10);
+                target.move_camera(0, 1);
                 break;
             case GDK_KEY_Left:
-                target.move_camera(10, 0);
+                target.move_camera(1, 0);
                 break;
             case GDK_KEY_Right:
-                target.move_camera(-10, 0);
+                target.move_camera(-1, 0);
                 break;
             case GDK_KEY_Page_Up:
                 target.zoom(0.1);
@@ -109,9 +109,11 @@ namespace {
             GdkEventScroll* event,
             gpointer* data)
     {
-        std::cout << "scrollou: " << event->delta_y << std::endl;
+        double delta = (event->direction * 2 - 1);
+        delta /= 10;
+        //std::cout << "scrollou: " << delta << std::endl;
         auto target = reinterpret_cast<Renderer*>(data)->render_target();
-        target.zoom(event->delta_y);
+        target.zoom(delta);
         return true;
     }
 
@@ -131,6 +133,8 @@ Renderer::Renderer(GtkWidget* parent):
     g_signal_connect(parent, "configure-event", G_CALLBACK(on_config_event), &target);
     g_signal_connect(parent, "size-allocate", G_CALLBACK(on_resize), this);
     g_signal_connect(parent, "key-press-event", G_CALLBACK(on_key_press), this);
+
+    gtk_widget_add_events(GTK_WIDGET(parent), GDK_SCROLL_MASK);
     g_signal_connect(parent, "scroll-event", G_CALLBACK(on_scroll), this);
 }
 
@@ -250,7 +254,7 @@ void RenderTarget::resize(Size size) {
 
 
 void RenderTarget::move_camera(int dx, int dy) {
-    camera_window.move(dx, dy);
+    camera_window.move(dx * _step, dy * _step);
 }
 
 

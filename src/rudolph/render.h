@@ -51,12 +51,17 @@ public:
         zoom_ratio_ += ratio;
     }
 
+    int step() const {
+        return _step;
+    }
+
     double zoom_ratio() const;
 
 private:
     CameraWindow camera_window;
     Viewport viewport;
     cairo_surface_t* back_buffer_ = nullptr;
+    int _step = 10;
     double zoom_ratio_ = 1.0;
 };
 

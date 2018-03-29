@@ -1,6 +1,8 @@
 #include "window.h"
 
 #include "objects/shapes.h"
+#include "dialog.h"
+
 #include <iostream>
 #include <utility>
 
@@ -39,28 +41,28 @@ void on_btn_up(GtkWidget *widget, gpointer* data) {
     std::cout << "btn up" << std::endl;
     auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
-    rt.move_camera(0, -10);
+    rt.move_camera(0, -1);
 }
 
 void on_btn_down(GtkWidget *widget, gpointer* data) {
     std::cout << "btn down" << std::endl;
     auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
-    rt.move_camera(0, 10);
+    rt.move_camera(0, 1);
 }
 
 void on_btn_left(GtkWidget *widget, gpointer* data) {
     std::cout << "btn left" << std::endl;
     auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
-    rt.move_camera(10, 0);
+    rt.move_camera(1, 0);
 }
 
 void on_btn_right(GtkWidget *widget, gpointer* data) {
     std::cout << "btn right" << std::endl;
     auto& r = *reinterpret_cast<Renderer*>(data);
     auto& rt = r.render_target();
-    rt.move_camera(-10, 0);
+    rt.move_camera(-1, 0);
 }
 
 void on_btn_in(GtkWidget *widget, gpointer* data) {
@@ -84,6 +86,8 @@ void on_btn_out(GtkWidget *widget, gpointer data) {
 
 void on_btn_new(GtkWidget *widget, gpointer data) {
     std::cout << "btn new" << std::endl;
+    DialogWindow new_dialog{geometry::Size{200, 300}, "newobject.ui"};
+    new_dialog.show();
 }
 
 void on_btn_edit(GtkWidget *widget, gpointer data) {
