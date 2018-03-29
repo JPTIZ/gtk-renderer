@@ -16,7 +16,7 @@ void on_close(GtkWidget* btn, gpointer* data) {
 }
 
 GtkWidget* create_gtk_window(GtkBuilder* gtk_builder, Size size) {
-    auto err = (GError*)nullptr;
+    auto err = static_cast<GError*>(nullptr);
     if (not gtk_builder_add_from_file(gtk_builder, "mainwindow.ui", &err)) {
         throw GtkInitError(
                 std::string{"failed to initialize main window from UI file: "} +
@@ -37,65 +37,73 @@ GtkWidget* get_component(GtkBuilder* gtk_builder, std::string id) {
     return GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), id.c_str()));
 }
 
-void on_btn_up(GtkWidget *widget, gpointer* data) {
-    std::cout << "btn up" << std::endl;
-    auto& r = *reinterpret_cast<Renderer*>(data);
-    auto& rt = r.render_target();
-    rt.move_camera(0, -1);
+bool update_tree_selection(GtkTreeView*& tree,
+                           GtkTreeSelection*& selection,
+                           GdkEventButton*& event) {
+    GtkTreePath* path;
+    GtkTreeViewColumn* column;
+
+    if (not gtk_tree_view_get_path_at_pos(tree,
+                                          event->x, event->y,
+                                          &path,
+                                          &column,
+                                          nullptr,
+                                          nullptr)) {
+        return false;
+    }
+
+    if (column != gtk_tree_view_get_column(tree, 0)) {
+        gtk_tree_path_free(path);
+        return false;
+    }
+
+    gtk_tree_selection_unselect_all(selection);
+    gtk_tree_selection_select_path(selection, path);
+    gtk_tree_path_free(path);
+
+    return true;
 }
 
-void on_btn_down(GtkWidget *widget, gpointer* data) {
-    std::cout << "btn down" << std::endl;
-    auto& r = *reinterpret_cast<Renderer*>(data);
-    auto& rt = r.render_target();
-    rt.move_camera(0, 1);
+std::string extract_tree_value(GtkTreeModel* model,
+                               GtkTreeIter& iter) {
+    char* value;
+    gtk_tree_model_get(model, &iter, 0, &value, -1);
+    auto str = std::string{value};
+    g_free(value);
+    return str;
 }
 
-void on_btn_left(GtkWidget *widget, gpointer* data) {
-    std::cout << "btn left" << std::endl;
-    auto& r = *reinterpret_cast<Renderer*>(data);
-    auto& rt = r.render_target();
-    rt.move_camera(1, 0);
+void show_popup(GtkTreeView*& tree,
+                GtkMenu*& popup,
+                GtkTreeSelection*& selection,
+                gpointer* data)
+{
+    GtkTreeIter iter;
+    GtkTreeModel* model;
+
+    if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
+        auto value = extract_tree_value(model, iter);
+    }
+
+    gtk_menu_popup_at_pointer(popup, nullptr);
 }
 
-void on_btn_right(GtkWidget *widget, gpointer* data) {
-    std::cout << "btn right" << std::endl;
-    auto& r = *reinterpret_cast<Renderer*>(data);
-    auto& rt = r.render_target();
-    rt.move_camera(-1, 0);
-}
+bool on_mouse_press(GtkWidget* widget, GdkEventButton* event, gpointer* data) {
+    auto tree = GTK_TREE_VIEW(widget);
+    auto popup = GTK_MENU(reinterpret_cast<GMenu*>(data));
 
-void on_btn_in(GtkWidget *widget, gpointer* data) {
-    std::cout << "btn in" << std::endl;
-    auto& r = *reinterpret_cast<Renderer*>(data);
-    auto& rt = r.render_target();
-    rt.zoom(0.1);
-}
+    if (event->type == GDK_BUTTON_PRESS and event->button == 3) {
+        auto selection = gtk_tree_view_get_selection(tree);
 
-void update_window_size(GtkWidget* widget, gpointer* data) {
-    auto& window = *reinterpret_cast<MainWindow*>(data);
-    window.refresh();
-}
+        if (not update_tree_selection(tree, selection, event)) {
+            return false;
+        }
 
-void on_btn_out(GtkWidget *widget, gpointer data) {
-    std::cout << "btn out" << std::endl;
-    auto& r = *reinterpret_cast<Renderer*>(data);
-    auto& rt = r.render_target();
-    rt.zoom(-0.1);
-}
+        show_popup(tree, popup, selection, data);
 
-void on_btn_new(GtkWidget *widget, gpointer data) {
-    std::cout << "btn new" << std::endl;
-    DialogWindow new_dialog{geometry::Size{200, 300}, "newobject.ui"};
-    new_dialog.show();
-}
-
-void on_btn_edit(GtkWidget *widget, gpointer data) {
-    std::cout << "btn edit" << std::endl;
-}
-
-void on_btn_del(GtkWidget *widget, gpointer data) {
-    std::cout << "btn del" << std::endl;
+        return true;
+    }
+    return false;
 }
 
 std::string gtkentry_value(GtkBuilder* builder, const std::string& id) {
@@ -111,45 +119,88 @@ MainWindow::MainWindow(Size size):
     renderer{get_component(gtk_builder, "canvas")}
 {
     g_signal_connect(gtk_window, "destroy", G_CALLBACK(on_close), this);
+    g_signal_connect(get_component(gtk_builder, "treeview1"),
+                     "button-press-event", G_CALLBACK(on_mouse_press),
+                     GTK_MENU(get_component(gtk_builder, "displayfile_popup")));
 
     configure_gui();
 }
 
+void MainWindow::execute(const std::string& cmd) {
+    std::cout << cmd << std::endl;
+}
+
 void MainWindow::configure_gui()
 {
-    auto button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_up"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_up), &renderer);
+    auto button_events = std::vector<Event<void(GtkWidget*, void**)>>{
+        {"btn_up", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.move_camera(0, -1);
+            }, &renderer},
+        {"btn_down", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.move_camera(0, 1);
+            }, &renderer},
+        {"btn_left", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.move_camera(1, 0);
+            }, &renderer},
+        {"btn_right", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.move_camera(-1, 0);
+            }, &renderer},
+        {"btn_in", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.zoom(0.1);
+            }, &renderer},
+        {"btn_out", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& _this = *reinterpret_cast<MainWindow*>(data);
+                auto& rt = _this.renderer.render_target();
+                rt.zoom(-0.1);
+            }, this},
+        {"btn_new", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                std::cout << "btn new" << std::endl;
+                DialogWindow new_dialog{geometry::Size{200, 300}, "newobject.ui"};
+                new_dialog.show();
+            }, &renderer},
+        {"btn_edit", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                std::cout << "btn edit\n";
+            }, &renderer},
+        {"btn_del", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                std::cout << "btn del\n";
+            }, &renderer},
+        {"btn_update_window", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& window = *reinterpret_cast<MainWindow*>(data);
+                window.refresh();
+            }, this},
+        {"btn_exec_cmdline", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                reinterpret_cast<MainWindow*>(data)->execute("print yay");
+            }, this},
+    };
 
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_down"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_down), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_left"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_left), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_right"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_right), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_in"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_in), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_out"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_out), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_new"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_new), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_edit"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_edit), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_del"));
-    g_signal_connect(button, "clicked", G_CALLBACK(on_btn_del), &renderer);
-
-    button = GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder), "btn_update_window"));
-    g_signal_connect(button, "clicked", G_CALLBACK(update_window_size), this);
+    for (auto event: button_events) {
+        link_signal(event);
+    }
 
     gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "800");
     gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_height")), "600");
-    update_window_size(nullptr, (void**)this);
+    refresh();
 }
 
 void MainWindow::show() {
