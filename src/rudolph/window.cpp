@@ -123,14 +123,14 @@ MainWindow::MainWindow(Size size):
                      "button-press-event", G_CALLBACK(on_mouse_press),
                      GTK_MENU(get_component(gtk_builder, "displayfile_popup")));
 
-    configure_gui();
+    setup();
 }
 
 void MainWindow::execute(const std::string& cmd) {
     std::cout << cmd << std::endl;
 }
 
-void MainWindow::configure_gui()
+void MainWindow::setup()
 {
     auto button_events = std::vector<Event<void(GtkWidget*, void**)>>{
         {"btn_up", "clicked",
@@ -168,13 +168,33 @@ void MainWindow::configure_gui()
                 auto& _this = *reinterpret_cast<MainWindow*>(data);
                 auto& rt = _this.renderer.render_target();
                 rt.zoom(-0.1);
-            }, this},
+            }, &renderer},
+
         {"btn_new", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 std::cout << "btn new" << std::endl;
-                DialogWindow new_dialog{geometry::Size{200, 300}, "newobject.ui"};
-                new_dialog.show();
+                //auto& renderer = *reinterpret_cast<Renderer*>(data);
+                DialogWindow dialog_new{geometry::Size{300, 400}, "newobject.ui"};
+                DialogWindow* _this = &dialog_new;
+
+                auto dialog_events = std::vector<Event<void(GtkWidget*, void**)>>{
+                    {"btn_cancel", "clicked",
+                        [](GtkWidget* w, gpointer* data) {
+                            std::cout << "btn cancel" << std::endl;
+                            reinterpret_cast<DialogWindow*>(data)->close();
+                        }, _this},
+                    {"btn_ok", "clicked",
+                        [](GtkWidget* w, gpointer* data) {
+                            std::cout << "btn ok" << std::endl;
+                            //auto& rt = renderer.render_target();
+                            //rt.move_camera(1, 0);
+                            reinterpret_cast<DialogWindow*>(data)->close();
+                        }, _this},
+                    };
+                dialog_new.setup(std::move(dialog_events));
+                dialog_new.show();
             }, &renderer},
+
         {"btn_edit", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 std::cout << "btn edit\n";
@@ -191,7 +211,7 @@ void MainWindow::configure_gui()
         {"btn_exec_cmdline", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 reinterpret_cast<MainWindow*>(data)->execute("print yay");
-            }, this},
+            }, this}
     };
 
     for (auto event: button_events) {

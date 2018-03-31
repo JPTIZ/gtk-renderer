@@ -2,10 +2,12 @@
 #define RUDOLPH_DIALOG_H
 
 #include <string>
+#include <vector>
 
 #include <gtk/gtk.h>
 
 #include "geometry.h"
+#include "window.h"
 
 namespace rudolph {
 
@@ -16,11 +18,20 @@ public:
 
     void show();
     void close();
-    void update_entries();
-    void configure_gui();
+    void setup(std::vector<Event<void(GtkWidget*, void**)>>&& button_events);
 
     Size size() const {
         return _size;
+    }
+
+    template <typename Signature>
+    void link_signal(const Event<Signature>& event) {
+        g_signal_connect(
+                GTK_WIDGET(gtk_builder_get_object(GTK_BUILDER(gtk_builder),
+                                                  event.element_id.c_str())),
+                event.event.c_str(),
+                G_CALLBACK(event.callback()),
+                event.parameters);
     }
 
 private:

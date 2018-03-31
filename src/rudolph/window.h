@@ -49,7 +49,7 @@ public:
     void show();
     void close();
     void update_list();
-    void configure_gui();
+    void setup();
     void refresh();
     void execute(const std::string&);
 
