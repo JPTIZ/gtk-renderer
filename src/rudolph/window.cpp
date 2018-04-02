@@ -2,6 +2,7 @@
 
 #include "objects/shapes.h"
 #include "dialog.h"
+#include "matrix.h"
 
 #include <iostream>
 #include <utility>
@@ -198,6 +199,22 @@ void MainWindow::setup()
         {"btn_edit", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 std::cout << "btn edit\n";
+                Matrix<int> a(3, 2);
+                a(0, 0) = 2;
+                a(0, 1) = 3;
+                a(1, 0) = 1;
+                a(1, 1) = 0;
+                a(2, 0) = 4;
+                a(2, 1) = 5;
+                Matrix<int> b(2, 2);
+                b(0, 0) = 3;
+                b(0, 1) = 1;
+                b(1, 0) = 2;
+                b(1, 1) = 4;
+                Matrix<int> c = a*b;
+                std::cout << "Matrix C (" << c.height() << "x" << c.width() << ")\n";
+                c.to_string();
+                std::cout << std::endl;
             }, &renderer},
         {"btn_del", "clicked",
             [](GtkWidget* w, gpointer* data) {
@@ -218,8 +235,8 @@ void MainWindow::setup()
         link_signal(event);
     }
 
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "800");
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_height")), "600");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "512");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_height")), "560");
     refresh();
 }
 
