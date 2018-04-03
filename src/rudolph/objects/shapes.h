@@ -9,7 +9,7 @@
 namespace rudolph {
 namespace objects {
 
-using Point2D = geometry::Point;
+using Point2D = geometry::Point2D;
 
 class Point {
 public:
@@ -22,15 +22,20 @@ public:
     void draw(RenderTarget&) const;
 
     int x() const {
-        return point.x;
+        return point.x();
     }
 
     int y() const {
-        return point.y;
+        return point.y();
     }
+
 
     std::string name() const {
         return _name;
+    }
+    
+    void translate() {
+        point.translate(20, 10);
     }
 
 private:
@@ -62,6 +67,10 @@ public:
         return _name;
     }
 
+    void translate() {
+        // todo
+    }
+
 private:
     Point2D _a;
     Point2D _b;
@@ -83,6 +92,10 @@ public:
 
     std::string name() const {
         return _name;
+    }
+
+    void translate() {
+        // todo
     }
 
 private:

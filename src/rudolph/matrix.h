@@ -2,6 +2,7 @@
 #define RUDOLPH_MATRIX_H
 
 #include <vector>
+#include <iostream>
 
 namespace rudolph {
 
@@ -15,6 +16,13 @@ public:
     {}
 
     Matrix(const Matrix &) = default;
+
+    // Create a matrix (1 x n), n = vec.size()
+    Matrix(std::vector<T> &vec):
+        width_{vec.size()},
+        height_{1},
+        contents{vec}
+    {}
 
     template <typename U>
     friend class Matrix;

@@ -20,7 +20,7 @@ namespace rudolph {
  * Abstracts the idea of an output drawing target.
  */
 class RenderTarget {
-    using Point2D = geometry::Point;
+    using Point2D = geometry::Point2D;
     using Size = geometry::Size;
 public:
     RenderTarget();
@@ -94,6 +94,10 @@ public:
     std::vector<Drawable> display_file() const {
         return _display_file;
     }
+
+    std::vector<Drawable>& display_file() {
+        return _display_file;
+    }    
 
     cairo_surface_t* surface() const {
         return target.surface();

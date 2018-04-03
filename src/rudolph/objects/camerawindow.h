@@ -6,7 +6,7 @@
 namespace rudolph {
 
 class CameraWindow {
-    using Point2D = geometry::Point;
+    using Point2D = geometry::Point2D;
 public:
     CameraWindow():
         _top_right{Point2D{200, 100}},
@@ -32,11 +32,11 @@ public:
     }
 
     int width() const {
-        return (_top_right - _bottom_left).x;
+        return (_top_right - _bottom_left).x();
     }
 
     int height() const {
-        return (_top_right - _bottom_left).y;
+        return (_top_right - _bottom_left).y();
     }
 
     void move(int dx, int dy);

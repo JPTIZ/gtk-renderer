@@ -17,11 +17,11 @@ void CameraWindow::zoom(double step) {
 }
 
 void CameraWindow::set_width(int width) {
-    _top_right.x = _bottom_left.x + width;
+    _top_right.x() = _bottom_left.x() + width;
 }
 
 void CameraWindow::set_height(int height) {
-    _top_right.y = _bottom_left.y + height;
+    _top_right.y() = _bottom_left.y() + height;
 }
 
 }

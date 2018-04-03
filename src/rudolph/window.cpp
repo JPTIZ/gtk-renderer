@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <utility>
+#include <vector>
 
 namespace rudolph {
 
@@ -129,6 +130,7 @@ MainWindow::MainWindow(Size size):
 
 void MainWindow::execute(const std::string& cmd) {
     std::cout << cmd << std::endl;
+    renderer.display_file()[0].translate();
 }
 
 void MainWindow::setup()
@@ -187,8 +189,6 @@ void MainWindow::setup()
                     {"btn_ok", "clicked",
                         [](GtkWidget* w, gpointer* data) {
                             std::cout << "btn ok" << std::endl;
-                            //auto& rt = renderer.render_target();
-                            //rt.move_camera(1, 0);
                             reinterpret_cast<DialogWindow*>(data)->close();
                         }, _this},
                     };
@@ -199,21 +199,8 @@ void MainWindow::setup()
         {"btn_edit", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 std::cout << "btn edit\n";
-                Matrix<int> a(3, 2);
-                a(0, 0) = 2;
-                a(0, 1) = 3;
-                a(1, 0) = 1;
-                a(1, 1) = 0;
-                a(2, 0) = 4;
-                a(2, 1) = 5;
-                Matrix<int> b(2, 2);
-                b(0, 0) = 3;
-                b(0, 1) = 1;
-                b(1, 0) = 2;
-                b(1, 1) = 4;
-                Matrix<int> c = a*b;
-                std::cout << "Matrix C (" << c.height() << "x" << c.width() << ")\n";
-                c.to_string();
+                Matrix<int> a( *(new std::vector<int>{3, 1, 2, 3, 9, 2}) );
+                a.to_string();
                 std::cout << std::endl;
             }, &renderer},
         {"btn_del", "clicked",

@@ -1,6 +1,8 @@
 #ifndef RUDOLPH_GEOMETRY_H
 #define RUDOLPH_GEOMETRY_H
 
+#include "matrix.h"
+
 namespace rudolph {
 namespace geometry {
 
@@ -15,27 +17,45 @@ struct Size {
 };
 
 
-struct Point {
-    int x{0};
-    int y{0};
-
-    Point(int x, int y):
-        x{x},
-        y{y}
+struct Point2D {
+    Matrix<int> data;
+    
+    Point2D(int x, int y):
+        data{ *(new std::vector<int>{x, y, 1}) }
     {}
 
-    Point& operator+=(const Point& p);
-    Point& operator-=(const Point& p);
+    int& x() {
+        return data(0, 0);
+    }
+
+    int& y() {
+        return data(0, 1);
+    }
+
+    const int& x() const {
+        return data(0, 0);
+    }
+
+    const int& y() const {
+        return data(0, 1);
+    }
+
+    Point2D& operator+=(const Point2D& p);
+    Point2D& operator-=(const Point2D& p);
+
+    void translate(int dx, int dy);
+    void scale(int sx, int sy);
+    void rotate(double angle);
 
 };
 
-Point operator-(const Point&);
-Point operator+(const Point&, const Point&);
-Point operator-(const Point&, const Point&);
-Point operator*(const Point&, int);
-Point operator*(const Point&, double);
-Point operator*(int value, const Point& p);
-Point operator*(double value, const Point& p);
+Point2D operator-(const Point2D&);
+Point2D operator+(const Point2D&, const Point2D&);
+Point2D operator-(const Point2D&, const Point2D&);
+Point2D operator*(const Point2D&, int);
+Point2D operator*(const Point2D&, double);
+Point2D operator*(int value, const Point2D& p);
+Point2D operator*(double value, const Point2D& p);
 
 
 struct Rect {

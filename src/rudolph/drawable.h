@@ -31,6 +31,10 @@ public:
         return data->name();
     }
 
+    void translate() {
+        data->translate();
+    }
+
 private:
     /**
      * DrawableImpl components' interface
@@ -40,6 +44,7 @@ private:
         virtual std::unique_ptr<Model> copy() const = 0;
         virtual void draw(RenderTarget&) const = 0;
         virtual std::string name() const = 0;
+        virtual void translate() = 0;
     };
 
     template <typename T>
@@ -58,6 +63,10 @@ private:
 
         std::string name() const override {
             return x.name();
+        }
+
+        void translate() override {
+            x.translate();
         }
 
         T x;
