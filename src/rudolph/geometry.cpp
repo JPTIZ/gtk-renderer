@@ -1,5 +1,7 @@
 #include "geometry.h"
 
+#include <cmath>
+
 using rudolph::geometry::Point2D;
 
 namespace rudolph {
@@ -16,11 +18,25 @@ void Point2D::translate(int dx, int dy) {
 }
 
 void Point2D::scale(int sx, int sy) {
+    Matrix<int> t(3, 3);
+    t(0, 0) = sx;
+    t(1, 1) = sy;
+    t(2, 2) = 1;
 
+    data = data * t;
 }
 
 void Point2D::rotate(double angle) {
+    const double pi = std::acos(-1);
 
+    Matrix<int> t(3, 3);
+    t(0, 0) = std::cos(angle*pi/180);
+    t(0, 1) = -std::sin(angle*pi/180);
+    t(1, 0) = std::sin(angle*pi/180);
+    t(1, 1) = std::cos(angle*pi/180);
+    t(2, 2) = 1;
+
+    data = data * t;
 }
 
 Point2D& Point2D::operator+=(const Point2D& p) {
