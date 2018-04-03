@@ -8,7 +8,7 @@
 namespace rudolph {
 
 class Viewport {
-    using Point2D = geometry::Point;
+    using Point2D = geometry::Point2D;
 public:
     Viewport(Point2D top_left, Point2D bottom_right):
         _top_left{top_left},
@@ -29,19 +29,19 @@ public:
     }
 
     int width() const {
-        return (_bottom_right.x - _top_left.x);
+        return (_bottom_right.x() - _top_left.x());
     }
 
     int height() const {
-        return (_bottom_right.y - _top_left.y);
+        return (_bottom_right.y() - _top_left.y());
     }
 
     void set_width(int width) {
-        _bottom_right.x = _top_left.x + width;
+        _bottom_right.x() = _top_left.x() + width;
     }
 
     void set_height(int height) {
-        _bottom_right.y = _top_left.y + height;
+        _bottom_right.y() = _top_left.y() + height;
     }
 
     void resize(int width, int height) {

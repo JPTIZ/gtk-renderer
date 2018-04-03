@@ -11,7 +11,7 @@ namespace {
 
     using Rect = geometry::Rect;
     using Size = geometry::Size;
-    using Point2D = geometry::Point;
+    using Point2D = geometry::Point2D;
 
 
     void clear(cairo_surface_t* surface) {
@@ -182,15 +182,15 @@ Point2D RenderTarget::world_to_viewport(int xw, int yw) {
 
     auto pcam = Point2D{xw, yw} - window.bottom_left();
 
-    auto xv = pcam.x * viewport_d.x / camera_d.x;
-    auto yv = viewport_d.y - (viewport_d.y / camera_d.y * pcam.y);
+    auto xv = pcam.x() * viewport_d.x() / camera_d.x();
+    auto yv = viewport_d.y() - (viewport_d.y() / camera_d.y() * pcam.y());
 
     return Point2D{xv, yv} * zoom_ratio_;
 }
 
 
 Point2D RenderTarget::world_to_viewport(Point2D p) {
-    return world_to_viewport(p.x, p.y);
+    return world_to_viewport(p.x(), p.y());
 }
 
 
@@ -201,8 +201,8 @@ void RenderTarget::clear() {
 
 void RenderTarget::draw_point(Point2D p) {
     auto vpoint = world_to_viewport(p);
-    auto x = vpoint.x;
-    auto y = vpoint.y;
+    auto x = vpoint.x();
+    auto y = vpoint.y();
 
     auto region = Rect{x, y, 1, 1};
 
@@ -222,11 +222,11 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
     auto va = world_to_viewport(a);
     auto vb = world_to_viewport(b);
 
-    auto min_x = std::min(va.x, vb.x);
-    auto min_y = std::min(va.y, vb.y);
+    auto min_x = std::min(va.x(), vb.x());
+    auto min_y = std::min(va.y(), vb.y());
 
-    auto max_x = std::max(va.x, vb.x);
-    auto max_y = std::max(va.y, vb.y);
+    auto max_x = std::max(va.x(), vb.x());
+    auto max_y = std::max(va.y(), vb.y());
 
     auto region = Rect{min_x, min_y, max_x - min_x, max_y - min_y};
 
@@ -235,8 +235,8 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
     cairo_set_source_rgb(cr, 1, 0, 0);
     cairo_set_line_width(cr, 1);
 
-    cairo_move_to(cr, va.x, va.y);
-    cairo_line_to(cr, vb.x, vb.y);
+    cairo_move_to(cr, va.x(), va.y());
+    cairo_line_to(cr, vb.x(), vb.y());
 
     cairo_stroke(cr);
     cairo_destroy(cr);

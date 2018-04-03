@@ -9,7 +9,7 @@
 namespace rudolph {
 namespace objects {
 
-using Point2D = geometry::Point;
+using Point2D = geometry::Point2D;
 
 class Point {
 public:
@@ -22,16 +22,29 @@ public:
     void draw(RenderTarget&) const;
 
     int x() const {
-        return point.x;
+        return point.x();
     }
 
     int y() const {
-        return point.y;
+        return point.y();
     }
 
     std::string name() const {
         return _name;
     }
+    
+    Point2D center() const {
+        return point;
+    }
+
+    void translate(int dx, int dy);
+
+    void scale(int sx, int sy);
+
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
+
 
 private:
     Point2D point;
@@ -62,6 +75,16 @@ public:
         return _name;
     }
 
+    Point2D center() const;
+
+    void translate(int dx, int dy);
+
+    void scale(int sx, int sy);
+
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
+
 private:
     Point2D _a;
     Point2D _b;
@@ -84,6 +107,16 @@ public:
     std::string name() const {
         return _name;
     }
+
+    Point2D center() const;
+
+    void translate(int dx, int dy);
+
+    void scale(int sx, int sy);
+
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
 
 private:
     std::vector<Point2D> _points;
