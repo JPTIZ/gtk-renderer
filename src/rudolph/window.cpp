@@ -2,6 +2,7 @@
 
 #include "objects/shapes.h"
 #include "dialog.h"
+#include "utils/command.h"
 
 #include <iostream>
 #include <utility>
@@ -127,11 +128,23 @@ MainWindow::MainWindow(Size size):
 }
 
 void MainWindow::execute(const std::string& cmd) {
-    std::cout << cmd << std::endl;
+    auto _cmd = command::parse(cmd);
+    auto command = _cmd.command;
+    auto args = _cmd.args;
+
+    if (command == "print") {
+        for (auto arg: args) {
+            std::cout << arg << " ";
+        }
+        std::cout << '\n';
+    } else if (command == "translate") {
+        auto obj_id = args[0];
+    }
 }
 
 void MainWindow::configure_gui()
 {
+    static auto wrong_way_to_do_this = std::make_pair(this,  gtk_builder);
     auto button_events = std::vector<Event<void(GtkWidget*, void**)>>{
         {"btn_up", "clicked",
             [](GtkWidget* w, gpointer* data) {
@@ -189,9 +202,14 @@ void MainWindow::configure_gui()
                 window.refresh();
             }, this},
         {"btn_exec_cmdline", "clicked",
-            [](GtkWidget* w, gpointer* data) {
-                reinterpret_cast<MainWindow*>(data)->execute("print yay");
-            }, this},
+            [](GtkWidget* w, gpointer* _data) {
+                auto& data = *reinterpret_cast<std::pair<MainWindow*,
+                                                         GtkBuilder*>*>(_data);
+                auto window = data.first;
+                auto gtk_builder = data.second;
+
+                window->execute(gtkentry_value(gtk_builder, "edt_cmdline"));
+            }, &wrong_way_to_do_this},
     };
 
     for (auto event: button_events) {
