@@ -29,14 +29,22 @@ public:
         return point.y();
     }
 
-
     std::string name() const {
         return _name;
     }
     
-    void translate() {
-        point.translate(20, 10);
+    Point2D center() const {
+        return point;
     }
+
+    void translate(int dx, int dy);
+
+    void scale(int sx, int sy);
+
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
+
 
 private:
     Point2D point;
@@ -67,9 +75,15 @@ public:
         return _name;
     }
 
-    void translate() {
-        // todo
-    }
+    Point2D center() const;
+
+    void translate(int dx, int dy);
+
+    void scale(int sx, int sy);
+
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
 
 private:
     Point2D _a;
@@ -94,9 +108,15 @@ public:
         return _name;
     }
 
-    void translate() {
-        // todo
-    }
+    Point2D center() const;
+
+    void translate(int dx, int dy);
+
+    void scale(int sx, int sy);
+
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
 
 private:
     std::vector<Point2D> _points;
