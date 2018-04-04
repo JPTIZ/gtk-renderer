@@ -44,7 +44,8 @@ public:
         return contents[i*width_ + j];
     }
 
-    Matrix operator*(const Matrix<T>& other)
+    template <typename U>
+    Matrix operator*(const Matrix<U>& other)
     {
         std::size_t height = this->height();
         std::size_t width = other.width();
@@ -92,7 +93,7 @@ public:
     }
 
 private:
-    const std::size_t width_, height_;
+    std::size_t width_, height_;
     std::vector<T> contents;
 };
 

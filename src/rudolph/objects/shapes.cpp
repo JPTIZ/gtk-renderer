@@ -39,7 +39,7 @@ void Line::draw(RenderTarget& target) const {
     target.draw_line(_a, _b);
 }
 
-Point2D Line::center() {
+Point2D Line::center() const {
     Point2D point{(_a.x() + _b.x())/2, (_a.y() + _b.y())/2};
     return point;
 }
@@ -50,7 +50,7 @@ void Line::translate(int dx, int dy) {
 }
 
 void Line::scale(int sx, int sy) {
-	Point2D center{center()};
+	Point2D center{this->center().x(), this->center().y()};
 	_a.translate(-center.x(), -center.y());
     _b.translate(-center.x(), -center.y());
 	_a.scale(sx, sy);
@@ -85,7 +85,7 @@ void Polygon::draw(RenderTarget& target) const {
     target.draw_line(_points.back(), _points.front());
 }
 
-Point2D Polygon::center() {
+Point2D Polygon::center() const {
     Point2D point;
     for (auto i = 0u; i < _points.size(); ++i) {
         point += _points[i];
@@ -102,7 +102,7 @@ void Polygon::translate(int dx, int dy) {
 }
 
 void Polygon::scale(int sx, int sy) {
-	Point2D center{this->center()};
+	Point2D center{this->center().x(), this->center().y()};
 	for (auto i = 0u; i < _points.size(); ++i) {
         _points[i].translate(-center.x(), -center.y());
     }

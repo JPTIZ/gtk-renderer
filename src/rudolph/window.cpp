@@ -130,7 +130,7 @@ MainWindow::MainWindow(Size size):
 
 void MainWindow::execute(const std::string& cmd) {
     std::cout << cmd << std::endl;
-    renderer.display_file()[0].translate();
+    renderer.display_file()[4].rotate_center(10);
 }
 
 void MainWindow::setup()
@@ -214,7 +214,7 @@ void MainWindow::setup()
             }, this},
         {"btn_exec_cmdline", "clicked",
             [](GtkWidget* w, gpointer* data) {
-                reinterpret_cast<MainWindow*>(data)->execute("print yay");
+                reinterpret_cast<MainWindow*>(data)->execute("renderer.display_file()[4].rotate_center(10);");
             }, this}
     };
 
@@ -222,8 +222,8 @@ void MainWindow::setup()
         link_signal(event);
     }
 
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "512");
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_height")), "560");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "660");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_height")), "660");
     refresh();
 }
 

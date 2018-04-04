@@ -20,6 +20,10 @@ struct Size {
 struct Point2D {
     Matrix<int> data;
     
+    Point2D():
+        data{ *(new std::vector<int>{0, 0, 1}) }
+    {}
+
     Point2D(int x, int y):
         data{ *(new std::vector<int>{x, y, 1}) }
     {}
