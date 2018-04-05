@@ -175,7 +175,7 @@ RenderTarget::~RenderTarget() {
 }
 
 
-Point2D RenderTarget::world_to_viewport(int xw, int yw) {
+Point2D RenderTarget::world_to_viewport(double xw, double yw) {
     auto window = camera_window;
     auto camera_d = window.top_right() - window.bottom_left();
     auto viewport_d = viewport.bottom_right() - viewport.top_left();
@@ -253,7 +253,7 @@ void RenderTarget::resize(Size size) {
 }
 
 
-void RenderTarget::move_camera(int dx, int dy) {
+void RenderTarget::move_camera(double dx, double dy) {
     camera_window.move(dx * _step, dy * _step);
 }
 

@@ -39,7 +39,7 @@ public:
         return (_top_right - _bottom_left).y();
     }
 
-    void move(int dx, int dy);
+    void move(double dx, double dy);
     void zoom(double step);
     void set_width(int width);
     void set_height(int height);

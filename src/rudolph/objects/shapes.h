@@ -13,7 +13,7 @@ using Point2D = geometry::Point2D;
 
 class Point {
 public:
-    Point(int x, int y):
+    Point(double x, double y):
         point{x, y},
         _id{points_id++},
         _name{"point" + std::to_string(_id)}
@@ -21,11 +21,11 @@ public:
 
     void draw(RenderTarget&) const;
 
-    int x() const {
+    double x() const {
         return point.x();
     }
 
-    int y() const {
+    double y() const {
         return point.y();
     }
 
@@ -37,9 +37,9 @@ public:
         return point;
     }
 
-    void translate(int dx, int dy);
+    void translate(double dx, double dy);
 
-    void scale(int sx, int sy);
+    void scale(double sx, double sy);
 
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point2D pin);
@@ -62,7 +62,7 @@ public:
         _name{"line" + std::to_string(_id)}
     {}
 
-    Line(int x1, int y1, int x2, int y2):
+    Line(double x1, double y1, double x2, double y2):
         _a{x1, y1},
         _b{x2, y2},
         _id{lines_id++},
@@ -77,9 +77,9 @@ public:
 
     Point2D center() const;
 
-    void translate(int dx, int dy);
+    void translate(double dx, double dy);
 
-    void scale(int sx, int sy);
+    void scale(double sx, double sy);
 
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point2D pin);
@@ -110,9 +110,9 @@ public:
 
     Point2D center() const;
 
-    void translate(int dx, int dy);
+    void translate(double dx, double dy);
 
-    void scale(int sx, int sy);
+    void scale(double sx, double sy);
 
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point2D pin);

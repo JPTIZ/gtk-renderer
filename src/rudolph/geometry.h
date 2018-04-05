@@ -7,10 +7,10 @@ namespace rudolph {
 namespace geometry {
 
 struct Size {
-    int width{0};
-    int height{0};
+    double width{0};
+    double height{0};
 
-    Size(int w, int h):
+    Size(double w, double h):
         width{w},
         height{h}
     {}
@@ -18,33 +18,37 @@ struct Size {
 
 
 struct Point2D {
-    Matrix<int> data;
+    Matrix<double> data;
     
-    Point2D(int x, int y):
-        data{ *(new std::vector<int>{x, y, 1}) }
+    Point2D():
+        data{ *(new std::vector<double>{0, 0, 1}) }
     {}
 
-    int& x() {
+    Point2D(double x, double y):
+        data{ *(new std::vector<double>{x, y, 1}) }
+    {}
+
+    double& x() {
         return data(0, 0);
     }
 
-    int& y() {
+    double& y() {
         return data(0, 1);
     }
 
-    const int& x() const {
+    const double& x() const {
         return data(0, 0);
     }
 
-    const int& y() const {
+    const double& y() const {
         return data(0, 1);
     }
 
     Point2D& operator+=(const Point2D& p);
     Point2D& operator-=(const Point2D& p);
 
-    void translate(int dx, int dy);
-    void scale(int sx, int sy);
+    void translate(double dx, double dy);
+    void scale(double sx, double sy);
     void rotate(double angle);
 
 };
@@ -59,12 +63,12 @@ Point2D operator*(double value, const Point2D& p);
 
 
 struct Rect {
-    int x{0};
-    int y{0};
-    int width{0};
-    int height{0};
+    double x{0};
+    double y{0};
+    double width{0};
+    double height{0};
 
-    Rect(int x, int y, int w, int h):
+    Rect(double x, double y, double w, double h):
         x{x},
         y{y},
         width{w},
