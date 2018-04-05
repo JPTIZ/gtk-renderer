@@ -2,9 +2,11 @@
 
 #include "geometry.h"
 #include "objects/shapes.h"
+#include "matrix.h"
 
 #include <utility>
 #include <iostream>
+#include <cmath>
 
 namespace {
     using namespace rudolph;
@@ -176,16 +178,48 @@ RenderTarget::~RenderTarget() {
 
 
 Point2D RenderTarget::world_to_viewport(double xw, double yw) {
-    auto window = camera_window;
-    auto camera_d = window.top_right() - window.bottom_left();
+    /*auto camera_d = camera_window.top_right() - camera_window.bottom_left();
     auto viewport_d = viewport.bottom_right() - viewport.top_left();
 
-    auto pcam = Point2D{xw, yw} - window.bottom_left();
+    auto pcam = Point2D{xw, yw} - camera_window.bottom_left();
 
     auto xv = pcam.x() * viewport_d.x() / camera_d.x();
     auto yv = viewport_d.y() - (viewport_d.y() / camera_d.y() * pcam.y());
 
-    return Point2D{xv, yv} * zoom_ratio_;
+    return Point2D{xv, yv} * zoom_ratio_;*/
+
+    Matrix<double> coord(1, 3);
+    coord(0, 0) = xw;
+    coord(0, 1) = yw;
+    coord(0, 2) = 1;
+
+    double cos_vy = std::cos(camera_window.angle());
+    double sin_vy = std::sin(camera_window.angle());
+
+    // Normalized Coordinates
+    // Translate to origin, rotate, and scale
+    Matrix<double> normalizer(3, 3);
+    normalizer(0, 0) = cos_vy * 2/camera_window.width();
+    normalizer(0, 1) = -sin_vy * 2/camera_window.height();
+    normalizer(1, 0) = sin_vy * 2/camera_window.width();
+    normalizer(1, 1) = cos_vy * 2/camera_window.height();
+    normalizer(2, 0) = (-cos_vy*camera_window.bottom_left().x() - sin_vy*camera_window.bottom_left().y())*2/camera_window.width();
+    normalizer(2, 1) = (sin_vy*camera_window.bottom_left().x() - cos_vy*camera_window.bottom_left().y())*2/camera_window.height();
+    normalizer(2, 2) = 1;
+
+    coord = coord * normalizer;
+
+    // Viewport Coordinates
+    normalizer(0, 0) = viewport.width()/2;
+    normalizer(0, 1) = 0;
+    normalizer(1, 0) = 0;
+    normalizer(1, 1) = -viewport.height()/2;
+    normalizer(2, 0) = viewport.width()/2;
+    normalizer(2, 1) = viewport.height()/2;
+
+    coord = coord * normalizer;
+
+    return Point2D{coord(0, 0), coord(0, 1)};
 }
 
 

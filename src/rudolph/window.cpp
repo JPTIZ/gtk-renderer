@@ -129,8 +129,9 @@ MainWindow::MainWindow(Size size):
 }
 
 void MainWindow::execute(const std::string& cmd) {
-    std::cout << cmd << std::endl;
-    renderer.display_file()[4].rotate_center(10);
+    //std::cout << cmd << std::endl;
+    //renderer.display_file()[4].rotate_center(10);
+    
 }
 
 void MainWindow::setup()
