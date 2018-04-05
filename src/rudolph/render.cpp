@@ -56,7 +56,7 @@ namespace {
                           gpointer* data)
     {
         auto renderer = reinterpret_cast<RenderTarget*>(data);
-        renderer->resize({event->width, event->height});
+        renderer->resize({(double)event->width, (double)event->height});
 
         return true;
     }
@@ -68,7 +68,7 @@ namespace {
             gpointer* data)
     {
         auto renderer = reinterpret_cast<Renderer*>(data);
-        renderer->resize({event->width, event->height});
+        renderer->resize({(double)event->width, (double)event->height});
         return true;
     }
 
@@ -120,7 +120,7 @@ namespace {
     Size parent_size(GtkWidget* parent) {
         GtkRequisition parent_size;
         gtk_widget_get_preferred_size(parent, nullptr, &parent_size);
-        return Size{parent_size.width, parent_size.height};
+        return Size{(double)parent_size.width, (double)parent_size.height};
     }
 }
 
@@ -264,8 +264,8 @@ double RenderTarget::zoom_ratio() const {
 
 void Renderer::invalidate() {
     invalidate(Rect{0, 0,
-                    gtk_widget_get_allocated_width(parent),
-                    gtk_widget_get_allocated_height(parent)});
+                    (double)gtk_widget_get_allocated_width(parent),
+                    (double)gtk_widget_get_allocated_height(parent)});
 }
 
 

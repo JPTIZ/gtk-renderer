@@ -130,7 +130,7 @@ MainWindow::MainWindow(Size size):
 
 void MainWindow::execute(const std::string& cmd) {
     std::cout << cmd << std::endl;
-    renderer.display_file()[4].rotate_center(10);
+    renderer.display_file()[0].translate(0, 0);
 }
 
 void MainWindow::setup()
@@ -177,20 +177,19 @@ void MainWindow::setup()
             [](GtkWidget* w, gpointer* data) {
                 std::cout << "btn new" << std::endl;
                 //auto& renderer = *reinterpret_cast<Renderer*>(data);
-                DialogWindow dialog_new{geometry::Size{300, 400}, "newobject.ui"};
-                DialogWindow* _this = &dialog_new;
+                auto dialog_new = DialogWindow{geometry::Size{300, 400}, "newobject.ui"};
 
                 auto dialog_events = std::vector<Event<void(GtkWidget*, void**)>>{
                     {"btn_cancel", "clicked",
                         [](GtkWidget* w, gpointer* data) {
                             std::cout << "btn cancel" << std::endl;
                             reinterpret_cast<DialogWindow*>(data)->close();
-                        }, _this},
+                        }, &dialog_new},
                     {"btn_ok", "clicked",
                         [](GtkWidget* w, gpointer* data) {
                             std::cout << "btn ok" << std::endl;
                             reinterpret_cast<DialogWindow*>(data)->close();
-                        }, _this},
+                        }, &dialog_new},
                     };
                 dialog_new.setup(std::move(dialog_events));
                 dialog_new.show();
@@ -249,8 +248,8 @@ void MainWindow::show() {
 
 void MainWindow::refresh() {
     auto window_size = Size{
-        std::stoi(gtkentry_value(gtk_builder, "edt_window_width")),
-        std::stoi(gtkentry_value(gtk_builder, "edt_window_height"))
+        (double)std::stoi(gtkentry_value(gtk_builder, "edt_window_width")),
+        (double)std::stoi(gtkentry_value(gtk_builder, "edt_window_height"))
     };
     renderer.render_target().window().resize(window_size);
 }

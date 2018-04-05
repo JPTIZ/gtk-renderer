@@ -6,11 +6,14 @@
 
 #include <string>
 
+#include "geometry.h"
+
 namespace rudolph {
 
 class RenderTarget;
 
 class Drawable {
+    using Point2D = geometry::Point2D;
 public:
     template <typename T>
     Drawable(T t):
@@ -120,8 +123,8 @@ private:
     };
 
     std::unique_ptr<Model> data;
-}; // end class Drawable
+};
 
-} // end rudolph namespace
+}
 
 #endif

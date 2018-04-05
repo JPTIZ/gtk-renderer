@@ -14,7 +14,8 @@ namespace rudolph {
 class DialogWindow {
     using Size = geometry::Size;
 public:
-    DialogWindow(Size size, std::string filename);
+    DialogWindow(Size size,
+                 std::string filename);
 
     void show();
     void close();

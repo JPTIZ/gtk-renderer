@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "gtk/gtk.h"
+#include <gtk/gtk.h>
 
 #include "geometry.h"
 #include "drawable.h"
