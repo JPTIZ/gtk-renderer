@@ -26,14 +26,14 @@ public:
     RenderTarget();
     ~RenderTarget();
 
-    Point2D world_to_viewport(int xw, int yw);
+    Point2D world_to_viewport(double xw, double yw);
     Point2D world_to_viewport(Point2D p);
 
     void clear();
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
     void resize(Size size);
-    void move_camera(int dx, int dy);
+    void move_camera(double dx, double dy);
 
     CameraWindow& window() {
         return camera_window;
@@ -51,7 +51,7 @@ public:
         zoom_ratio_ += ratio;
     }
 
-    int step() const {
+    double step() const {
         return _step;
     }
 
@@ -61,7 +61,7 @@ private:
     CameraWindow camera_window;
     Viewport viewport;
     cairo_surface_t* back_buffer_ = nullptr;
-    int _step = 10;
+    double _step = 10;
     double zoom_ratio_ = 1.0;
 };
 

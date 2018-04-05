@@ -6,8 +6,8 @@ using rudolph::geometry::Point2D;
 
 namespace rudolph {
 
-void Point2D::translate(int dx, int dy) {
-    Matrix<int> t(3, 3);
+void Point2D::translate(double dx, double dy) {
+    Matrix<double> t(3, 3);
     t(0, 0) = 1;
     t(1, 1) = 1;
     t(2, 0) = dx;
@@ -17,7 +17,7 @@ void Point2D::translate(int dx, int dy) {
     data = data * t;
 }
 
-void Point2D::scale(int sx, int sy) {
+void Point2D::scale(double sx, double sy) {
     Matrix<double> t(3, 3);
     t(0, 0) = sx;
     t(1, 1) = sy;
@@ -66,7 +66,7 @@ Point2D geometry::operator*(const Point2D& p, int value) {
 }
 
 Point2D geometry::operator*(const Point2D& p, double value) {
-    return Point2D{int(p.x() * value), int(p.y() * value)};
+    return Point2D{p.x() * value, p.y() * value};
 }
 
 Point2D geometry::operator*(int value, const Point2D& p) {
@@ -74,7 +74,7 @@ Point2D geometry::operator*(int value, const Point2D& p) {
 }
 
 Point2D geometry::operator*(double value, const Point2D& p) {
-    return Point2D{int(p.x() * value), int(p.y() * value)};
+    return Point2D{p.x() * value, p.y() * value};
 }
 
 }

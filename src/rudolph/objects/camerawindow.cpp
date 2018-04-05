@@ -2,7 +2,7 @@
 
 namespace rudolph {
 
-void CameraWindow::move(int dx, int dy) {
+void CameraWindow::move(double dx, double dy) {
     auto d = Point2D{dx, dy};
 
     _bottom_left += d;

@@ -87,7 +87,7 @@ void show_popup(GtkTreeView*& tree,
         auto value = extract_tree_value(model, iter);
     }
 
-    gtk_menu_popup_at_pointer(popup, nullptr);
+    //gtk_menu_popup_at_pointer(popup, nullptr);
 }
 
 bool on_mouse_press(GtkWidget* widget, GdkEventButton* event, gpointer* data) {

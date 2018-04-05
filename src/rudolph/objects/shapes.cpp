@@ -13,11 +13,11 @@ void Point::draw(RenderTarget& target) const {
     target.draw_point(point);
 }
 
-void Point::translate(int dx, int dy) {
+void Point::translate(double dx, double dy) {
 	point.translate(dx, dy);
 }
 
-void Point::scale(int sx, int sy) {
+void Point::scale(double sx, double sy) {
 	point.scale(sx, sy);
 }
 
@@ -44,12 +44,12 @@ Point2D Line::center() const {
     return point;
 }
 
-void Line::translate(int dx, int dy) {
+void Line::translate(double dx, double dy) {
     _a.translate(dx, dy);
     _b.translate(dx, dy);
 }
 
-void Line::scale(int sx, int sy) {
+void Line::scale(double sx, double sy) {
 	Point2D center{this->center().x(), this->center().y()};
 	_a.translate(-center.x(), -center.y());
     _b.translate(-center.x(), -center.y());
@@ -95,13 +95,13 @@ Point2D Polygon::center() const {
     return point;
 }
 
-void Polygon::translate(int dx, int dy) {
+void Polygon::translate(double dx, double dy) {
     for (auto i = 0u; i < _points.size(); ++i) {
         _points[i].translate(dx, dy);
     }
 }
 
-void Polygon::scale(int sx, int sy) {
+void Polygon::scale(double sx, double sy) {
 	Point2D center{this->center().x(), this->center().y()};
 	for (auto i = 0u; i < _points.size(); ++i) {
         _points[i].translate(-center.x(), -center.y());
