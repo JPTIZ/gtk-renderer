@@ -58,7 +58,7 @@ namespace {
                           gpointer* data)
     {
         auto renderer = reinterpret_cast<RenderTarget*>(data);
-        renderer->resize({event->width, event->height});
+        renderer->resize({(double)event->width, (double)event->height});
 
         return true;
     }
@@ -70,7 +70,7 @@ namespace {
             gpointer* data)
     {
         auto renderer = reinterpret_cast<Renderer*>(data);
-        renderer->resize({event->width, event->height});
+        renderer->resize({(double)event->width, (double)event->height});
         return true;
     }
 
@@ -122,7 +122,7 @@ namespace {
     Size parent_size(GtkWidget* parent) {
         GtkRequisition parent_size;
         gtk_widget_get_preferred_size(parent, nullptr, &parent_size);
-        return Size{parent_size.width, parent_size.height};
+        return Size{(double)parent_size.width, (double)parent_size.height};
     }
 }
 
@@ -178,16 +178,6 @@ RenderTarget::~RenderTarget() {
 
 
 Point2D RenderTarget::world_to_viewport(double xw, double yw) {
-    /*auto camera_d = camera_window.top_right() - camera_window.bottom_left();
-    auto viewport_d = viewport.bottom_right() - viewport.top_left();
-
-    auto pcam = Point2D{xw, yw} - camera_window.bottom_left();
-
-    auto xv = pcam.x() * viewport_d.x() / camera_d.x();
-    auto yv = viewport_d.y() - (viewport_d.y() / camera_d.y() * pcam.y());
-
-    return Point2D{xv, yv} * zoom_ratio_;*/
-
     Matrix<double> coord(1, 3);
     coord(0, 0) = xw;
     coord(0, 1) = yw;
@@ -298,8 +288,8 @@ double RenderTarget::zoom_ratio() const {
 
 void Renderer::invalidate() {
     invalidate(Rect{0, 0,
-                    gtk_widget_get_allocated_width(parent),
-                    gtk_widget_get_allocated_height(parent)});
+                    (double)gtk_widget_get_allocated_width(parent),
+                    (double)gtk_widget_get_allocated_height(parent)});
 }
 
 
