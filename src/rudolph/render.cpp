@@ -188,15 +188,16 @@ Point2D RenderTarget::world_to_viewport(double xw, double yw) {
 
     // Normalized Coordinates
     // Translate to origin, rotate, and scale
-    Matrix<double> normalizer(3, 3);
-    normalizer(0, 0) = cos_vy * 2/camera_window.width();
-    normalizer(0, 1) = -sin_vy * 2/camera_window.height();
-    normalizer(1, 0) = sin_vy * 2/camera_window.width();
-    normalizer(1, 1) = cos_vy * 2/camera_window.height();
-    normalizer(2, 0) = (-cos_vy*camera_window.bottom_left().x() - sin_vy*camera_window.bottom_left().y())*2/camera_window.width();
-    normalizer(2, 1) = (sin_vy*camera_window.bottom_left().x() - cos_vy*camera_window.bottom_left().y())*2/camera_window.height();
-    normalizer(2, 2) = 1;
-
+    auto vec = std::vector<double>{
+        cos_vy * 2/camera_window.width(), -sin_vy * 2/camera_window.height(), 0,
+        sin_vy * 2/camera_window.width(), cos_vy * 2/camera_window.height(), 0,
+        (-cos_vy*camera_window.bottom_left().x() - sin_vy*camera_window.bottom_left().y())*2/camera_window.width(),
+            (sin_vy*camera_window.bottom_left().x() - cos_vy*camera_window.bottom_left().y())*2/camera_window.height(),
+            1 };
+    Matrix<double> normalizer(vec);
+    normalizer.width(3);
+    normalizer.height(3);
+    
     coord = coord * normalizer;
 
     // Viewport Coordinates
