@@ -50,12 +50,12 @@ void Line::translate(double dx, double dy) {
 }
 
 void Line::scale(double sx, double sy) {
-	auto center = this->center();
-	_a.translate(-center.x(), -center.y());
+    auto center = this->center();
+	  _a.translate(-center.x(), -center.y());
     _b.translate(-center.x(), -center.y());
-	_a.scale(sx, sy);
-	_b.scale(sx, sy);
-	_a.translate(center.x(), center.y());
+	  _a.scale(sx, sy);
+	  _b.scale(sx, sy);
+	  _a.translate(center.x(), center.y());
     _b.translate(center.x(), center.y());
 }
 
@@ -74,7 +74,7 @@ void Line::rotate_pin(double angle, Point2D pin) {
 }
 
 void Line::rotate_center(double angle) {
-	rotate_pin(angle, center());
+    rotate_pin(angle, center());
 }
 
 void Polygon::draw(RenderTarget& target) const {
@@ -98,8 +98,8 @@ void Polygon::translate(double dx, double dy) {
 }
 
 void Polygon::scale(double sx, double sy) {
-	auto center = this->center();
-	for (auto i = 0u; i < _points.size(); ++i) {
+    auto center = this->center();
+    for (auto i = 0u; i < _points.size(); ++i) {
         _points[i].translate(-center.x(), -center.y());
     }
     for (auto i = 0u; i < _points.size(); ++i) {
@@ -129,7 +129,7 @@ void Polygon::rotate_pin(double angle, Point2D pin) {
 }
 
 void Polygon::rotate_center(double angle) {
-	rotate_pin(angle, center());
+    rotate_pin(angle, center());
 }
 
 }
