@@ -78,11 +78,7 @@ void Line::rotate_center(double angle) {
 }
 
 void Polygon::draw(RenderTarget& target) const {
-    for (auto i = 0u; i < _points.size() - 1; ++i) {
-        target.draw_line(_points[i], _points[i + 1]);
-    }
-
-    target.draw_line(_points.back(), _points.front());
+    target.draw_polygon(_points, _filled);
 }
 
 Point2D Polygon::center() const {

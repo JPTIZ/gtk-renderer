@@ -176,8 +176,7 @@ RenderTarget::~RenderTarget() {
     cairo_surface_destroy(surface());
 }
 
-
-Point2D RenderTarget::world_to_viewport(double xw, double yw) {
+Point2D RenderTarget::world_to_normal(double xw, double yw) {
     Matrix<double> coord(1, 3);
     coord(0, 0) = xw;
     coord(0, 1) = yw;
@@ -185,44 +184,67 @@ Point2D RenderTarget::world_to_viewport(double xw, double yw) {
 
     double cos_vy = std::cos(camera_window.angle());
     double sin_vy = std::sin(camera_window.angle());
+    double cam_x = camera_window.bottom_left().x();
+    double cam_y = camera_window.bottom_left().y();
 
     // Normalized Coordinates
     // Translate to origin, rotate, and scale
     auto vec = std::vector<double>{
         cos_vy * 2/camera_window.width(), -sin_vy * 2/camera_window.height(), 0,
         sin_vy * 2/camera_window.width(), cos_vy * 2/camera_window.height(), 0,
-        (-cos_vy*camera_window.bottom_left().x() - sin_vy*camera_window.bottom_left().y())*2/camera_window.width(),
-            (sin_vy*camera_window.bottom_left().x() - cos_vy*camera_window.bottom_left().y())*2/camera_window.height(),
-            1 };
+        (-cos_vy*cam_x - sin_vy*cam_y)*2/camera_window.width(),
+        (sin_vy*cam_x - cos_vy*cam_y)*2/camera_window.height(),
+        1 };
     Matrix<double> normalizer(vec);
     normalizer.width(3);
     normalizer.height(3);
     
     coord = coord * normalizer;
 
-    // Viewport Coordinates
-    normalizer(0, 0) = viewport.width()/2;
-    normalizer(0, 1) = 0;
-    normalizer(1, 0) = 0;
-    normalizer(1, 1) = -viewport.height()/2;
-    normalizer(2, 0) = viewport.width()/2;
-    normalizer(2, 1) = viewport.height()/2;
+    return Point2D{coord(0, 0), coord(0, 1)};
+}
 
-    coord = coord * normalizer;
+Point2D RenderTarget::world_to_normal(Point2D p) {
+    return world_to_viewport(p.x(), p.y());
+}
+
+Point2D RenderTarget::normal_to_viewport(double xw, double yw) {
+    Matrix<double> coord(1, 3);
+    coord(0, 0) = xw;
+    coord(0, 1) = yw;
+    coord(0, 2) = 1;
+
+    // Viewport Coordinates
+    auto vec = std::vector<double>{
+        (double)viewport.width()/2, 0, 0,
+        0, (double)-viewport.height()/2, 0,
+        (double)viewport.width()/2, (double)viewport.height()/2, 1
+    };
+    Matrix<double> viewporter(vec);
+    viewporter.width(3);
+    viewporter.height(3);
+    
+    coord = coord * viewporter;
 
     return Point2D{coord(0, 0), coord(0, 1)};
 }
 
+Point2D RenderTarget::normal_to_viewport(Point2D p) {
+    return normal_to_viewport(p.x(), p.y());
+}
+
+Point2D RenderTarget::world_to_viewport(double xw, double yw) {
+    auto normalized = world_to_normal(xw, yw);
+    return normal_to_viewport(normalized.x(), normalized.y());
+}
 
 Point2D RenderTarget::world_to_viewport(Point2D p) {
     return world_to_viewport(p.x(), p.y());
 }
 
-
 void RenderTarget::clear() {
     ::clear(back_buffer_);
 }
-
 
 void RenderTarget::draw_point(Point2D p) {
     auto vpoint = world_to_viewport(p);
@@ -242,18 +264,9 @@ void RenderTarget::draw_point(Point2D p) {
     cairo_destroy(cr);
 }
 
-
 void RenderTarget::draw_line(Point2D a, Point2D b) {
     auto va = world_to_viewport(a);
     auto vb = world_to_viewport(b);
-
-    auto min_x = std::min(va.x(), vb.x());
-    auto min_y = std::min(va.y(), vb.y());
-
-    auto max_x = std::max(va.x(), vb.x());
-    auto max_y = std::max(va.y(), vb.y());
-
-    auto region = Rect{min_x, min_y, max_x - min_x, max_y - min_y};
 
     auto cr = cairo_create(back_buffer_);
 
@@ -267,6 +280,29 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
     cairo_destroy(cr);
 }
 
+void RenderTarget::draw_polygon(std::vector<Point2D> points, bool filled) {
+    auto cr = cairo_create(back_buffer_);
+    cairo_set_source_rgb(cr, 1, 0, 0);
+    cairo_set_line_width(cr, 1);
+
+    auto va = world_to_viewport(points[0]);
+    cairo_move_to(cr, va.x(), va.y());
+    for (auto i = 1u; i < points.size(); ++i) {
+        auto vb = world_to_viewport(points[i]);
+
+        cairo_line_to(cr, vb.x(), vb.y());
+    }
+    // Go back to first point to close polygon
+    cairo_line_to(cr, va.x(), va.y());
+
+    if (filled) {
+        cairo_fill(cr);
+    } else {
+        cairo_stroke(cr);
+    }
+
+    cairo_destroy(cr);
+}
 
 void RenderTarget::resize(Size size) {
     viewport.resize(size.width, size.height);
@@ -277,11 +313,13 @@ void RenderTarget::resize(Size size) {
                                               viewport.height());
 }
 
-
 void RenderTarget::move_camera(double dx, double dy) {
     camera_window.move(dx * _step, dy * _step);
 }
 
+void RenderTarget::zoom(double ratio) {
+    camera_window.zoom(ratio);
+}
 
 double RenderTarget::zoom_ratio() const {
     return zoom_ratio_;

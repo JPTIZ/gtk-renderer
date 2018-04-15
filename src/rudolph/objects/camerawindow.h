@@ -50,6 +50,7 @@ public:
     void zoom(double step);
     void set_width(int width);
     void set_height(int height);
+    void rotate(double da);
 
     void resize(int width, int height) {
         set_width(width);

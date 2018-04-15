@@ -3,6 +3,7 @@
 #include "objects/shapes.h"
 #include "dialog.h"
 #include "matrix.h"
+#include "../algebra.h"
 
 #include <iostream>
 #include <utility>
@@ -130,8 +131,7 @@ MainWindow::MainWindow(Size size):
 
 void MainWindow::execute(const std::string& cmd) {
     //std::cout << cmd << std::endl;
-    renderer.display_file()[4].rotate_center(10);
-    
+    renderer.display_file()[3].translate(-30, 0);
 }
 
 void MainWindow::setup()
@@ -141,37 +141,49 @@ void MainWindow::setup()
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(0, -1);
+                rt.move_camera(0, 1);
             }, &renderer},
         {"btn_down", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(0, 1);
+                rt.move_camera(0, -1);
             }, &renderer},
         {"btn_left", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(1, 0);
+                rt.move_camera(-1, 0);
             }, &renderer},
         {"btn_right", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(-1, 0);
+                rt.move_camera(1, 0);
             }, &renderer},
         {"btn_in", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.zoom(0.1);
+                rt.zoom(-0.1);
             }, &renderer},
         {"btn_out", "clicked",
             [](GtkWidget* w, gpointer* data) {
-                auto& _this = *reinterpret_cast<MainWindow*>(data);
-                auto& rt = _this.renderer.render_target();
-                rt.zoom(-0.1);
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.zoom(0.1);
+            }, &renderer},
+        {"btn_rot_left", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.window().rotate(-algebra::pi/18);
+            }, &renderer},
+        {"btn_rot_right", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.window().rotate(algebra::pi/18);
             }, &renderer},
 
         {"btn_new", "clicked",
@@ -224,6 +236,7 @@ void MainWindow::setup()
 
     gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "660");
     gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_height")), "660");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate pol1 -30 0");
     refresh();
 }
 
@@ -231,15 +244,22 @@ void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
 
     renderer.add_object(Point{10, 10});
-    renderer.add_object(Line{100, 20, 110, 30});
-    renderer.add_object(Line{300, 400, 200, 380});
-    renderer.add_object(Point{320, 420});
+    renderer.add_object(Line{0, 0, 10, 0});
+    renderer.add_object(Line{0, 0, 0, 10});
     auto points = std::vector<Point2D>{
         Point2D{150, 150},
         Point2D{175, 175},
         Point2D{160, 200},
         Point2D{140, 200},
         Point2D{125, 175},
+    };
+    renderer.add_object(Polygon(points, true));
+
+    points = std::vector<Point2D>{
+        Point2D{-30, 60},
+        Point2D{-30, 90},
+        Point2D{0, 90},
+        Point2D{0, 60}
     };
     renderer.add_object(Polygon(points));
 

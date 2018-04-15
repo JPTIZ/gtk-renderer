@@ -10,10 +10,13 @@ void CameraWindow::move(double dx, double dy) {
 }
 
 void CameraWindow::zoom(double step) {
-    auto d = (_top_right - _bottom_left) * (step / 2);
+    auto d = (_top_right - _bottom_left) * step;
 
-    _bottom_left -= d;
     _top_right += d;
+}
+
+void CameraWindow::rotate(double da) {
+    _angle += da;
 }
 
 void CameraWindow::set_width(int width) {
