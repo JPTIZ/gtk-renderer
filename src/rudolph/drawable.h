@@ -6,8 +6,6 @@
 
 #include <string>
 
-#include "geometry.h"
-
 namespace rudolph {
 
 class RenderTarget;
@@ -15,7 +13,6 @@ class RenderTarget;
 class Drawable {
     using Point2D = geometry::Point2D;
 public:
-    using Point2D = geometry::Point2D;
     template <typename T>
     Drawable(T t):
         data{utils::make_unique<ModelImpl<T>>(std::move(t))}
