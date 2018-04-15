@@ -26,12 +26,17 @@ public:
     RenderTarget();
     ~RenderTarget();
 
+    Point2D world_to_normal(double xw, double yw);
+    Point2D world_to_normal(Point2D p);
+    Point2D normal_to_viewport(double xw, double yw);
+    Point2D normal_to_viewport(Point2D p);
     Point2D world_to_viewport(double xw, double yw);
     Point2D world_to_viewport(Point2D p);
 
     void clear();
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
+    void draw_polygon(std::vector<Point2D> points, bool filled);
     void resize(Size size);
     void move_camera(double dx, double dy);
 
@@ -47,9 +52,7 @@ public:
         return back_buffer_;
     }
 
-    void zoom(double ratio) {
-        zoom_ratio_ += ratio;
-    }
+    void zoom(double ratio);
 
     double step() const {
         return _step;

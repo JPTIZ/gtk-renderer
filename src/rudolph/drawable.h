@@ -15,6 +15,7 @@ class RenderTarget;
 class Drawable {
     using Point2D = geometry::Point2D;
 public:
+    using Point2D = geometry::Point2D;
     template <typename T>
     Drawable(T t):
         data{utils::make_unique<ModelImpl<T>>(std::move(t))}
@@ -36,7 +37,7 @@ public:
         return data->name();
     }
 
-    geometry::Point2D center() const {
+    Point2D center() const {
         data->center();
     }
 
@@ -52,7 +53,7 @@ public:
         data->rotate_origin(angle);
     }
 
-    void rotate_pin(double angle, geometry::Point2D pin) {
+    void rotate_pin(double angle, Point2D pin) {
         data->rotate_pin(angle, pin);
     }
 
@@ -69,11 +70,11 @@ private:
         virtual std::unique_ptr<Model> copy() const = 0;
         virtual void draw(RenderTarget&) const = 0;
         virtual std::string name() const = 0;
-        virtual geometry::Point2D center() const = 0;
+        virtual Point2D center() const = 0;
         virtual void translate(int dx, int dy) = 0;
         virtual void scale(int sx, int sy) = 0;
         virtual void rotate_origin(double angle) = 0;
-        virtual void rotate_pin(double angle, geometry::Point2D pin) = 0;
+        virtual void rotate_pin(double angle, Point2D pin) = 0;
         virtual void rotate_center(double angle) = 0;
     };
 
@@ -95,7 +96,7 @@ private:
             return x.name();
         }
 
-        geometry::Point2D center() const override {
+        Point2D center() const override {
             return x.center();
         }
 
@@ -111,7 +112,7 @@ private:
             x.rotate_origin(angle);
         }
 
-        void rotate_pin(double angle, geometry::Point2D pin) {
+        void rotate_pin(double angle, Point2D pin) {
             x.rotate_pin(angle, pin);
         }
 

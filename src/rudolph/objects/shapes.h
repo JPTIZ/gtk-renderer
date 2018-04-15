@@ -96,10 +96,11 @@ private:
 
 class Polygon {
 public:
-    Polygon(std::vector<Point2D> points):
+    Polygon(std::vector<Point2D> points, bool filled = false):
         _points{std::move(points)},
         _id{polygons_id++},
-        _name{"polygon" + std::to_string(_id)}
+        _name{"polygon" + std::to_string(_id)},
+        _filled{filled}
     {}
 
     void draw(RenderTarget&) const;
@@ -122,6 +123,8 @@ private:
     std::vector<Point2D> _points;
     unsigned _id;
     std::string _name;
+    bool _filled;
+    
     const std::string _type{"Polygon"};
     static unsigned int polygons_id;
 };

@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "../algebra.h"
+
 using rudolph::geometry::Point2D;
 
 namespace rudolph {
@@ -27,13 +29,11 @@ void Point2D::scale(double sx, double sy) {
 }
 
 void Point2D::rotate(double angle) {
-    const double pi = std::acos(-1);
-
     Matrix<double> t(3, 3);
-    t(0, 0) = std::cos(angle*pi/180);
-    t(0, 1) = -std::sin(angle*pi/180);
-    t(1, 0) = std::sin(angle*pi/180);
-    t(1, 1) = std::cos(angle*pi/180);
+    t(0, 0) = std::cos(angle*algebra::pi/180);
+    t(0, 1) = -std::sin(angle*algebra::pi/180);
+    t(1, 0) = std::sin(angle*algebra::pi/180);
+    t(1, 1) = std::cos(angle*algebra::pi/180);
     t(2, 2) = 1;
 
     data = data * t;

@@ -65,6 +65,14 @@ public:
         return width_;
     }
 
+    void width(std::size_t w) {
+        width_ = w;
+    }
+
+    void height(std::size_t h) {
+        height_ = h;
+    }
+
     std::size_t height() const
     {
         return height_;
