@@ -26,7 +26,7 @@ public:
         data{std::move(other.data)}
     {}
 
-    void draw(RenderTarget& target) const {
+    void draw(RenderTarget& target) {
         data->draw(target);
     }
 
@@ -65,7 +65,7 @@ private:
     struct Model {
         virtual ~Model() = default;
         virtual std::unique_ptr<Model> copy() const = 0;
-        virtual void draw(RenderTarget&) const = 0;
+        virtual void draw(RenderTarget&) = 0;
         virtual std::string name() const = 0;
         virtual Point2D center() const = 0;
         virtual void translate(int dx, int dy) = 0;
@@ -85,7 +85,7 @@ private:
             return utils::make_unique<ModelImpl>(*this);
         }
 
-        void draw(RenderTarget& target) const override {
+        void draw(RenderTarget& target) override {
             x.draw(target);
         }
 

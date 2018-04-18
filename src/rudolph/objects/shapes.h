@@ -15,11 +15,13 @@ class Point {
 public:
     Point(double x, double y):
         point{x, y},
+        scn_point{x, y},
+        scn_valid{false},
         _id{points_id++},
         _name{"point" + std::to_string(_id)}
     {}
 
-    void draw(RenderTarget&) const;
+    void draw(RenderTarget&);
 
     double x() const {
         return point.x();
@@ -48,6 +50,8 @@ public:
 
 private:
     Point2D point;
+    Point2D scn_point;
+    bool scn_valid;
     unsigned _id;
     std::string _name;
     const std::string _type{"Point"};
@@ -58,6 +62,7 @@ class Line {
 public:
     Line(Point2D a, Point2D b):
         _a{a}, _b{b},
+        scn_valid{false},
         _id{lines_id++},
         _name{"line" + std::to_string(_id)}
     {}
@@ -65,11 +70,12 @@ public:
     Line(double x1, double y1, double x2, double y2):
         _a{x1, y1},
         _b{x2, y2},
+        scn_valid{false},
         _id{lines_id++},
         _name{"line" + std::to_string(_id)}
     {}
 
-    void draw(RenderTarget&) const;
+    void draw(RenderTarget&);
 
     std::string name() const {
         return _name;
@@ -88,6 +94,9 @@ public:
 private:
     Point2D _a;
     Point2D _b;
+    Point2D scn_a;
+    Point2D scn_b;
+    bool scn_valid;
     unsigned _id;
     std::string _name;
     const std::string _type{"Line"};
@@ -98,12 +107,14 @@ class Polygon {
 public:
     Polygon(std::vector<Point2D> points, bool filled = false):
         _points{std::move(points)},
+        scn_points{_points},
+        scn_valid{false},
         _id{polygons_id++},
         _name{"polygon" + std::to_string(_id)},
         _filled{filled}
     {}
 
-    void draw(RenderTarget&) const;
+    void draw(RenderTarget&);
 
     std::string name() const {
         return _name;
@@ -121,6 +132,8 @@ public:
 
 private:
     std::vector<Point2D> _points;
+    std::vector<Point2D> scn_points;
+    bool scn_valid;
     unsigned _id;
     std::string _name;
     bool _filled;

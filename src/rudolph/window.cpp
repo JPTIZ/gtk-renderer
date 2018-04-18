@@ -31,8 +31,6 @@ GtkWidget* create_gtk_window(GtkBuilder* gtk_builder, Size size) {
     gtk_window_set_default_size(GTK_WINDOW(gtk_window), size.width, size.height);
     gtk_window_set_title(GTK_WINDOW(gtk_window), "Rudolph Software Rendeer");
 
-    auto window = gtk_builder_get_object(gtk_builder, "main_window");
-
     return gtk_window;
 }
 
@@ -130,7 +128,6 @@ MainWindow::MainWindow(Size size):
 }
 
 void MainWindow::execute(const std::string& cmd) {
-    //std::cout << cmd << std::endl;
     renderer.display_file()[3].translate(-30, 0);
 }
 
@@ -177,13 +174,13 @@ void MainWindow::setup()
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.window().rotate(-algebra::pi/18);
+                rt.window().rotate(algebra::pi/18);
             }, &renderer},
         {"btn_rot_right", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.window().rotate(algebra::pi/18);
+                rt.window().rotate(-algebra::pi/18);
             }, &renderer},
 
         {"btn_new", "clicked",
@@ -234,18 +231,15 @@ void MainWindow::setup()
         link_signal(event);
     }
 
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "660");
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_height")), "660");
     gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate pol1 -30 0");
-    refresh();
 }
 
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
 
     renderer.add_object(Point{10, 10});
-    renderer.add_object(Line{0, 0, 10, 0});
-    renderer.add_object(Line{0, 0, 0, 10});
+    renderer.add_object(Line{10, 0, 270, -270});
+    renderer.add_object(Line{0, 0, -300, 260});
     auto points = std::vector<Point2D>{
         Point2D{150, 150},
         Point2D{175, 175},
@@ -258,13 +252,12 @@ void MainWindow::show() {
     points = std::vector<Point2D>{
         Point2D{-30, 60},
         Point2D{-30, 90},
-        Point2D{0, 90},
-        Point2D{0, 60}
+        Point2D{10, 90},
+        Point2D{10, 60}
     };
     renderer.add_object(Polygon(points));
 
     update_list();
-
 }
 
 void MainWindow::refresh() {

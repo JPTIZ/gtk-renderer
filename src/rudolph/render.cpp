@@ -3,6 +3,7 @@
 #include "geometry.h"
 #include "objects/shapes.h"
 #include "matrix.h"
+#include "clipper.h"
 
 #include <utility>
 #include <iostream>
@@ -57,9 +58,6 @@ namespace {
                           GdkEventConfigure* event,
                           gpointer* data)
     {
-        auto renderer = reinterpret_cast<RenderTarget*>(data);
-        renderer->resize({(double)event->width, (double)event->height});
-
         return true;
     }
 
@@ -69,8 +67,6 @@ namespace {
             GtkAllocation* event,
             gpointer* data)
     {
-        auto renderer = reinterpret_cast<Renderer*>(data);
-        renderer->resize({(double)event->width, (double)event->height});
         return true;
     }
 
@@ -113,7 +109,6 @@ namespace {
     {
         double delta = (event->direction * 2 - 1);
         delta /= 10;
-        //std::cout << "scrollou: " << delta << std::endl;
         auto target = reinterpret_cast<Renderer*>(data)->render_target();
         target.zoom(delta);
         return true;
@@ -125,7 +120,6 @@ namespace {
         return Size{(double)parent_size.width, (double)parent_size.height};
     }
 }
-
 
 Renderer::Renderer(GtkWidget* parent):
     parent{parent},
@@ -143,6 +137,8 @@ Renderer::Renderer(GtkWidget* parent):
 
 void Renderer::refresh()
 {
+    target.draw_viewport();
+
     for (auto obj: _display_file)
     {
         obj.draw(target);
@@ -155,20 +151,13 @@ void Renderer::clear()
     target.clear();
 }
 
-
-void Renderer::resize(Size size)
-{
-    target.resize(size);
-}
-
-
 RenderTarget::RenderTarget():
-    camera_window{Size{800, 600}},
-    viewport{Size{800, 600}},
+    camera_window{Size{520, 520}},
+    viewport{Size{520, 520}},
     back_buffer_{
         cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-                                   viewport.width(),
-                                   viewport.height())}
+                                   viewport.width()+20,
+                                   viewport.height()+20) }
 {}
 
 
@@ -205,7 +194,7 @@ Point2D RenderTarget::world_to_normal(double xw, double yw) {
 }
 
 Point2D RenderTarget::world_to_normal(Point2D p) {
-    return world_to_viewport(p.x(), p.y());
+    return world_to_normal(p.x(), p.y());
 }
 
 Point2D RenderTarget::normal_to_viewport(double xw, double yw) {
@@ -218,7 +207,7 @@ Point2D RenderTarget::normal_to_viewport(double xw, double yw) {
     auto vec = std::vector<double>{
         (double)viewport.width()/2, 0, 0,
         0, (double)-viewport.height()/2, 0,
-        (double)viewport.width()/2, (double)viewport.height()/2, 1
+        viewport.top_left().x()+(double)viewport.width()/2, viewport.top_left().y()+(double)viewport.height()/2, 1
     };
     Matrix<double> viewporter(vec);
     viewporter.width(3);
@@ -247,7 +236,7 @@ void RenderTarget::clear() {
 }
 
 void RenderTarget::draw_point(Point2D p) {
-    auto vpoint = world_to_viewport(p);
+    auto vpoint = normal_to_viewport(p);
     auto x = vpoint.x();
     auto y = vpoint.y();
 
@@ -255,7 +244,7 @@ void RenderTarget::draw_point(Point2D p) {
 
     auto cr = cairo_create(back_buffer_);
 
-    cairo_set_source_rgb(cr, 1, 0, 0);
+    cairo_set_source_rgb(cr, 0, 0, 1);
     cairo_set_line_width(cr, 1);
 
     cairo_rectangle(cr, region.x, region.y, region.width, region.height);
@@ -265,30 +254,38 @@ void RenderTarget::draw_point(Point2D p) {
 }
 
 void RenderTarget::draw_line(Point2D a, Point2D b) {
-    auto va = world_to_viewport(a);
-    auto vb = world_to_viewport(b);
+    auto clip = Clipper(ClipMethod::LIANG_BARSKY);
 
-    auto cr = cairo_create(back_buffer_);
+    std::vector<Point2D> clipped = clip.Clip(a, b);
 
-    cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_set_line_width(cr, 1);
+    if (clipped.size() > 0) {
+        auto va = normal_to_viewport(clipped[0]);
+        auto vb = normal_to_viewport(clipped[1]);
 
-    cairo_move_to(cr, va.x(), va.y());
-    cairo_line_to(cr, vb.x(), vb.y());
+        auto cr = cairo_create(back_buffer_);
 
-    cairo_stroke(cr);
-    cairo_destroy(cr);
+        cairo_set_source_rgb(cr, 0, 0, 1);
+        cairo_set_line_width(cr, 1);
+
+        cairo_move_to(cr, va.x(), va.y());
+        cairo_line_to(cr, vb.x(), vb.y());
+
+        cairo_stroke(cr);
+        cairo_destroy(cr);
+    }
 }
 
 void RenderTarget::draw_polygon(std::vector<Point2D> points, bool filled) {
     auto cr = cairo_create(back_buffer_);
-    cairo_set_source_rgb(cr, 1, 0, 0);
+    cairo_set_source_rgb(cr, 0, 0, 1);
     cairo_set_line_width(cr, 1);
 
-    auto va = world_to_viewport(points[0]);
+    // Move to first point
+    auto va = normal_to_viewport(points[0]);
     cairo_move_to(cr, va.x(), va.y());
+    // Iterate through every point
     for (auto i = 1u; i < points.size(); ++i) {
-        auto vb = world_to_viewport(points[i]);
+        auto vb = normal_to_viewport(points[i]);
 
         cairo_line_to(cr, vb.x(), vb.y());
     }
@@ -304,13 +301,29 @@ void RenderTarget::draw_polygon(std::vector<Point2D> points, bool filled) {
     cairo_destroy(cr);
 }
 
-void RenderTarget::resize(Size size) {
-    viewport.resize(size.width, size.height);
+void RenderTarget::draw_viewport() {
+    auto cr = cairo_create(back_buffer_);
+    cairo_set_source_rgb(cr, 1, 0, 0);
+    cairo_set_line_width(cr, 1);
 
-    cairo_surface_destroy(back_buffer_);
-    back_buffer_ = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-                                              viewport.width(),
-                                              viewport.height());
+    // Move to first point
+    auto va = viewport.top_left();
+    cairo_move_to(cr, va.x(), va.y());
+
+    auto vb = va;
+    vb.x() += viewport.width();
+    cairo_line_to(cr, vb.x(), vb.y());
+
+    vb.y() += viewport.height();
+    cairo_line_to(cr, vb.x(), vb.y());
+
+    vb.x() -= viewport.width();
+    cairo_line_to(cr, vb.x(), vb.y());
+
+    cairo_line_to(cr, va.x(), va.y());
+
+    cairo_stroke(cr);
+    cairo_destroy(cr);
 }
 
 void RenderTarget::move_camera(double dx, double dy) {
@@ -319,10 +332,6 @@ void RenderTarget::move_camera(double dx, double dy) {
 
 void RenderTarget::zoom(double ratio) {
     camera_window.zoom(ratio);
-}
-
-double RenderTarget::zoom_ratio() const {
-    return zoom_ratio_;
 }
 
 void Renderer::invalidate() {

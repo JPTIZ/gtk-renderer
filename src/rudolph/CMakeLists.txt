@@ -7,6 +7,7 @@ set(SOURCES
     render.cpp
     geometry.cpp
     dialog.cpp
+    clipper.cpp
     "objects/shapes.cpp"
     "objects/camerawindow.cpp"
 )

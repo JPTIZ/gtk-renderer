@@ -37,7 +37,7 @@ public:
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
     void draw_polygon(std::vector<Point2D> points, bool filled);
-    void resize(Size size);
+    void draw_viewport();
     void move_camera(double dx, double dy);
 
     CameraWindow& window() {
@@ -46,6 +46,14 @@ public:
 
     const CameraWindow& window() const {
         return camera_window;
+    }
+
+    Viewport& get_viewport() {
+        return viewport;
+    }
+
+    const Viewport& get_viewport() const {
+        return viewport;
     }
 
     cairo_surface_t* surface() const {
@@ -58,14 +66,11 @@ public:
         return _step;
     }
 
-    double zoom_ratio() const;
-
 private:
     CameraWindow camera_window;
     Viewport viewport;
     cairo_surface_t* back_buffer_ = nullptr;
     double _step = 10;
-    double zoom_ratio_ = 1.0;
 };
 
 /**
@@ -81,8 +86,6 @@ public:
      * @param parent Parent GtkWindow.
      */
     Renderer(GtkWidget*);
-
-    void resize(Size size);
 
     void refresh();
     void clear();

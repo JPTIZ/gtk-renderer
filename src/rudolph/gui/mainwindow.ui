@@ -25,6 +25,7 @@
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
     <property name="title" translatable="yes">Rudolf Paintiz</property>
+    <property name="resizable">False</property>
     <property name="window_position">center-always</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>
@@ -446,10 +447,11 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkDrawingArea" id="canvas">
-                    <property name="width_request">2</property>
-                    <property name="height_request">2</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="margin_left">56</property>
+                    <property name="margin_right">55</property>
+                    <property name="margin_bottom">1</property>
                     <signal name="configure-event" handler="on_configure_event" swapped="no"/>
                     <signal name="draw" handler="on_draw" swapped="no"/>
                   </object>

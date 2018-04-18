@@ -16,8 +16,8 @@ public:
     {}
 
     Viewport(geometry::Size size):
-        _top_left{0, 0},
-        _bottom_right{size.width, size.height}
+        _top_left{10, 10},
+        _bottom_right{_top_left.x()+size.width, _top_left.y()+size.height}
     {}
 
     Point2D top_left() const {
