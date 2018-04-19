@@ -22,11 +22,15 @@ enum class ClipMethod {
 class Clipper {
     using Point2D = geometry::Point2D;
 public:
-    Clipper(ClipMethod method):
+    Clipper(ClipMethod method = ClipMethod::LIANG_BARSKY):
         _method{method}
     {}
 
-    std::vector<Point2D> Clip(Point2D a, Point2D b);
+    // Return false if point was not clipped (visible), true if clipped (hidden)
+    bool clip_point(Point2D a);
+    std::vector<Point2D> clip_line(Point2D a, Point2D b);
+    std::vector<Point2D> clip_polygon(std::vector<Point2D>& points);
+    void clip_pol_aux(Point2D a, Point2D b, std::vector<Point2D>& new_polygon, std::vector<Point2D>& intersections);
 
 private:
     ClipMethod _method;

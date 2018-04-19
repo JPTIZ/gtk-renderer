@@ -236,6 +236,11 @@ void RenderTarget::clear() {
 }
 
 void RenderTarget::draw_point(Point2D p) {
+    auto clipped = Clipper().clip_point(p);
+
+    if (clipped) // if point was clipped it is out of the window
+        return;  // no need to draw it
+
     auto vpoint = normal_to_viewport(p);
     auto x = vpoint.x();
     auto y = vpoint.y();
@@ -254,9 +259,9 @@ void RenderTarget::draw_point(Point2D p) {
 }
 
 void RenderTarget::draw_line(Point2D a, Point2D b) {
-    auto clip = Clipper(ClipMethod::LIANG_BARSKY);
+    auto clipper = Clipper(ClipMethod::LIANG_BARSKY);
 
-    std::vector<Point2D> clipped = clip.Clip(a, b);
+    std::vector<Point2D> clipped = clipper.clip_line(a, b);
 
     if (clipped.size() > 0) {
         auto va = normal_to_viewport(clipped[0]);
@@ -280,25 +285,30 @@ void RenderTarget::draw_polygon(std::vector<Point2D> points, bool filled) {
     cairo_set_source_rgb(cr, 0, 0, 1);
     cairo_set_line_width(cr, 1);
 
-    // Move to first point
-    auto va = normal_to_viewport(points[0]);
-    cairo_move_to(cr, va.x(), va.y());
-    // Iterate through every point
-    for (auto i = 1u; i < points.size(); ++i) {
-        auto vb = normal_to_viewport(points[i]);
+    auto clipper = Clipper();
+    std::vector<Point2D> clipped = clipper.clip_polygon(points);
 
-        cairo_line_to(cr, vb.x(), vb.y());
+    if (clipped.size() > 0) {
+        // Move to first point
+        auto va = normal_to_viewport(clipped[0]);
+        cairo_move_to(cr, va.x(), va.y());
+        // Iterate through every point
+        for (auto i = 1u; i < clipped.size(); ++i) {
+            auto vb = normal_to_viewport(clipped[i]);
+
+            cairo_line_to(cr, vb.x(), vb.y());
+        }
+        // Go back to first point to close polygon
+        cairo_line_to(cr, va.x(), va.y());
+
+        if (filled) {
+            cairo_fill(cr);
+        } else {
+            cairo_stroke(cr);
+        }
+
+        cairo_destroy(cr);
     }
-    // Go back to first point to close polygon
-    cairo_line_to(cr, va.x(), va.y());
-
-    if (filled) {
-        cairo_fill(cr);
-    } else {
-        cairo_stroke(cr);
-    }
-
-    cairo_destroy(cr);
 }
 
 void RenderTarget::draw_viewport() {
@@ -339,7 +349,6 @@ void Renderer::invalidate() {
                     (double)gtk_widget_get_allocated_width(parent),
                     (double)gtk_widget_get_allocated_height(parent)});
 }
-
 
 void Renderer::invalidate(Rect region) {
     gtk_widget_queue_draw_area(

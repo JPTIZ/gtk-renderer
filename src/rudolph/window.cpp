@@ -241,19 +241,21 @@ void MainWindow::show() {
     renderer.add_object(Line{10, 0, 270, -270});
     renderer.add_object(Line{0, 0, -300, 260});
     auto points = std::vector<Point2D>{
-        Point2D{150, 150},
-        Point2D{175, 175},
-        Point2D{160, 200},
-        Point2D{140, 200},
-        Point2D{125, 175},
+        Point2D{150-200, 150},
+        Point2D{175-200, 175},
+        Point2D{160-200, 200},
+        Point2D{140-200, 200},
+        Point2D{125-200, 175},
     };
-    renderer.add_object(Polygon(points, true));
+    //renderer.add_object(Polygon(points, true));
 
     points = std::vector<Point2D>{
-        Point2D{-30, 60},
-        Point2D{-30, 90},
-        Point2D{10, 90},
-        Point2D{10, 60}
+        Point2D{-230, 100},
+        Point2D{-160, 100},
+        Point2D{-155, 80},
+        Point2D{-210, 60},
+        Point2D{-165, 20},
+        Point2D{-235, 25}
     };
     renderer.add_object(Polygon(points));
 
