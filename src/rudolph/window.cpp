@@ -247,7 +247,7 @@ void MainWindow::show() {
         Point2D{140-200, 200},
         Point2D{125-200, 175},
     };
-    //renderer.add_object(Polygon(points, true));
+    renderer.add_object(Polygon(points));
 
     points = std::vector<Point2D>{
         Point2D{-230, 100},
@@ -257,7 +257,7 @@ void MainWindow::show() {
         Point2D{-165, 20},
         Point2D{-235, 25}
     };
-    renderer.add_object(Polygon(points));
+    renderer.add_object(Polygon(points, true));
 
     update_list();
 }

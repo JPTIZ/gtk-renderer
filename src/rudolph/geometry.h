@@ -46,6 +46,7 @@ struct Point2D {
 
     Point2D& operator+=(const Point2D& p);
     Point2D& operator-=(const Point2D& p);
+    bool operator==(const Point2D& p);
 
     void translate(double dx, double dy);
     void scale(double sx, double sy);

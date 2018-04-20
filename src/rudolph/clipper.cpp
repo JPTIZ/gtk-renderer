@@ -143,77 +143,63 @@ std::vector<Point2D> Clipper::liang_barsky(Point2D a, Point2D b) {
 }
 
 std::vector<Point2D> Clipper::clip_polygon(std::vector<Point2D>& points) {
-    counter++;
-    std::vector<Point2D> new_polygon{};
-    std::vector<Point2D> intersections{};
-    //bool edging = false;
-    if (counter%500 == 0) {
-        std::cout << "iniciando for" << std::endl;
-    }
-    for (auto i = 0u; i < points.size()-1; ++i) {
-        clip_pol_aux(points[i], points[i+1], new_polygon, intersections);
-    }
-    // last point
-    clip_pol_aux(points[points.size()-1], points[0], new_polygon, intersections);
+    std::vector<Point2D> clip_window{
+        Point2D{edge_left, edge_up},
+        Point2D{edge_right, edge_up},
+        Point2D{edge_right, edge_down},
+        Point2D{edge_left, edge_down}
+    };
+    std::vector<Point2D> new_polygon{points};
 
-    if (counter%500 == 0) {
-        std::cout << "terminou for" << std::endl;
-        for (auto i = 0u; i < new_polygon.size(); ++i) {
-            std::cout << i << ": " << new_polygon[i].x() << " " << new_polygon[i].y() << std::endl;
-        }
+    // For each edge apply clipping
+    for (auto i = 0u; i < clip_window.size(); ++i) {
+        auto k = (i+1)%clip_window.size();
+        clip_pol_aux(new_polygon, clip_window[i], clip_window[k]);
     }
+
     return new_polygon;
 }
 
-void Clipper::clip_pol_aux(Point2D a, Point2D b, std::vector<Point2D>& new_polygon, std::vector<Point2D>& intersections) {
-    if (counter%1000 == 0) {
-        std::cout << "A: " << a.x() << " " << a.y() << std::endl;
-        std::cout << "B: " << b.x() << " " << b.y() << std::endl;
+void Clipper::clip_pol_aux(std::vector<Point2D>& new_polygon, Point2D e1, Point2D e2) {
+    std::vector<Point2D> new_points{};
+
+    for (auto i = 0u; i < new_polygon.size(); ++i) {
+        auto k = (i+1)%new_polygon.size();
+        
+        Point2D a{new_polygon[i]};
+        Point2D b{new_polygon[k]};
+
+        double a_pos = (e2.x()-e1.x()) * (a.y()-e1.y()) - (e2.y()-e1.y()) * (a.x()-e1.x());
+        double b_pos = (e2.x()-e1.x()) * (b.y()-e1.y()) - (e2.y()-e1.y()) * (b.x()-e1.x());
+        
+        if (a_pos >= 0 && b_pos >= 0) { // If both points are inside
+            new_points.push_back(b);
+        }
+        else if (a_pos < 0 && b_pos >= 0) { // only A is outside
+            new_points.push_back(intersection(e1, e2, a, b));
+            new_points.push_back(b);
+        }
+        else if (a_pos >= 0 && b_pos < 0) { // only B is outside
+            new_points.push_back(intersection(e1, e2, a, b));
+        }
     }
-    auto clip0 = clip_point(a);
-    auto clip1 = clip_point(b);
-    if (clip0 && !clip1) {
-        if (counter%1000 == 0) {
-            std::cout << "out -> in" << std::endl;
-        }
-        auto line = clip_line(a, b);
-        new_polygon.push_back(line[0]);
-        new_polygon.push_back(line[1]);
-        if (counter%1000 == 0) {
-            std::cout << "new A: " << line[0].x() << " " << line[0].y() << std::endl;
-            std::cout << "new B: " << line[1].x() << " " << line[1].y() << std::endl;
-        }
-        if (line[0].x() == edge_left || line[0].x() == edge_right ||
-            line[0].y() == edge_up || line[0].y() == edge_down)
-            intersections.push_back(line[0]);
-        else
-            intersections.push_back(line[1]);
+
+    if (new_points.size() == 0) {
+        new_polygon.clear();
+        new_polygon.push_back(Point2D{0,0});
+    } else {
+        new_polygon = new_points;
     }
-    else if (!clip0 && clip1) {
-        if (counter%1000 == 0) {
-            std::cout << "in -> out" << std::endl;
-        }
-        auto line = clip_line(a, b);
-        //new_polygon.push_back(line[0]);
-        new_polygon.push_back(line[1]);
-        if (counter%1000 == 0) {
-            std::cout << "new A: " << line[0].x() << " " << line[0].y() << std::endl;
-            std::cout << "new B: " << line[1].x() << " " << line[1].y() << std::endl;
-        }
-        if (line[0].x() == edge_left || line[0].x() == edge_right ||
-            line[0].y() == edge_up || line[0].y() == edge_down)
-            intersections.push_back(line[0]);
-        else
-            intersections.push_back(line[1]);
-        //edging = true;
-    }
-    else if (!clip0 && !clip1) {
-        if (counter%1000 == 0) {
-            std::cout << "both in" << std::endl;
-        }
-        //new_polygon.push_back(a);
-        new_polygon.push_back(b);
-    }
+}
+
+Point2D Clipper::intersection(Point2D e1, Point2D e2, Point2D a, Point2D b) {
+    double x = (e1.x()*e2.y() - e1.y()*e2.x()) * (a.x() - b.x()) - (e1.x() - e2.x()) * (a.x()*b.y() - a.y()*b.x());
+    x /= (e1.x() - e2.x()) * (a.y() - b.y()) - (e1.y() - e2.y()) * (a.x() - b.x());
+
+    double y = (e1.x()*e2.y() - e1.y()*e2.x()) * (a.y() - b.y()) - (e1.y() - e2.y()) * (a.x()*b.y() - a.y()*b.x());
+    y /= (e1.x() - e2.x()) * (a.y() - b.y()) - (e1.y() - e2.y()) * (a.x() - b.x());
+
+    return Point2D{x, y};
 }
 
 }

@@ -49,6 +49,10 @@ Point2D& Point2D::operator-=(const Point2D& p) {
     return *this += -p;
 }
 
+bool Point2D::operator==(const Point2D& p) {
+    return ( (x() == p.x()) && (y() == p.y()) );
+}
+
 Point2D geometry::operator-(const Point2D& p) {
     return Point2D{-p.x(), -p.y()};
 }

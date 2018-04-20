@@ -30,13 +30,14 @@ public:
     bool clip_point(Point2D a);
     std::vector<Point2D> clip_line(Point2D a, Point2D b);
     std::vector<Point2D> clip_polygon(std::vector<Point2D>& points);
-    void clip_pol_aux(Point2D a, Point2D b, std::vector<Point2D>& new_polygon, std::vector<Point2D>& intersections);
 
 private:
     ClipMethod _method;
     int region_code(Point2D p);
     std::vector<Point2D> cohen_sutherland(Point2D a, Point2D b);
     std::vector<Point2D> liang_barsky(Point2D a, Point2D b);
+    void clip_pol_aux(std::vector<Point2D>& new_polygon, Point2D a, Point2D b);
+    Point2D intersection(Point2D e1, Point2D e2, Point2D a, Point2D b);
 
     const double edge_left = -1;
     const double edge_right = 1;
