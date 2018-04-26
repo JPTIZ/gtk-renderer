@@ -147,7 +147,6 @@ void MainWindow::execute(const std::string& cmd) {
             }
         }
     }
-    //renderer.display_file()[3].translate(-30, 0);
 }
 
 void MainWindow::setup()
