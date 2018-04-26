@@ -140,6 +140,12 @@ void MainWindow::execute(const std::string& cmd) {
         std::cout << '\n';
     } else if (command == "translate") {
         auto obj_id = args[0];
+
+        for (auto& obj: renderer.display_file()) {
+            if (obj.name() == args[0]) {
+                obj.translate(atoi(args[1].c_str()), atoi(args[2].c_str()));
+            }
+        }
     }
     //renderer.display_file()[3].translate(-30, 0);
 }
