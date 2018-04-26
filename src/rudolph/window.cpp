@@ -3,9 +3,12 @@
 #include "objects/shapes.h"
 #include "dialog.h"
 #include "utils/command.h"
+#include "matrix.h"
+#include "../algebra.h"
 
 #include <iostream>
 #include <utility>
+#include <vector>
 
 namespace rudolph {
 
@@ -28,8 +31,6 @@ GtkWidget* create_gtk_window(GtkBuilder* gtk_builder, Size size) {
     auto gtk_window = GTK_WIDGET(pre_window);
     gtk_window_set_default_size(GTK_WINDOW(gtk_window), size.width, size.height);
     gtk_window_set_title(GTK_WINDOW(gtk_window), "Rudolph Software Rendeer");
-
-    auto window = gtk_builder_get_object(gtk_builder, "main_window");
 
     return gtk_window;
 }
@@ -86,7 +87,7 @@ void show_popup(GtkTreeView*& tree,
         auto value = extract_tree_value(model, iter);
     }
 
-    gtk_menu_popup_at_pointer(popup, nullptr);
+    //gtk_menu_popup_at_pointer(popup, nullptr);
 }
 
 bool on_mouse_press(GtkWidget* widget, GdkEventButton* event, gpointer* data) {
@@ -124,7 +125,7 @@ MainWindow::MainWindow(Size size):
                      "button-press-event", G_CALLBACK(on_mouse_press),
                      GTK_MENU(get_component(gtk_builder, "displayfile_popup")));
 
-    configure_gui();
+    setup();
 }
 
 void MainWindow::execute(const std::string& cmd) {
@@ -140,9 +141,10 @@ void MainWindow::execute(const std::string& cmd) {
     } else if (command == "translate") {
         auto obj_id = args[0];
     }
+    //renderer.display_file()[3].translate(-30, 0);
 }
 
-void MainWindow::configure_gui()
+void MainWindow::setup()
 {
     static auto wrong_way_to_do_this = std::make_pair(this,  gtk_builder);
     auto button_events = std::vector<Event<void(GtkWidget*, void**)>>{
@@ -150,47 +152,79 @@ void MainWindow::configure_gui()
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(0, -1);
+                rt.move_camera(0, 1);
             }, &renderer},
         {"btn_down", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(0, 1);
+                rt.move_camera(0, -1);
             }, &renderer},
         {"btn_left", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(1, 0);
+                rt.move_camera(-1, 0);
             }, &renderer},
         {"btn_right", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(-1, 0);
+                rt.move_camera(1, 0);
             }, &renderer},
         {"btn_in", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.zoom(0.1);
+                rt.zoom(-0.1);
             }, &renderer},
         {"btn_out", "clicked",
             [](GtkWidget* w, gpointer* data) {
-                auto& _this = *reinterpret_cast<MainWindow*>(data);
-                auto& rt = _this.renderer.render_target();
-                rt.zoom(-0.1);
-            }, this},
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.zoom(0.1);
+            }, &renderer},
+        {"btn_rot_left", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.window().rotate(algebra::pi/18);
+            }, &renderer},
+        {"btn_rot_right", "clicked",
+            [](GtkWidget* w, gpointer* data) {
+                auto& r = *reinterpret_cast<Renderer*>(data);
+                auto& rt = r.render_target();
+                rt.window().rotate(-algebra::pi/18);
+            }, &renderer},
+
         {"btn_new", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 std::cout << "btn new" << std::endl;
-                DialogWindow new_dialog{geometry::Size{200, 300}, "newobject.ui"};
-                new_dialog.show();
+                //auto& renderer = *reinterpret_cast<Renderer*>(data);
+                auto dialog_new = DialogWindow{geometry::Size{300, 400}, "newobject.ui"};
+
+                auto dialog_events = std::vector<Event<void(GtkWidget*, void**)>>{
+                    {"btn_cancel", "clicked",
+                        [](GtkWidget* w, gpointer* data) {
+                            std::cout << "btn cancel" << std::endl;
+                            reinterpret_cast<DialogWindow*>(data)->close();
+                        }, &dialog_new},
+                    {"btn_ok", "clicked",
+                        [](GtkWidget* w, gpointer* data) {
+                            std::cout << "btn ok" << std::endl;
+                            reinterpret_cast<DialogWindow*>(data)->close();
+                        }, &dialog_new},
+                    };
+                dialog_new.setup(std::move(dialog_events));
+                dialog_new.show();
             }, &renderer},
+
         {"btn_edit", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 std::cout << "btn edit\n";
+                Matrix<int> a( *(new std::vector<int>{3, 1, 2, 3, 9, 2}) );
+                a.to_string();
+                std::cout << std::endl;
             }, &renderer},
         {"btn_del", "clicked",
             [](GtkWidget* w, gpointer* data) {
@@ -216,35 +250,41 @@ void MainWindow::configure_gui()
         link_signal(event);
     }
 
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_width")), "800");
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_window_height")), "600");
-    refresh();
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate pol1 -30 0");
 }
 
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
 
     renderer.add_object(Point{10, 10});
-    renderer.add_object(Line{100, 20, 110, 30});
-    renderer.add_object(Line{300, 400, 200, 380});
-    renderer.add_object(Point{320, 420});
+    renderer.add_object(Line{10, 0, 270, -270});
+    renderer.add_object(Line{0, 0, -300, 260});
     auto points = std::vector<Point2D>{
-        Point2D{150, 150},
-        Point2D{175, 175},
-        Point2D{160, 200},
-        Point2D{140, 200},
-        Point2D{125, 175},
+        Point2D{150-200, 150},
+        Point2D{175-200, 175},
+        Point2D{160-200, 200},
+        Point2D{140-200, 200},
+        Point2D{125-200, 175},
     };
     renderer.add_object(Polygon(points));
 
-    update_list();
+    points = std::vector<Point2D>{
+        Point2D{-230, 100},
+        Point2D{-160, 100},
+        Point2D{-155, 80},
+        Point2D{-210, 60},
+        Point2D{-165, 20},
+        Point2D{-235, 25}
+    };
+    renderer.add_object(Polygon(points, true));
 
+    update_list();
 }
 
 void MainWindow::refresh() {
     auto window_size = Size{
-        std::stoi(gtkentry_value(gtk_builder, "edt_window_width")),
-        std::stoi(gtkentry_value(gtk_builder, "edt_window_height"))
+        (double)std::stoi(gtkentry_value(gtk_builder, "edt_window_width")),
+        (double)std::stoi(gtkentry_value(gtk_builder, "edt_window_height"))
     };
     renderer.render_target().window().resize(window_size);
 }

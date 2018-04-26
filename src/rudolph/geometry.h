@@ -1,50 +1,75 @@
 #ifndef RUDOLPH_GEOMETRY_H
 #define RUDOLPH_GEOMETRY_H
 
+#include "matrix.h"
+
 namespace rudolph {
 namespace geometry {
 
 struct Size {
-    int width{0};
-    int height{0};
+    double width{0};
+    double height{0};
 
-    Size(int w, int h):
+    Size(double w, double h):
         width{w},
         height{h}
     {}
 };
 
 
-struct Point {
-    int x{0};
-    int y{0};
-
-    Point(int x, int y):
-        x{x},
-        y{y}
+struct Point2D {
+    Matrix<double> data;
+    
+    Point2D():
+        data{ *(new std::vector<double>{0, 0, 1}) }
     {}
 
-    Point& operator+=(const Point& p);
-    Point& operator-=(const Point& p);
+    Point2D(double x, double y):
+        data{ *(new std::vector<double>{x, y, 1}) }
+    {}
+
+    double& x() {
+        return data(0, 0);
+    }
+
+    double& y() {
+        return data(0, 1);
+    }
+
+    const double& x() const {
+        return data(0, 0);
+    }
+
+    const double& y() const {
+        return data(0, 1);
+    }
+
+    Point2D& operator+=(const Point2D& p);
+    Point2D& operator-=(const Point2D& p);
+    bool operator==(const Point2D& p);
+
+    void translate(double dx, double dy);
+    void scale(double sx, double sy);
+    void rotate(double angle);
 
 };
 
-Point operator-(const Point&);
-Point operator+(const Point&, const Point&);
-Point operator-(const Point&, const Point&);
-Point operator*(const Point&, int);
-Point operator*(const Point&, double);
-Point operator*(int value, const Point& p);
-Point operator*(double value, const Point& p);
+Point2D operator-(const Point2D&);
+Point2D operator+(const Point2D&, const Point2D&);
+Point2D operator-(const Point2D&, const Point2D&);
+Point2D operator*(const Point2D&, int);
+Point2D operator*(const Point2D&, double);
+Point2D operator*(int value, const Point2D& p);
+Point2D operator*(double value, const Point2D& p);
 
 
 struct Rect {
-    int x{0};
-    int y{0};
-    int width{0};
-    int height{0};
+    double x{0};
+    double y{0};
+    double width{0};
+    double height{0};
 
-    Rect(int x, int y, int w, int h):
+    Rect(double x, double y, double w, double h):
         x{x},
         y{y},
         width{w},

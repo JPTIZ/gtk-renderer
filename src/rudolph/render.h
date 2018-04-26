@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "gtk/gtk.h"
+#include <gtk/gtk.h>
 
 #include "geometry.h"
 #include "drawable.h"
@@ -20,20 +20,25 @@ namespace rudolph {
  * Abstracts the idea of an output drawing target.
  */
 class RenderTarget {
-    using Point2D = geometry::Point;
+    using Point2D = geometry::Point2D;
     using Size = geometry::Size;
 public:
     RenderTarget();
     ~RenderTarget();
 
-    Point2D world_to_viewport(int xw, int yw);
+    Point2D world_to_normal(double xw, double yw);
+    Point2D world_to_normal(Point2D p);
+    Point2D normal_to_viewport(double xw, double yw);
+    Point2D normal_to_viewport(Point2D p);
+    Point2D world_to_viewport(double xw, double yw);
     Point2D world_to_viewport(Point2D p);
 
     void clear();
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
-    void resize(Size size);
-    void move_camera(int dx, int dy);
+    void draw_polygon(std::vector<Point2D> points, bool filled);
+    void draw_viewport();
+    void move_camera(double dx, double dy);
 
     CameraWindow& window() {
         return camera_window;
@@ -43,26 +48,29 @@ public:
         return camera_window;
     }
 
+    Viewport& get_viewport() {
+        return viewport;
+    }
+
+    const Viewport& get_viewport() const {
+        return viewport;
+    }
+
     cairo_surface_t* surface() const {
         return back_buffer_;
     }
 
-    void zoom(double ratio) {
-        zoom_ratio_ += ratio;
-    }
+    void zoom(double ratio);
 
-    int step() const {
+    double step() const {
         return _step;
     }
-
-    double zoom_ratio() const;
 
 private:
     CameraWindow camera_window;
     Viewport viewport;
     cairo_surface_t* back_buffer_ = nullptr;
-    int _step = 10;
-    double zoom_ratio_ = 1.0;
+    double _step = 10;
 };
 
 /**
@@ -79,8 +87,6 @@ public:
      */
     Renderer(GtkWidget*);
 
-    void resize(Size size);
-
     void refresh();
     void clear();
     void invalidate();
@@ -94,6 +100,10 @@ public:
     std::vector<Drawable> display_file() const {
         return _display_file;
     }
+
+    std::vector<Drawable>& display_file() {
+        return _display_file;
+    }    
 
     cairo_surface_t* surface() const {
         return target.surface();

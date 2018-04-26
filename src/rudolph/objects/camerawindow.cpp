@@ -2,7 +2,7 @@
 
 namespace rudolph {
 
-void CameraWindow::move(int dx, int dy) {
+void CameraWindow::move(double dx, double dy) {
     auto d = Point2D{dx, dy};
 
     _bottom_left += d;
@@ -10,18 +10,21 @@ void CameraWindow::move(int dx, int dy) {
 }
 
 void CameraWindow::zoom(double step) {
-    auto d = (_top_right - _bottom_left) * (step / 2);
+    auto d = (_top_right - _bottom_left) * step;
 
-    _bottom_left -= d;
     _top_right += d;
 }
 
+void CameraWindow::rotate(double da) {
+    _angle += da;
+}
+
 void CameraWindow::set_width(int width) {
-    _top_right.x = _bottom_left.x + width;
+    _top_right.x() = _bottom_left.x() + width;
 }
 
 void CameraWindow::set_height(int height) {
-    _top_right.y = _bottom_left.y + height;
+    _top_right.y() = _bottom_left.y() + height;
 }
 
 }

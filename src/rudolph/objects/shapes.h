@@ -9,32 +9,49 @@
 namespace rudolph {
 namespace objects {
 
-using Point2D = geometry::Point;
+using Point2D = geometry::Point2D;
 
 class Point {
 public:
-    Point(int x, int y):
+    Point(double x, double y):
         point{x, y},
+        scn_point{x, y},
+        scn_valid{false},
         _id{points_id++},
         _name{"point" + std::to_string(_id)}
     {}
 
-    void draw(RenderTarget&) const;
+    void draw(RenderTarget&);
 
-    int x() const {
-        return point.x;
+    double x() const {
+        return point.x();
     }
 
-    int y() const {
-        return point.y;
+    double y() const {
+        return point.y();
     }
 
     std::string name() const {
         return _name;
     }
+    
+    Point2D center() const {
+        return point;
+    }
+
+    void translate(double dx, double dy);
+
+    void scale(double sx, double sy);
+
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
+
 
 private:
     Point2D point;
+    Point2D scn_point;
+    bool scn_valid;
     unsigned _id;
     std::string _name;
     const std::string _type{"Point"};
@@ -45,26 +62,41 @@ class Line {
 public:
     Line(Point2D a, Point2D b):
         _a{a}, _b{b},
+        scn_valid{false},
         _id{lines_id++},
         _name{"line" + std::to_string(_id)}
     {}
 
-    Line(int x1, int y1, int x2, int y2):
+    Line(double x1, double y1, double x2, double y2):
         _a{x1, y1},
         _b{x2, y2},
+        scn_valid{false},
         _id{lines_id++},
         _name{"line" + std::to_string(_id)}
     {}
 
-    void draw(RenderTarget&) const;
+    void draw(RenderTarget&);
 
     std::string name() const {
         return _name;
     }
 
+    Point2D center() const;
+
+    void translate(double dx, double dy);
+
+    void scale(double sx, double sy);
+
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
+
 private:
     Point2D _a;
     Point2D _b;
+    Point2D scn_a;
+    Point2D scn_b;
+    bool scn_valid;
     unsigned _id;
     std::string _name;
     const std::string _type{"Line"};
@@ -73,22 +105,39 @@ private:
 
 class Polygon {
 public:
-    Polygon(std::vector<Point2D> points):
+    Polygon(std::vector<Point2D> points, bool filled = false):
         _points{std::move(points)},
+        scn_points{_points},
+        scn_valid{false},
         _id{polygons_id++},
-        _name{"polygon" + std::to_string(_id)}
+        _name{"polygon" + std::to_string(_id)},
+        _filled{filled}
     {}
 
-    void draw(RenderTarget&) const;
+    void draw(RenderTarget&);
 
     std::string name() const {
         return _name;
     }
 
+    Point2D center() const;
+
+    void translate(double dx, double dy);
+
+    void scale(double sx, double sy);
+
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
+
 private:
     std::vector<Point2D> _points;
+    std::vector<Point2D> scn_points;
+    bool scn_valid;
     unsigned _id;
     std::string _name;
+    bool _filled;
+    
     const std::string _type{"Polygon"};
     static unsigned int polygons_id;
 };

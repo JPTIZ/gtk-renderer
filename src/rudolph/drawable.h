@@ -2,6 +2,8 @@
 #define RUDOLPH_DRAWABLE_H
 
 #include "../utils.h"
+#include "geometry.h"
+
 #include <string>
 
 namespace rudolph {
@@ -9,6 +11,7 @@ namespace rudolph {
 class RenderTarget;
 
 class Drawable {
+    using Point2D = geometry::Point2D;
 public:
     template <typename T>
     Drawable(T t):
@@ -23,12 +26,36 @@ public:
         data{std::move(other.data)}
     {}
 
-    void draw(RenderTarget& target) const {
+    void draw(RenderTarget& target) {
         data->draw(target);
     }
 
     std::string name() const {
         return data->name();
+    }
+
+    Point2D center() const {
+        data->center();
+    }
+
+    void translate(int dx, int dy) {
+        data->translate(dx, dy);
+    }
+
+    void scale(int sx, int sy) {
+        data->scale(sx, sy);
+    }
+
+    void rotate_origin(double angle) {
+        data->rotate_origin(angle);
+    }
+
+    void rotate_pin(double angle, Point2D pin) {
+        data->rotate_pin(angle, pin);
+    }
+
+    void rotate_center(double angle) {
+        data->rotate_center(angle);
     }
 
 private:
@@ -38,8 +65,14 @@ private:
     struct Model {
         virtual ~Model() = default;
         virtual std::unique_ptr<Model> copy() const = 0;
-        virtual void draw(RenderTarget&) const = 0;
+        virtual void draw(RenderTarget&) = 0;
         virtual std::string name() const = 0;
+        virtual Point2D center() const = 0;
+        virtual void translate(int dx, int dy) = 0;
+        virtual void scale(int sx, int sy) = 0;
+        virtual void rotate_origin(double angle) = 0;
+        virtual void rotate_pin(double angle, Point2D pin) = 0;
+        virtual void rotate_center(double angle) = 0;
     };
 
     template <typename T>
@@ -52,7 +85,7 @@ private:
             return utils::make_unique<ModelImpl>(*this);
         }
 
-        void draw(RenderTarget& target) const override {
+        void draw(RenderTarget& target) override {
             x.draw(target);
         }
 
@@ -60,12 +93,36 @@ private:
             return x.name();
         }
 
+        Point2D center() const override {
+            return x.center();
+        }
+
+        void translate(int dx, int dy) override {
+            x.translate(dx, dy);
+        }
+
+        void scale(int sx, int sy) override {
+            x.scale(sx, sy);
+        }
+
+        void rotate_origin(double angle) {
+            x.rotate_origin(angle);
+        }
+
+        void rotate_pin(double angle, Point2D pin) {
+            x.rotate_pin(angle, pin);
+        }
+
+        void rotate_center(double angle) {
+            x.rotate_center(angle);
+        }
+
         T x;
     };
 
     std::unique_ptr<Model> data;
-}; // end class Drawable
+};
 
-} // end rudolph namespace
+}
 
 #endif
