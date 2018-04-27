@@ -5,6 +5,7 @@
 #include <string>
 #include "../render.h"
 #include "../geometry.h"
+#include "../matrix.h"
 
 namespace rudolph {
 namespace objects {
@@ -140,6 +141,41 @@ private:
     
     const std::string _type{"Polygon"};
     static unsigned int polygons_id;
+};
+
+class BezierCurve {
+public:
+    BezierCurve(std::vector<Point2D> points, double step = 0.05);
+
+    void draw(RenderTarget&);
+
+    std::string name() const {
+        return _name;
+    }
+
+    Point2D center() const;
+
+    void translate(double dx, double dy);
+    void scale(double sx, double sy);
+    void rotate_origin(double angle);
+    void rotate_pin(double angle, Point2D pin);
+    void rotate_center(double angle);
+
+    Matrix<double> m_t(double t);
+    void generate_curve();
+
+private:
+    std::vector<Point2D> _input;
+    std::vector<Point2D> _points;
+    std::vector<Point2D> scn_points;
+    double _step;
+    bool scn_valid;
+    unsigned _id;
+    std::string _name;
+    
+    const std::string _type{"BezierCurve"};
+    static unsigned int bezier_id;
+    static const Matrix<double> matrix_b;
 };
 
 }

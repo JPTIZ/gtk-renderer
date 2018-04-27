@@ -9,6 +9,7 @@ set(SOURCES
     dialog.cpp
     clipper.cpp
     "objects/shapes.cpp"
+    "objects/beziercurve.cpp"
     "objects/camerawindow.cpp"
 )
 

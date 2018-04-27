@@ -283,6 +283,14 @@ void MainWindow::show() {
     };
     renderer.add_object(Polygon(points, true));
 
+    points = std::vector<Point2D>{
+        Point2D{-100, 100},
+        Point2D{-90, 120},
+        Point2D{-20, 100},
+        Point2D{-30, 80}
+    };
+    renderer.add_object(BezierCurve(points));
+
     update_list();
 }
 
