@@ -143,12 +143,6 @@ std::vector<Point2D> Clipper::liang_barsky(Point2D a, Point2D b) {
 }
 
 std::vector<Point2D> Clipper::clip_polygon(std::vector<Point2D>& points) {
-    std::vector<Point2D> clip_window{
-        Point2D{edge_left, edge_up},
-        Point2D{edge_right, edge_up},
-        Point2D{edge_right, edge_down},
-        Point2D{edge_left, edge_down}
-    };
     std::vector<Point2D> new_polygon{points};
 
     // For each edge apply clipping
@@ -158,6 +152,45 @@ std::vector<Point2D> Clipper::clip_polygon(std::vector<Point2D>& points) {
     }
 
     return new_polygon;
+}
+
+std::vector<Point2D> Clipper::clip_curve(std::vector<Point2D>& points) {
+    std::vector<Point2D> new_curve{};
+
+    bool went_out = false;
+
+    for (auto i = 0u; i < points.size()-1; ++i) {
+        auto a = points[i];
+        auto b = points[i+1];
+
+        bool clip_a = clip_point(a);
+        bool clip_b = clip_point(b);
+
+        if (!went_out) {
+            if (i != 0 || !clip_a) { // if first point and clipped dont draw it
+                new_curve.push_back(a);
+            }
+        }
+
+        if (!clip_a && clip_b) { // only A is inside
+            new_curve.push_back(b);
+            went_out = true;
+        }
+        else if (clip_a && !clip_b) { // only B is inside
+            new_curve.push_back(a);
+            went_out = false;
+        }
+        else if (clip_a && clip_b) { // both are outside
+            went_out = true;
+        }
+        else if (!clip_a && !clip_b) { // both are inside
+            went_out = false;
+        }
+    }
+    if (!clip_point(points[points.size()-1]))
+        new_curve.push_back(points[points.size()-1]);
+
+    return new_curve;
 }
 
 void Clipper::clip_pol_aux(std::vector<Point2D>& new_polygon, Point2D e1, Point2D e2) {
@@ -173,13 +206,13 @@ void Clipper::clip_pol_aux(std::vector<Point2D>& new_polygon, Point2D e1, Point2
         double b_pos = (e2.x()-e1.x()) * (b.y()-e1.y()) - (e2.y()-e1.y()) * (b.x()-e1.x());
         
         if (a_pos >= 0 && b_pos >= 0) { // If both points are inside
-            new_points.push_back(b);
+            new_points.push_back(a);
         }
-        else if (a_pos < 0 && b_pos >= 0) { // only A is outside
+        else if (a_pos < 0 && b_pos >= 0) { // only B is inside
             new_points.push_back(intersection(e1, e2, a, b));
-            new_points.push_back(b);
         }
-        else if (a_pos >= 0 && b_pos < 0) { // only B is outside
+        else if (a_pos >= 0 && b_pos < 0) { // only A is inside
+            new_points.push_back(a);
             new_points.push_back(intersection(e1, e2, a, b));
         }
     }

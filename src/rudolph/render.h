@@ -37,6 +37,7 @@ public:
     void draw_point(Point2D);
     void draw_line(Point2D, Point2D);
     void draw_polygon(std::vector<Point2D> points, bool filled);
+    void draw_curve(std::vector<Point2D> points);
     void draw_viewport();
     void move_camera(double dx, double dy);
 

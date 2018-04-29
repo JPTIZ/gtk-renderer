@@ -145,7 +145,7 @@ private:
 
 class BezierCurve {
 public:
-    BezierCurve(std::vector<Point2D> points, double step = 0.05);
+    BezierCurve(std::vector<Point2D> points, double step = 0.01);
 
     void draw(RenderTarget&);
 

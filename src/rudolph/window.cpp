@@ -261,9 +261,9 @@ void MainWindow::setup()
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
 
-    renderer.add_object(Point{10, 10});
-    renderer.add_object(Line{10, 0, 270, -270});
-    renderer.add_object(Line{0, 0, -300, 260});
+    renderer.add_object(Point{-10, -10});
+    //renderer.add_object(Line{0, 0, 40, 0});
+    //renderer.add_object(Line{100, 0, 100, 40});
     auto points = std::vector<Point2D>{
         Point2D{150-200, 150},
         Point2D{175-200, 175},
@@ -284,10 +284,10 @@ void MainWindow::show() {
     renderer.add_object(Polygon(points, true));
 
     points = std::vector<Point2D>{
-        Point2D{-100, 100},
-        Point2D{-90, 120},
-        Point2D{-20, 100},
-        Point2D{-30, 80}
+        Point2D{0, 0},
+        Point2D{20, 40},
+        Point2D{80, -40},
+        Point2D{100, 0}
     };
     renderer.add_object(BezierCurve(points));
 

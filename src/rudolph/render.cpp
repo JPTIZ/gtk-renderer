@@ -307,8 +307,33 @@ void RenderTarget::draw_polygon(std::vector<Point2D> points, bool filled) {
             cairo_stroke(cr);
         }
 
-        cairo_destroy(cr);
     }
+    cairo_destroy(cr);
+}
+
+void RenderTarget::draw_curve(std::vector<Point2D> points) {
+    auto cr = cairo_create(back_buffer_);
+    cairo_set_source_rgb(cr, 0, 0, 1);
+    cairo_set_line_width(cr, 1);
+
+    auto clipper = Clipper();
+    std::vector<Point2D> clipped = clipper.clip_curve(points);
+
+    if (clipped.size() > 0) {
+        // Move to first point
+        auto va = normal_to_viewport(clipped[0]);
+        cairo_move_to(cr, va.x(), va.y());
+        // Iterate through every point
+        for (auto i = 1u; i < clipped.size(); ++i) {
+            auto vb = normal_to_viewport(clipped[i]);
+
+            cairo_line_to(cr, vb.x(), vb.y());
+        }
+
+        cairo_stroke(cr);
+
+    }
+    cairo_destroy(cr);
 }
 
 void RenderTarget::draw_viewport() {

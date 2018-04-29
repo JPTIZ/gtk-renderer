@@ -30,18 +30,7 @@ BezierCurve::BezierCurve(std::vector<Point2D> points, double step):
         throw std::invalid_argument("Points size must obey { size % 3 == 1 }");
     }
 
-    std::cout << "input" << std::endl;
-    for (auto xit : _input) {
-        std::cout << xit.x() << " " << xit.y() << std::endl;
-    }
-
-    std::cout << "points.size " << _points.size() << std::endl;
-
     generate_curve();
-
-    std::cout << "points.size " << _points.size() << std::endl;
-
-    std::cout << _name << " created." << std::endl;
 }
 
 void BezierCurve::draw(RenderTarget& target) {
@@ -52,8 +41,8 @@ void BezierCurve::draw(RenderTarget& target) {
         }
         scn_valid = true;
     }
-    std::cout << scn_points[0].x() << " " << scn_points[0].y() << std::endl;
-    target.draw_polygon(scn_points, false);
+
+    target.draw_curve(scn_points);
 }
 
 Point2D BezierCurve::center() const {
@@ -119,7 +108,7 @@ Matrix<double> BezierCurve::m_t(double t) {
               t,
               1
             }),
-            4, 1
+            1, 4
         };
 }
 
@@ -127,12 +116,11 @@ void BezierCurve::generate_curve() {
     _points.clear();
 
     for (auto i = 0; i < _input.size() - 1; i+=3) {
-        auto t = _step;
+        double t = 0;
         auto p0 = _input[i];
         auto p1 = _input[i+1];  
         auto p2 = _input[i+2];
         auto p3 = _input[i+3];
-        std::cout << p0.x() << " " << p0.y() << std::endl;
 
         auto m_x = Matrix<double>{
             *(new std::vector<double>{
@@ -144,9 +132,6 @@ void BezierCurve::generate_curve() {
             4, 1
         };
 
-        std::cout << "m_x" << std::endl;
-        m_x.to_string();
-
         auto m_y = Matrix<double>{
             *(new std::vector<double>{
                 p0.y(),
@@ -157,13 +142,7 @@ void BezierCurve::generate_curve() {
             4, 1
         };
 
-        std::cout << "m_y" << std::endl;
-        m_y.to_string();
-
-        std::cout << "t: " << t << std::endl;
-
-        while (t <= 1) {
-            std::cout << "t: " << t << std::endl;
+        while (t <= (1+_step/10)) {
             auto tm = m_t(t) * matrix_b;
 
             auto x = (tm * m_x)(0,0);

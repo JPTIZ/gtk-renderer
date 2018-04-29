@@ -30,6 +30,7 @@ public:
     bool clip_point(Point2D a);
     std::vector<Point2D> clip_line(Point2D a, Point2D b);
     std::vector<Point2D> clip_polygon(std::vector<Point2D>& points);
+    std::vector<Point2D> clip_curve(std::vector<Point2D>& points);
 
 private:
     ClipMethod _method;
@@ -43,6 +44,12 @@ private:
     const double edge_right = 1;
     const double edge_up = -1;
     const double edge_down = 1;
+    std::vector<Point2D> clip_window{
+        Point2D{edge_left, edge_up},
+        Point2D{edge_right, edge_up},
+        Point2D{edge_right, edge_down},
+        Point2D{edge_left, edge_down}
+    };
 };
 
 } // end namespace rudolph
