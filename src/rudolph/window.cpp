@@ -205,22 +205,8 @@ void MainWindow::setup()
         {"btn_new", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 std::cout << "btn new" << std::endl;
-                //auto& renderer = *reinterpret_cast<Renderer*>(data);
                 auto dialog_new = DialogWindow{geometry::Size{300, 400}, "newobject.ui"};
-
-                auto dialog_events = std::vector<Event<void(GtkWidget*, void**)>>{
-                    {"btn_cancel", "clicked",
-                        [](GtkWidget* w, gpointer* data) {
-                            std::cout << "btn cancel" << std::endl;
-                            reinterpret_cast<DialogWindow*>(data)->close();
-                        }, &dialog_new},
-                    {"btn_ok", "clicked",
-                        [](GtkWidget* w, gpointer* data) {
-                            std::cout << "btn ok" << std::endl;
-                            reinterpret_cast<DialogWindow*>(data)->close();
-                        }, &dialog_new},
-                    };
-                dialog_new.setup(std::move(dialog_events));
+                dialog_new.setup();
                 dialog_new.show();
             }, &renderer},
 
