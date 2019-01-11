@@ -17,7 +17,7 @@ const Matrix<double> BezierCurve::matrix_b{
     4, 4
 };
 
-BezierCurve::BezierCurve(std::vector<Point2D> points, double step):
+BezierCurve::BezierCurve(std::vector<Point3D> points, double step):
     _input{points},
     _step{step},
     _points{},
@@ -45,7 +45,7 @@ void BezierCurve::draw(RenderTarget& target) {
     target.draw_curve(scn_points);
 }
 
-Point2D BezierCurve::center() const {
+Point3D BezierCurve::center() const {
     auto point = _points[0];
     for (auto i = 1u; i < _points.size(); ++i) {
         point += _points[i];
@@ -78,17 +78,17 @@ void BezierCurve::scale(double sx, double sy) {
 
 void BezierCurve::rotate_origin(double angle) {
 	for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].rotate(angle);
+        _points[i].rotate_x(angle);
     }
     scn_valid = false;
 }
 
-void BezierCurve::rotate_pin(double angle, Point2D pin) {
+void BezierCurve::rotate_pin(double angle, Point3D pin) {
 	for (auto i = 0u; i < _points.size(); ++i) {
         _points[i].translate(-pin.x(), -pin.y());
     }
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].rotate(angle);
+        _points[i].rotate_x(angle);
     }
     for (auto i = 0u; i < _points.size(); ++i) {
         _points[i].translate(pin.x(), pin.y());
@@ -118,7 +118,7 @@ void BezierCurve::generate_curve() {
     for (auto i = 0; i < _input.size() - 1; i+=3) {
         double t = 0;
         auto p0 = _input[i];
-        auto p1 = _input[i+1];  
+        auto p1 = _input[i+1];
         auto p2 = _input[i+2];
         auto p3 = _input[i+3];
 
@@ -148,7 +148,7 @@ void BezierCurve::generate_curve() {
             auto x = (tm * m_x)(0,0);
             auto y = (tm * m_y)(0,0);
 
-            _points.push_back(Point2D{x, y});
+            _points.push_back(Point3D{x, y});
             t += _step;
         }
     }

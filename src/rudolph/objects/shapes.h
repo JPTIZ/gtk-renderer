@@ -3,14 +3,14 @@
 
 #include <vector>
 #include <string>
-#include "../render.h"
-#include "../geometry.h"
-#include "../matrix.h"
+#include "../render/render.h"
+#include "../utils/geometry.h"
+#include "../utils/matrix.h"
 
 namespace rudolph {
 namespace objects {
 
-using Point2D = geometry::Point2D;
+using Point3D = geometry::Point3D;
 
 class Point {
 public:
@@ -35,8 +35,8 @@ public:
     std::string name() const {
         return _name;
     }
-    
-    Point2D center() const {
+
+    Point3D center() const {
         return point;
     }
 
@@ -45,13 +45,13 @@ public:
     void scale(double sx, double sy);
 
     void rotate_origin(double angle);
-    void rotate_pin(double angle, Point2D pin);
+    void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);
 
 
 private:
-    Point2D point;
-    Point2D scn_point;
+    Point3D point;
+    Point3D scn_point;
     bool scn_valid;
     unsigned _id;
     std::string _name;
@@ -61,7 +61,7 @@ private:
 
 class Line {
 public:
-    Line(Point2D a, Point2D b):
+    Line(Point3D a, Point3D b):
         _a{a}, _b{b},
         scn_valid{false},
         _id{lines_id++},
@@ -82,21 +82,21 @@ public:
         return _name;
     }
 
-    Point2D center() const;
+    Point3D center() const;
 
     void translate(double dx, double dy);
 
     void scale(double sx, double sy);
 
     void rotate_origin(double angle);
-    void rotate_pin(double angle, Point2D pin);
+    void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);
 
 private:
-    Point2D _a;
-    Point2D _b;
-    Point2D scn_a;
-    Point2D scn_b;
+    Point3D _a;
+    Point3D _b;
+    Point3D scn_a;
+    Point3D scn_b;
     bool scn_valid;
     unsigned _id;
     std::string _name;
@@ -106,7 +106,7 @@ private:
 
 class Polygon {
 public:
-    Polygon(std::vector<Point2D> points, bool filled = false):
+    Polygon(std::vector<Point3D> points, bool filled = false):
         _points{std::move(points)},
         scn_points{_points},
         scn_valid{false},
@@ -121,31 +121,31 @@ public:
         return _name;
     }
 
-    Point2D center() const;
+    Point3D center() const;
 
     void translate(double dx, double dy);
 
     void scale(double sx, double sy);
 
     void rotate_origin(double angle);
-    void rotate_pin(double angle, Point2D pin);
+    void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);
 
 private:
-    std::vector<Point2D> _points;
-    std::vector<Point2D> scn_points;
+    std::vector<Point3D> _points;
+    std::vector<Point3D> scn_points;
     bool scn_valid;
     unsigned _id;
     std::string _name;
     bool _filled;
-    
+
     const std::string _type{"Polygon"};
     static unsigned int polygons_id;
 };
 
 class BezierCurve {
 public:
-    BezierCurve(std::vector<Point2D> points, double step = 0.01);
+    BezierCurve(std::vector<Point3D> points, double step = 0.01);
 
     void draw(RenderTarget&);
 
@@ -153,26 +153,26 @@ public:
         return _name;
     }
 
-    Point2D center() const;
+    Point3D center() const;
 
     void translate(double dx, double dy);
     void scale(double sx, double sy);
     void rotate_origin(double angle);
-    void rotate_pin(double angle, Point2D pin);
+    void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);
 
     Matrix<double> m_t(double t);
     void generate_curve();
 
 private:
-    std::vector<Point2D> _input;
-    std::vector<Point2D> _points;
-    std::vector<Point2D> scn_points;
+    std::vector<Point3D> _input;
+    std::vector<Point3D> _points;
+    std::vector<Point3D> scn_points;
     double _step;
     bool scn_valid;
     unsigned _id;
     std::string _name;
-    
+
     const std::string _type{"BezierCurve"};
     static unsigned int bezier_id;
     static const Matrix<double> matrix_b;

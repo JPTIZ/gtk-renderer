@@ -12,10 +12,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # External libraries
 
-# - GTK+3.0
-find_package(GTK3)
+# - GTKMM
+find_package(PkgConfig)
+pkg_check_modules(GTKMM gtkmm-3.0)
 
-add_definitions(${GTK3_CFLAGS_OTHER})
+if(GTKMM_FOUND)
+    message(STATUS "SFML found!")
+    message("GTKMM Include: \"${GTKMM_INCLUDE_DIRS}\"\n")
+    message("GTKMM Libraries: \"${GTKMM_LIBRARIES}\"")
+else()
+    message(FATAL_ERROR "Failed to find GTKMM...")
+endif()
+
+
+add_definitions(${GTKMM_CFLAGS_OTHER})
 
 # Project sub-dirs
 add_subdirectory(rudolph)
@@ -30,6 +40,6 @@ copy("${PROJECT_SOURCE_DIR}/rudolph/gui/newobject.ui")
 
 # Final linkings
 add_executable(gtk-renderer main.cpp)
-target_include_directories(gtk-renderer PRIVATE ${GTK3_INCLUDE_DIRS})
+target_include_directories(gtk-renderer PRIVATE ${GTKMM_INCLUDE_DIRS})
 
-target_link_libraries(gtk-renderer rudolph ${GTK3_LIBRARIES})
+target_link_libraries(gtk-renderer rudolph ${GTKMM_LIBRARIES})

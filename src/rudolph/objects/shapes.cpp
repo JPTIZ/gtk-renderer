@@ -28,13 +28,13 @@ void Point::scale(double sx, double sy) {
 }
 
 void Point::rotate_origin(double angle) {
-    point.rotate(angle);
+    point.rotate_x(angle);
     scn_valid = false;
 }
 
-void Point::rotate_pin(double angle, Point2D pin) {
+void Point::rotate_pin(double angle, Point3D pin) {
     point.translate(-pin.x(), -pin.y());
-    point.rotate(angle);
+    point.rotate_x(angle);
     point.translate(pin.x(), pin.y());
     scn_valid = false;
 }
@@ -52,8 +52,8 @@ void Line::draw(RenderTarget& target) {
     target.draw_line(scn_a, scn_b);
 }
 
-Point2D Line::center() const {
-    Point2D point{(_a.x() + _b.x())/2, (_a.y() + _b.y())/2};
+Point3D Line::center() const {
+    Point3D point{(_a.x() + _b.x())/2, (_a.y() + _b.y())/2};
     return point;
 }
 
@@ -75,16 +75,16 @@ void Line::scale(double sx, double sy) {
 }
 
 void Line::rotate_origin(double angle) {
-    _a.rotate(angle);
-    _b.rotate(angle);
+    _a.rotate_x(angle);
+    _b.rotate_x(angle);
     scn_valid = false;
 }
 
-void Line::rotate_pin(double angle, Point2D pin) {
+void Line::rotate_pin(double angle, Point3D pin) {
     _a.translate(-pin.x(), -pin.y());
     _b.translate(-pin.x(), -pin.y());
-    _a.rotate(angle);
-    _b.rotate(angle);
+    _a.rotate_x(angle);
+    _b.rotate_x(angle);
     _a.translate(pin.x(), pin.y());
     _b.translate(pin.x(), pin.y());
     scn_valid = false;
@@ -104,7 +104,7 @@ void Polygon::draw(RenderTarget& target) {
     target.draw_polygon(scn_points, _filled);
 }
 
-Point2D Polygon::center() const {
+Point3D Polygon::center() const {
     auto point = _points[0];
     for (auto i = 1u; i < _points.size(); ++i) {
         point += _points[i];
@@ -137,17 +137,17 @@ void Polygon::scale(double sx, double sy) {
 
 void Polygon::rotate_origin(double angle) {
 	for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].rotate(angle);
+        _points[i].rotate_x(angle);
     }
     scn_valid = false;
 }
 
-void Polygon::rotate_pin(double angle, Point2D pin) {
+void Polygon::rotate_pin(double angle, Point3D pin) {
 	for (auto i = 0u; i < _points.size(); ++i) {
         _points[i].translate(-pin.x(), -pin.y());
     }
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].rotate(angle);
+        _points[i].rotate_x(angle);
     }
     for (auto i = 0u; i < _points.size(); ++i) {
         _points[i].translate(pin.x(), pin.y());

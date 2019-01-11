@@ -1,0 +1,3 @@
+default:
+	cmake ../src
+	make -f Makefile
