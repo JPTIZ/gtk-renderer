@@ -6,9 +6,9 @@ set(SOURCES
 )
 
 add_subdirectory(gui)
-add_subdirectory(render)
-add_subdirectory(objects)
-add_subdirectory(utils)
+# add_subdirectory(render)
+# add_subdirectory(objects)
+# add_subdirectory(utils)
 
 add_library(rudolph STATIC
     ${SOURCES}
@@ -16,9 +16,9 @@ add_library(rudolph STATIC
 
 target_link_libraries(rudolph PUBLIC
     gui
-    render
-    objects
-    utils
+    #    render
+    #    objects
+    #    utils
     ${GTKMM_LIBRARIES}
 )
 

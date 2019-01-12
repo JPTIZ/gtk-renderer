@@ -2,9 +2,10 @@
 
 #include "gui/window.h"
 
-void rudolph::main(int& argc, char**& argv) {
-    auto window = MainWindow{geometry::Size{800, 700}};
-    window.show();
+void rudolph::main() {
+    auto app = Gtk::Application::create("rudolph");
+    auto window = MainWindow{geometry::Size{800, 600}, app};
 
-    gtk_main();
+    window.show();
+    app->run(window);
 }

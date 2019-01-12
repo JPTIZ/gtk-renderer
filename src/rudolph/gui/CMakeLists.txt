@@ -3,7 +3,7 @@ project(gui CXX)
 
 set(SOURCES
     "window.cpp"
-    "dialog.cpp"
+    #    "dialog.cpp"
 )
 
 add_library(gui STATIC
