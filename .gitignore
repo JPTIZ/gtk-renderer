@@ -37,4 +37,4 @@ build/
 # Temporary files
 for-vpl/vpl
 **/.*.swp
-rudolph
+/rudolph
