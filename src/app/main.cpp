@@ -1,6 +1,6 @@
 #include "rudolph/rudolph.h"
 
-int main(int argc, char* argv[]) {
+int main() {
     rudolph::main();
 
     return 0;

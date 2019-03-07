@@ -1,3 +1,6 @@
+#------------------------------------------------------------------------------
+# Rudolph's library modules.
+#------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.0)
 project(rudolph CXX)
 
@@ -6,20 +9,16 @@ set(SOURCES
 )
 
 add_subdirectory(gui)
-# add_subdirectory(render)
-# add_subdirectory(objects)
-# add_subdirectory(utils)
 
 add_library(rudolph STATIC
     ${SOURCES}
 )
 
-target_link_libraries(rudolph PUBLIC
-    gui
-    #    render
-    #    objects
-    #    utils
-    ${GTKMM_LIBRARIES}
+target_link_libraries(rudolph
+    PUBLIC
+        gui
+    PRIVATE
+        ${GTKMM_LIBRARIES}
 )
 
 target_include_directories(rudolph
@@ -28,3 +27,6 @@ target_include_directories(rudolph
     PRIVATE
         ${GTKMM_INCLUDE_DIRS}
 )
+
+copy("${PROJECT_SOURCE_DIR}/gui/mainwindow.ui")
+copy("${PROJECT_SOURCE_DIR}/gui/newobject.ui")
