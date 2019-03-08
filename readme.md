@@ -10,6 +10,18 @@ C++).
 Build & Run
 -----------
 
-Run `make` in project dir and then `./rudolph`.
+Build:
 
-> Desenvolvido por: @jptiz e @diogojr2d
+```console
+$ cmake -B build  # Only on first build
+$ make -C build
+```
+
+Run:
+
+```console
+$ ./build/src/app/app
+```
+
+> First Version Developed by: @jptiz e @diogojr2d
+> New Version Developed by: @jptiz
