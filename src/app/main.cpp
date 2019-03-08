@@ -1,7 +1,7 @@
-#include "rudolph/rudolph.h"
+#include "app.h"
 
 int main() {
-    rudolph::main();
+    rudolph::app::Rudolph();
 
     return 0;
 }

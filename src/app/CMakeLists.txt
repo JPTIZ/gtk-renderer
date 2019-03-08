@@ -6,6 +6,7 @@ project(app CXX)
 
 set(SOURCES
     "main.cpp"
+    "app.cpp"
 )
 
 add_executable(app

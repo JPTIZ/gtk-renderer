@@ -1,5 +1,5 @@
-#ifndef RUDOLPH_WINDOW_H
-#define RUDOLPH_WINDOW_H
+#ifndef RUDOLPH_GUI_WINDOW_H
+#define RUDOLPH_GUI_WINDOW_H
 
 #include <memory>
 #include <utility>
@@ -9,6 +9,7 @@
 #include "../utils/geometry.h"
 
 namespace rudolph {
+namespace gui {
 
 class MainWindow: public Gtk::ApplicationWindow {
     using Size = geometry::Size;
@@ -26,6 +27,7 @@ private:
     Gtk::ApplicationWindow gtk_window;
 };
 
+}
 }
 
 #endif
