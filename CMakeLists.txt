@@ -2,7 +2,7 @@
 # Setup project
 #------------------------------------------------------------------------------
 # Project name and build-system
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 2.8)
 project(gtk-renderer CXX)
 
 # Add warning flags for g++
@@ -51,7 +51,7 @@ macro(copy file)
 endmacro()
 
 # Set resources dir variable
-set(PROJECT_RESOURCE_DIR "${PROJECT_SOURCE_DIR}/res")
+#set(PROJECT_RESOURCE_DIR "${PROJECT_SOURCE_DIR}/res")
 
 # Local libraries
 add_subdirectory(src/rudolph)
