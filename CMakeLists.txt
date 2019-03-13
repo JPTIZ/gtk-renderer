@@ -50,6 +50,9 @@ macro(copy file)
     configure_file(${file} ${PROJECT_BINARY_DIR}/${base} COPYONLY)
 endmacro()
 
+# Set resources dir variable
+set(PROJECT_RESOURCE_DIR "${PROJECT_SOURCE_DIR}/res")
+
 # Local libraries
 add_subdirectory(src/rudolph)
 
