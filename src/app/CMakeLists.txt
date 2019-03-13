@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # The Rudolph Application itself
 #------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 2.8)
 project(app CXX)
 
 set(SOURCES
