@@ -20,8 +20,12 @@ else()
 endif()
 
 # Set C++11 standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.1")
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+else()
+    add_compile_options(-std=c++11)
+endif()
 
 #------------------------------------------------------------------------------
 # External Libraries
