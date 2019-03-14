@@ -20,7 +20,7 @@ else()
 endif()
 
 # Set C++11 standard
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.1")
+if(${CMAKE_VERSION} VERSION_GREATER "3.1")
     set(CMAKE_CXX_STANDARD 11)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 else()
