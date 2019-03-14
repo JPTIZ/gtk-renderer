@@ -4,8 +4,6 @@
 #include <gtkmm.h>
 #include <memory>
 
-#include "rudolph/gui/window.h"
-
 namespace rudolph {
 namespace app {
 
@@ -13,9 +11,15 @@ class Rudolph {
 public:
     Rudolph();
 
+    void run() {
+        _app->run();
+    }
+
 private:
+    void create_mainwindow();
+
     Glib::RefPtr<Gtk::Application> _app;
-    std::unique_ptr<rudolph::gui::MainWindow> _window;
+    std::shared_ptr<Gtk::ApplicationWindow> _mainwindow;
 };
 
 }
