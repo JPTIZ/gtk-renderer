@@ -14,10 +14,10 @@ Rudolph::Rudolph():
 {
     _app = Gtk::Application::create("org.rudolph");
     _app->signal_activate().connect([this]() {
-        _window = utils::make_unique<MainWindow>(
-            geometry::Size{800, 600},
-            _app
-        );
+        auto builder = Gtk::Builder::create_from_file("res/ui/mainwindow.ui");
+
+        Gtk::Window* _window;
+        builder->get_widget("main_window", _window);
 
         _app->add_window(*_window);
 
