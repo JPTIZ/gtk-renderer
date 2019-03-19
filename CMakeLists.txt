@@ -58,7 +58,7 @@ endmacro()
 #set(PROJECT_RESOURCE_DIR "${PROJECT_SOURCE_DIR}/res")
 
 # Local libraries
-add_subdirectory(src/rudolph)
+# add_subdirectory(src/rudolph)
 
 # Final executable
 add_subdirectory(src/app)

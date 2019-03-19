@@ -23,6 +23,3 @@ target_include_directories(rudolph
     PRIVATE
         ${GTKMM_INCLUDE_DIRS}
 )
-
-copy("${PROJECT_SOURCE_DIR}/gui/mainwindow.ui")
-copy("${PROJECT_SOURCE_DIR}/gui/newobject.ui")
