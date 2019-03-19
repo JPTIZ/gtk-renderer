@@ -19,6 +19,7 @@ target_link_libraries(rudolph
         render
     PRIVATE
         ${GTKMM_LIBRARIES}
+        ${CAIROMM_LIBRARIES}
 )
 
 target_include_directories(rudolph
@@ -26,4 +27,5 @@ target_include_directories(rudolph
         ${CMAKE_CURRENT_LIST_DIR}
     PRIVATE
         ${GTKMM_INCLUDE_DIRS}
+        ${CAIROMM_INCLUDE_DIRS}
 )

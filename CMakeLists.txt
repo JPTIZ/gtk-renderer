@@ -33,6 +33,7 @@ endif()
 # - GTKMM
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
+pkg_check_modules(CAIROMM cairomm-1.0)
 
 if(GTKMM_FOUND)
     message(STATUS "GTKMM found!")
@@ -43,7 +44,17 @@ else()
     message(FATAL_ERROR "Failed to find GTKMM. Do you have and GTKMM.cmake?")
 endif()
 
+if(CAIROMM_FOUND)
+    message(STATUS "CAIROMM found!")
+    message("       Include  -> \"${CAIROMM_INCLUDE_DIRS}\"")
+    message("       Libs     -> \"${CAIROMM_LIBRARIES}\"")
+    message("       Flags    -> \"${CAIROMM_CFLAGS_OTHER}\"")
+else()
+    message(FATAL_ERROR "Failed to find CAIROMM. Do you have and CAIROMM.cmake?")
+endif()
+
 add_definitions(${GTKMM_CFLAGS_OTHER})
+add_definitions(${CAIROMM_CFLAGS_OTHER})
 
 #------------------------------------------------------------------------------
 # Local sources
