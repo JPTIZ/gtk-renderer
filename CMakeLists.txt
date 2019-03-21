@@ -7,7 +7,7 @@ project(gtk-renderer CXX)
 
 # Add warning flags for g++
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror")
 endif()
 
 # Show profile and compilation flags
