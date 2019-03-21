@@ -5,6 +5,7 @@ add_library(render
     STATIC
         renderer.cpp
         geometry.cpp
+        display_file.cpp
 )
 
 target_include_directories(render

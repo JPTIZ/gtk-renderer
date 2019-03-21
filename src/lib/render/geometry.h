@@ -31,7 +31,7 @@ struct Point : GraphicObject {
         Point(Vec2(x_, y_))
     {}
 
-    void draw() override;
+    void draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
 struct Line : GraphicObject {
@@ -45,7 +45,7 @@ struct Line : GraphicObject {
         b{b_}
     {}
 
-    void draw() override;
+    void draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
 struct Polygon : GraphicObject {
@@ -55,7 +55,7 @@ struct Polygon : GraphicObject {
         vertices{vertices_}
     {}
 
-    void draw() override;
+    void draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
 struct Size {

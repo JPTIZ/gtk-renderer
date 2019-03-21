@@ -17,7 +17,8 @@ public:
     }
 
 private:
-    Renderer renderer = Renderer();
+    DisplayFile _display_file = DisplayFile();
+    Renderer _renderer = Renderer(_display_file);
 
     Glib::RefPtr<Gtk::Application> _app;
     std::shared_ptr<Gtk::ApplicationWindow> _mainwindow;

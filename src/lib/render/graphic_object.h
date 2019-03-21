@@ -2,14 +2,16 @@
 #define RUDOLPH_GRAPHIC_OBJECT_H
 
 #include <string>
+#include <gtkmm.h>
 
 namespace rudolph {
 
 class GraphicObject {
+public:
     std::string name;
     std::string type;
 
-    virtual void draw() = 0;
+    virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr) = 0;
 };
 
 }

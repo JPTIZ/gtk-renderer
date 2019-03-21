@@ -2,6 +2,7 @@
 
 #include "utils/cppnew.h"
 #include "utils/gtk.h"
+#include "lib/render/geometry.h"
 
 using namespace rudolph;
 
@@ -15,6 +16,31 @@ Rudolph::Rudolph():
     _app->signal_activate().connect(
         sigc::mem_fun(*this, &Rudolph::create_mainwindow)
     );
+
+    _display_file.add(std::make_shared<geometry::Line>(
+        geometry::Vec2{60, 70},
+        geometry::Vec2{80, 70}
+    ));
+
+    _display_file.add(std::make_shared<geometry::Point>(
+        geometry::Vec2{100, 100}
+    ));
+
+    _display_file.add(std::make_shared<geometry::Polygon>(
+        std::vector<geometry::Vec2>({
+            geometry::Vec2{150, 150},
+            geometry::Vec2{150, 200},
+            geometry::Vec2{200, 200}
+        })
+    ));
+
+    _display_file.add(std::make_shared<geometry::Polygon>(
+        std::vector<geometry::Vec2>({
+            geometry::Vec2{350, 350},
+            geometry::Vec2{350, 400},
+            geometry::Vec2{400, 400}
+        })
+    ));
 }
 
 void Rudolph::create_mainwindow() {
@@ -28,7 +54,7 @@ void Rudolph::create_mainwindow() {
         builder, "drawing-area"
     );
 
-    _drawing_area->signal_draw().connect(sigc::mem_fun(renderer, &Renderer::on_draw));
+    _drawing_area->signal_draw().connect(sigc::mem_fun(_renderer, &Renderer::on_draw));
 
     _mainwindow->set_application(_app);
     _app->add_window(*_mainwindow);
