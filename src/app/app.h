@@ -20,6 +20,7 @@ private:
 
     Glib::RefPtr<Gtk::Application> _app;
     std::shared_ptr<Gtk::ApplicationWindow> _mainwindow;
+    std::shared_ptr<Gtk::DrawingArea> _drawing_area;
 };
 
 }
