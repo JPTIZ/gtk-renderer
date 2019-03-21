@@ -72,4 +72,5 @@ endmacro()
 # add_subdirectory(src/rudolph)
 
 # Final executable
+add_subdirectory(src/lib)
 add_subdirectory(src/app)

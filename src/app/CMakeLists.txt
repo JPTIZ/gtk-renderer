@@ -21,7 +21,8 @@ target_include_directories(app
         ${GTKMM_INCLUDE_DIRS}
 )
 
-target_link_libraries(app PUBLIC
-    # rudolph
-    ${GTKMM_LIBRARIES}
+target_link_libraries(app
+    PUBLIC
+        rudolph
+        ${GTKMM_LIBRARIES}
 )

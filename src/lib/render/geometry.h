@@ -8,7 +8,7 @@
 namespace rudolph {
 namespace geometry {
 
-struct Vec2 {
+struct Vec2{
     double x{0};
     double y{0};
 
@@ -30,6 +30,8 @@ struct Point : GraphicObject {
     Point(double x_, double y_):
         Point(Vec2(x_, y_))
     {}
+
+    void draw() override;
 };
 
 struct Line : GraphicObject {
@@ -42,6 +44,8 @@ struct Line : GraphicObject {
         a{a_},
         b{b_}
     {}
+
+    void draw() override;
 };
 
 struct Polygon : GraphicObject {
@@ -50,6 +54,8 @@ struct Polygon : GraphicObject {
     Polygon(std::vector<Vec2> vertices_):
         vertices{vertices_}
     {}
+
+    void draw() override;
 };
 
 struct Size {

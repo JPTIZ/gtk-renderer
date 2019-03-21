@@ -4,18 +4,18 @@
 cmake_minimum_required(VERSION 2.8)
 project(rudolph CXX)
 
-add_subdirectory(algebra)
+#add_subdirectory(lin_algebra)
 add_subdirectory(render)
 
 add_library(rudolph
     STATIC
-        algebra
+        # algebra
         render
 )
 
 target_link_libraries(rudolph
     PUBLIC
-        algebra
+        # algebra
         render
     PRIVATE
         ${GTKMM_LIBRARIES}

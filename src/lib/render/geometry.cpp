@@ -3,23 +3,13 @@
 namespace rudolph {
 namespace geometry {
 
-struct Point : GraphicObject {
-    void draw() override {
 
-    }
-};
+void Point::draw() {}
 
-struct Line : GraphicObject {
-    void draw() override {
+void Line::draw() {}
 
-    }
-};
+void Polygon::draw() {}
 
-struct Polygon : GraphicObject {
-    void draw() override {
-
-    }
-};
 
 }
 }
