@@ -2,14 +2,14 @@
 # Algebra module.
 #------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8)
-project(algebra CXX)
+project(render CXX)
 
-add_library(algebra
+add_library(rudolph
     STATIC
-        matrix.cpp
+        window.cpp
 )
 
-target_include_directories(algebra
+target_include_directories(rudolph
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
 )
