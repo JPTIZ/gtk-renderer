@@ -1,22 +1,13 @@
-#ifndef RUDOLPH_GEOMETRY_H
-#define RUDOLPH_GEOMETRY_H
+#ifndef RUDOLPH_RENDER_GEOMETRY_H
+#define RUDOLPH_RENDER_GEOMETRY_H
 
 #include <memory>
 #include <vector>
 #include "graphic_object.h"
+#include "../utils/geometry.h"
 
 namespace rudolph {
 namespace geometry {
-
-struct Vec2{
-    double x{0};
-    double y{0};
-
-    Vec2(double x_, double y_):
-        x{x_},
-        y{y_}
-    {}
-};
 
 struct Point : GraphicObject {
     Vec2 pos;
@@ -56,16 +47,6 @@ struct Polygon : GraphicObject {
     {}
 
     void draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-};
-
-struct Size {
-    double width{0};
-    double height{0};
-
-    Size(double w, double h):
-        width{w},
-        height{h}
-    {}
 };
 
 }
