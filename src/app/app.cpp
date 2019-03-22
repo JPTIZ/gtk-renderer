@@ -1,10 +1,13 @@
 #include "app.h"
 
+#include <iostream>
+
 #include "utils/cppnew.h"
-#include "utils/gtk.h"
+#include "utils/signals.h"
 #include "lib/render/geometry.h"
 
 using namespace rudolph;
+using namespace utils;
 
 namespace rudolph {
 namespace app {
@@ -44,24 +47,47 @@ Rudolph::Rudolph():
 }
 
 void Rudolph::create_mainwindow() {
+    using str = std::string;
+    using std::bind;
+    using namespace std::placeholders;
+
     auto builder = Gtk::Builder::create_from_file("res/ui/mainwindow.ui");
 
+    link_all<Callback::Clicked, Gtk::Button>(
+        _elms,
+        builder,
+        {
+            signal(str{"btn-up"}, []() {
+                std::cout << "Clicked 'up'\n";
+            }),
+            signal(str{"btn-down"}, []() {
+                std::cout << "Clicked 'down'\n";
+            }),
+            signal(str{"btn-left"}, []() {
+                std::cout << "Clicked 'left'\n";
+            }),
+            signal(str{"btn-right"}, []() {
+                std::cout << "Clicked 'right'\n";
+            }),
+        }
+    );
+
+    sig<Callback::Draw, Gtk::DrawingArea>(
+        _elms,
+        builder,
+        "drawing-area",
+        bind(&Renderer::on_draw, _renderer, _1)
+    );
+
     _mainwindow = utils::get_widget<Gtk::ApplicationWindow>(
-            builder, "main_window"
+        builder, "main-window"
     );
-
-    _drawing_area = utils::get_widget<Gtk::DrawingArea>(
-        builder, "drawing-area"
-    );
-
-    _drawing_area->signal_draw().connect(sigc::mem_fun(_renderer, &Renderer::on_draw));
 
     _mainwindow->set_application(_app);
     _app->add_window(*_mainwindow);
 
     _mainwindow->present();
 }
-
 
 }
 }
