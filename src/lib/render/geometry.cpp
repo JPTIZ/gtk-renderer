@@ -16,7 +16,7 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 void Polygon::draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     Vec2 start = this->vertices[0];
     cr->move_to(start.x, start.y);
-    for(int i = 1; i < this->vertices.size(); i++) {
+    for(auto i = 1u; i < this->vertices.size(); i++) {
         Vec2 next = this->vertices[i];
         cr->line_to(next.x, next.y);
         cr->move_to(next.x, next.y);
@@ -26,3 +26,4 @@ void Polygon::draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
 }
 }
+

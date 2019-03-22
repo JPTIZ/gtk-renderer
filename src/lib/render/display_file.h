@@ -9,11 +9,11 @@ namespace rudolph {
     struct DisplayFile {
         std::vector<std::shared_ptr<GraphicObject>> objects;
 
-        void add(std::shared_ptr<GraphicObject> object);
+        void add(const std::shared_ptr<GraphicObject> object);
 
-        void remove_from(int index);
+        void remove(int index);
 
-        void replace(int index, std::shared_ptr<GraphicObject> object);
+        void replace(int index, const std::shared_ptr<GraphicObject> object);
 
         std::shared_ptr<GraphicObject> at(int index);
 

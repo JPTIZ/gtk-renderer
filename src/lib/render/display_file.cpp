@@ -3,17 +3,19 @@
 
 namespace rudolph {
 
-void DisplayFile::add(std::shared_ptr<GraphicObject> object) {
-    std::cout << "Objeto adicionado" << std::endl;
-    this->objects.push_back(object);
+void DisplayFile::add(const std::shared_ptr<GraphicObject> object) {
+    objects.push_back(object);
+    std::cout << "Object added" << std::endl;
 }
 
-void DisplayFile::remove_from(int index) {
-
+void DisplayFile::remove(int index) {
+    objects.erase(objects.begin() + index);
+    std::cout << "Object[" << index << "] removed" << std::endl;
 }
 
-void DisplayFile::replace(int index, std::shared_ptr<GraphicObject> object) {
-
+void DisplayFile::replace(int index, const std::shared_ptr<GraphicObject> object) {
+    objects.insert(objects.begin() + index, object);
+    std::cout << "Object[" << index << "] replaced" << std::endl;
 }
 
 std::shared_ptr<GraphicObject> DisplayFile::at(int index) {
