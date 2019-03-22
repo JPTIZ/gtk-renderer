@@ -2,6 +2,14 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
+  <object class="GtkListStore" id="object-list-store">
+    <columns>
+      <!-- column-name object-name -->
+      <column type="gchararray"/>
+      <!-- column-name object-type -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="can_focus">False</property>
     <child>
@@ -400,79 +408,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="object-list-store">
-    <columns>
-      <!-- column-name object-name -->
-      <column type="gchararray"/>
-      <!-- column-name object-type -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">line_01</col>
-        <col id="1" translatable="yes">&lt;line&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">line_02</col>
-        <col id="1" translatable="yes">&lt;line&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">line_03</col>
-        <col id="1" translatable="yes">&lt;line&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">line_04</col>
-        <col id="1" translatable="yes">&lt;line&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">point_01</col>
-        <col id="1" translatable="yes">&lt;point&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">point_02</col>
-        <col id="1" translatable="yes">&lt;point&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">point_03</col>
-        <col id="1" translatable="yes">&lt;point&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">point_04</col>
-        <col id="1" translatable="yes">&lt;point&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">point_05</col>
-        <col id="1" translatable="yes">&lt;point&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">point_06</col>
-        <col id="1" translatable="yes">&lt;point&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">point_07</col>
-        <col id="1" translatable="yes">&lt;point&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">polygon_01</col>
-        <col id="1" translatable="yes">&lt;polygon&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">polygon_02</col>
-        <col id="1" translatable="yes">&lt;polygon&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">polygon_03</col>
-        <col id="1" translatable="yes">&lt;polygon&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">polygon_04</col>
-        <col id="1" translatable="yes">&lt;polygon&gt;</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">polygon_05</col>
-        <col id="1" translatable="yes">&lt;polygon&gt;</col>
-      </row>
-    </data>
   </object>
 </interface>
