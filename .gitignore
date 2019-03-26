@@ -38,3 +38,7 @@ build/
 for-vpl/vpl
 **/.*.swp
 /rudolph
+res/ui/*~
+
+# VScode
+.vscode
