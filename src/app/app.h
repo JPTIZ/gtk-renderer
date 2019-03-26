@@ -19,7 +19,9 @@ public:
 private:
     DisplayFile _display_file = DisplayFile();
     Renderer _renderer = Renderer(_display_file);
+    DisplayFileColumns m_columns;
 
+    Glib::RefPtr<Gtk::ListStore> _list_store;
     Glib::RefPtr<Gtk::Application> _app;
     std::shared_ptr<Gtk::ApplicationWindow> _mainwindow;
     std::shared_ptr<Gtk::DrawingArea> _drawing_area;

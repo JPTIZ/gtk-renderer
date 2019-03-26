@@ -54,6 +54,12 @@ void Rudolph::create_mainwindow() {
         builder, "drawing-area"
     );
 
+    _list_store = Glib::RefPtr<Gtk::ListStore>::cast_dynamic(
+        builder->get_object("object-list-store")
+    );
+
+    // auto row = *(_list_store->append());
+
     _drawing_area->signal_draw().connect(sigc::mem_fun(_renderer, &Renderer::on_draw));
 
     _mainwindow->set_application(_app);
