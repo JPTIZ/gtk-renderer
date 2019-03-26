@@ -13,9 +13,9 @@ bool Renderer::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
     int n_objects = this->_display_file.size();
     std::cout << "Number of objects to draw: " << n_objects << std::endl;
 
-    for(int i = 0; i < n_objects; i++) {
-        std::shared_ptr<GraphicObject> object = this->_display_file.at(i);
-        if (object != nullptr) {
+    for (int i = 0; i < n_objects; i++) {
+        auto object = _display_file[i];
+        if (object) {
             std::cout << "Drawing object #" << i << std::endl;
             object->draw(cr);
         }

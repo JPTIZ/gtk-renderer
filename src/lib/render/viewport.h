@@ -16,7 +16,7 @@ public:
         Rectangle{pos, size}
     {}
 
-    void draw() override;
+    void draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
 }

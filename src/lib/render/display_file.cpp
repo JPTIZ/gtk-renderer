@@ -17,10 +17,6 @@ void DisplayFile::replace(int index, std::shared_ptr<GraphicObject> object) {
     (void)object;
 }
 
-std::shared_ptr<GraphicObject> DisplayFile::at(int index) {
-    return objects.at(index);
-}
-
 int DisplayFile::size() {
     return objects.size();
 }

@@ -19,9 +19,6 @@ using fn = std::function<T>;
 template <typename R, typename ...T>
 using Proxy = Glib::SignalProxy<R, T...>;
 
-// template <typename ProxyType, typename T>
-// using Signal = fn<ProxyType(T*)>;
-
 using Bind = std::tuple<std::string, fn<void()>, fn<void()>>;
 
 /**
