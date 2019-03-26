@@ -12,8 +12,19 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-delete</property>
   </object>
+  <object class="GtkListStore" id="object-list-store">
+    <columns>
+      <!-- column-name m_col_name -->
+      <column type="gchararray"/>
+      <!-- column-name m_col_type -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="can_focus">False</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -156,6 +167,7 @@
             <property name="can_focus">False</property>
             <property name="margin_top">8</property>
             <property name="margin_bottom">8</property>
+            <property name="vexpand">True</property>
             <child>
               <object class="GtkBox" id="left-box">
                 <property name="visible">True</property>
@@ -547,13 +559,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="object-list-store">
-    <columns>
-      <!-- column-name m_col_name -->
-      <column type="gchararray"/>
-      <!-- column-name m_col_type -->
-      <column type="gchararray"/>
-    </columns>
   </object>
 </interface>
