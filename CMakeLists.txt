@@ -2,8 +2,10 @@
 # Setup project
 #------------------------------------------------------------------------------
 # Project name and build-system
-cmake_minimum_required(VERSION 2.8)
-project(gtk-renderer CXX)
+cmake_minimum_required(VERSION 3.8)
+project(gtk-renderer
+    VERSION 0.1
+    LANGUAGES CXX)
 
 # Add warning flags for g++
 if(CMAKE_COMPILER_IS_GNUCXX)

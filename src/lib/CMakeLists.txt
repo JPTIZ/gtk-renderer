@@ -1,7 +1,6 @@
 #------------------------------------------------------------------------------
 # Rudolph's library modules.
 #------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.8)
 project(rudolph CXX)
 
 #add_subdirectory(lin_algebra)
