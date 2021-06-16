@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-#include "utils/cppnew.h"
 #include "utils/signals.h"
 #include "lib/render/geometry.h"
 
@@ -47,7 +46,7 @@ Rudolph::Rudolph():
 }
 
 void Rudolph::create_mainwindow() {
-    using str = std::string;
+    using std::string;
     using std::bind;
     using namespace std::placeholders;
 
@@ -57,16 +56,16 @@ void Rudolph::create_mainwindow() {
         _elms,
         builder,
         {
-            signal(str{"btn-up"}, []() {
+            signal(string{"btn-up"}, []() {
                 std::cout << "Clicked 'up'\n";
             }),
-            signal(str{"btn-down"}, []() {
+            signal(string{"btn-down"}, []() {
                 std::cout << "Clicked 'down'\n";
             }),
-            signal(str{"btn-left"}, []() {
+            signal(string{"btn-left"}, []() {
                 std::cout << "Clicked 'left'\n";
             }),
-            signal(str{"btn-right"}, []() {
+            signal(string{"btn-right"}, []() {
                 std::cout << "Clicked 'right'\n";
             }),
         }
