@@ -25,3 +25,7 @@ target_link_libraries(app
         rudolph
         ${GTKMM_LIBRARIES}
 )
+
+# Set C++20 standard
+target_compile_features(app PUBLIC cxx_std_20)
+set_target_properties(app PROPERTIES CXX_EXTENSIONS OFF)

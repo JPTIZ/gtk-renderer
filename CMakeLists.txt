@@ -21,21 +21,11 @@ else()
     message("         Release flags  -> ${CMAKE_CXX_FLAGS_RELEASE}")
 endif()
 
-# Set C++11 standard
-if(${CMAKE_VERSION} VERSION_GREATER "3.1")
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-else()
-    add_compile_options(-std=c++11)
-endif()
-
 #------------------------------------------------------------------------------
 # External Libraries
 #------------------------------------------------------------------------------
-# - GTKMM
-find_package(PkgConfig)
-pkg_check_modules(GTKMM gtkmm-3.0)
-pkg_check_modules(CAIROMM cairomm-1.0)
+find_library(GTKMM gtkmm-3.0)
+find_library(CAIROMM cairomm-1.0)
 
 if(GTKMM_FOUND)
     message(STATUS "GTKMM found!")
@@ -67,12 +57,5 @@ macro(copy file)
     configure_file(${file} ${PROJECT_BINARY_DIR}/${base} COPYONLY)
 endmacro()
 
-# Set resources dir variable
-#set(PROJECT_RESOURCE_DIR "${PROJECT_SOURCE_DIR}/res")
-
-# Local libraries
-# add_subdirectory(src/rudolph)
-
-# Final executable
 add_subdirectory(src/lib)
 add_subdirectory(src/app)
