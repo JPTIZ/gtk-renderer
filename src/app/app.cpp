@@ -52,21 +52,33 @@ void Rudolph::create_mainwindow() {
 
     auto builder = Gtk::Builder::create_from_file("res/ui/mainwindow.ui");
 
+    auto drawing_area = utils::get_widget<Gtk::DrawingArea>(
+        builder, "drawing-area"
+    );
+
     link_all<Callback::Clicked, Gtk::Button>(
         _elms,
         builder,
         {
-            signal(string{"btn-up"}, []() {
+            signal(string{"btn-up"}, [this, drawing_area]() {
                 std::cout << "Clicked 'up'\n";
+                _renderer.window().offset({0, -10});
+                drawing_area->queue_draw();
             }),
-            signal(string{"btn-down"}, []() {
+            signal(string{"btn-down"}, [this, drawing_area]() {
                 std::cout << "Clicked 'down'\n";
+                _renderer.window().offset({0, 10});
+                drawing_area->queue_draw();
             }),
-            signal(string{"btn-left"}, []() {
+            signal(string{"btn-left"}, [this, drawing_area]() {
                 std::cout << "Clicked 'left'\n";
+                _renderer.window().offset({-10, 0});
+                drawing_area->queue_draw();
             }),
-            signal(string{"btn-right"}, []() {
+            signal(string{"btn-right"}, [this, drawing_area]() {
                 std::cout << "Clicked 'right'\n";
+                _renderer.window().offset({10, 0});
+                drawing_area->queue_draw();
             }),
         }
     );
@@ -75,7 +87,7 @@ void Rudolph::create_mainwindow() {
         _elms,
         builder,
         "drawing-area",
-        bind(&Renderer::on_draw, _renderer, _1)
+        sigc::mem_fun(_renderer, &Renderer::on_draw)
     );
 
     _mainwindow = utils::get_widget<Gtk::ApplicationWindow>(

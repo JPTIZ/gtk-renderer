@@ -22,7 +22,7 @@ struct Point : GraphicObject {
         Point(Vec2(x_, y_))
     {}
 
-    void draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+    void draw(const Cairo::RefPtr<Cairo::Context>& cr, const render::Window& window) override;
 };
 
 struct Line : GraphicObject {
@@ -36,7 +36,7 @@ struct Line : GraphicObject {
         b{b_}
     {}
 
-    void draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+    void draw(const Cairo::RefPtr<Cairo::Context>& cr, const render::Window& window) override;
 };
 
 struct Polygon : GraphicObject {
@@ -46,7 +46,7 @@ struct Polygon : GraphicObject {
         vertices{vertices_}
     {}
 
-    void draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+    void draw(const Cairo::RefPtr<Cairo::Context>& cr, const render::Window& window) override;
 };
 
 }

@@ -4,6 +4,8 @@
 #include <string>
 #include <gtkmm.h>
 
+#include "window.h"
+
 namespace rudolph {
 
 class GraphicObject {
@@ -11,7 +13,7 @@ public:
     std::string name;
     std::string type;
 
-    virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr) = 0;
+    virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr, const render::Window& window) = 0;
 };
 
 }

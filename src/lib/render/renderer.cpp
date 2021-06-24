@@ -12,12 +12,18 @@ bool Renderer::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
     // Iterate the display file, drawing each object according to its type
     int n_objects = this->_display_file.size();
     std::cout << "Number of objects to draw: " << n_objects << std::endl;
+    auto [win_x, win_y] = _window.pos();
+    auto [win_w, win_h] = _window.size();
+    std::cout << "Window: {\n"
+        "    pos: (" << win_x << ", " << win_y << ")\n"
+        "    siz: (" << win_w << ", " << win_h << ")\n"
+        "}\n";
 
     for (int i = 0; i < n_objects; i++) {
         auto object = _display_file[i];
         if (object) {
             std::cout << "Drawing object #" << i << std::endl;
-            object->draw(cr);
+            object->draw(cr, _window);
         }
     }
     cr->stroke();

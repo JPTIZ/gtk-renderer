@@ -110,12 +110,13 @@ void link_all(
     const BuilderPtr builder,
     const std::vector<Connection<CallbackType>>& signals
 ) {
-    for (auto& btn: signals) {
+    for (auto& _signal: signals) {
+        auto [id, callback] = _signal;
         sig<CallbackType, WidgetType>(
             elms,
             builder,
-            std::get<0>(btn),
-            std::get<1>(btn)
+            id,
+            callback
         );
     }
 }
