@@ -2,7 +2,7 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
-  <object class="GtkApplicationWindow" id="main_window">
+  <object class="GtkApplicationWindow" id="main-window">
     <property name="can_focus">False</property>
     <child>
       <placeholder/>
@@ -85,7 +85,7 @@
                   </object>
                 </child>
                 <child type="label">
-                  <object class="GtkLabel" id="lbl_displayfile">
+                  <object class="GtkLabel" id="lbl-displayfile">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes"> Display File</property>
@@ -123,11 +123,10 @@
                         <property name="row_homogeneous">True</property>
                         <property name="column_homogeneous">True</property>
                         <child>
-                          <object class="GtkButton" id="btn_up">
+                          <object class="GtkButton" id="btn-up">
                             <property name="label" translatable="yes">Up</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -135,11 +134,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_left">
+                          <object class="GtkButton" id="btn-left">
                             <property name="label" translatable="yes">Left</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
@@ -147,11 +145,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_right">
+                          <object class="GtkButton" id="btn-right">
                             <property name="label" translatable="yes">Right</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">2</property>
@@ -159,11 +156,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_down">
+                          <object class="GtkButton" id="btn-down">
                             <property name="label" translatable="yes">Down</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -171,11 +167,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_in">
+                          <object class="GtkButton" id="btn-in">
                             <property name="label" translatable="yes">+</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">3</property>
@@ -183,11 +178,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_out">
+                          <object class="GtkButton" id="btn-out">
                             <property name="label" translatable="yes">-</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">3</property>
@@ -195,11 +189,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_rot_left">
+                          <object class="GtkButton" id="btn_rot-left">
                             <property name="label" translatable="yes">↶</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
@@ -207,11 +200,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_rot_right">
+                          <object class="GtkButton" id="btn_rot-right">
                             <property name="label" translatable="yes">↷</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">2</property>
@@ -219,11 +211,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_center_view">
+                          <object class="GtkButton" id="btn_center-view">
                             <property name="label" translatable="yes">Origin</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -244,7 +235,7 @@
                   </object>
                 </child>
                 <child type="label">
-                  <object class="GtkLabel" id="lbl_navigation">
+                  <object class="GtkLabel" id="lbl-navigation">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes"> Navigation </property>
@@ -277,7 +268,6 @@
                       <object class="GtkBox" id="window-box">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="has_default">True</property>
                         <property name="spacing">8</property>
                         <child>
                           <object class="GtkEntry" id="window-width">

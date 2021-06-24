@@ -1,10 +1,12 @@
 #include "app.h"
 
-#include "utils/cppnew.h"
-#include "utils/gtk.h"
+#include <iostream>
+
+#include "utils/signals.h"
 #include "lib/render/geometry.h"
 
 using namespace rudolph;
+using namespace utils;
 
 namespace rudolph {
 namespace app {
@@ -44,24 +46,59 @@ Rudolph::Rudolph():
 }
 
 void Rudolph::create_mainwindow() {
+    using std::string;
+    using std::bind;
+    using namespace std::placeholders;
+
     auto builder = Gtk::Builder::create_from_file("res/ui/mainwindow.ui");
 
-    _mainwindow = utils::get_widget<Gtk::ApplicationWindow>(
-            builder, "main_window"
-    );
-
-    _drawing_area = utils::get_widget<Gtk::DrawingArea>(
+    auto drawing_area = utils::get_widget<Gtk::DrawingArea>(
         builder, "drawing-area"
     );
 
-    _drawing_area->signal_draw().connect(sigc::mem_fun(_renderer, &Renderer::on_draw));
+    link_all<Callback::Clicked, Gtk::Button>(
+        _elms,
+        builder,
+        {
+            signal(string{"btn-up"}, [this, drawing_area]() {
+                std::cout << "Clicked 'up'\n";
+                _renderer.window().offset({0, -10});
+                drawing_area->queue_draw();
+            }),
+            signal(string{"btn-down"}, [this, drawing_area]() {
+                std::cout << "Clicked 'down'\n";
+                _renderer.window().offset({0, 10});
+                drawing_area->queue_draw();
+            }),
+            signal(string{"btn-left"}, [this, drawing_area]() {
+                std::cout << "Clicked 'left'\n";
+                _renderer.window().offset({-10, 0});
+                drawing_area->queue_draw();
+            }),
+            signal(string{"btn-right"}, [this, drawing_area]() {
+                std::cout << "Clicked 'right'\n";
+                _renderer.window().offset({10, 0});
+                drawing_area->queue_draw();
+            }),
+        }
+    );
+
+    sig<Callback::Draw, Gtk::DrawingArea>(
+        _elms,
+        builder,
+        "drawing-area",
+        sigc::mem_fun(_renderer, &Renderer::on_draw)
+    );
+
+    _mainwindow = utils::get_widget<Gtk::ApplicationWindow>(
+        builder, "main-window"
+    );
 
     _mainwindow->set_application(_app);
     _app->add_window(*_mainwindow);
 
     _mainwindow->present();
 }
-
 
 }
 }

@@ -1,7 +1,6 @@
 #------------------------------------------------------------------------------
 # Rudolph's library modules.
 #------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.8)
 project(rudolph CXX)
 
 #add_subdirectory(lin_algebra)
@@ -29,3 +28,7 @@ target_include_directories(rudolph
         ${GTKMM_INCLUDE_DIRS}
         ${CAIROMM_INCLUDE_DIRS}
 )
+
+# Set C++20 standard
+target_compile_features(rudolph PUBLIC cxx_std_20)
+set_target_properties(rudolph PROPERTIES CXX_EXTENSIONS OFF)

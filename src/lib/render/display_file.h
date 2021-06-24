@@ -6,19 +6,21 @@
 
 namespace rudolph {
 
-    struct DisplayFile {
-        std::vector<std::shared_ptr<GraphicObject>> objects;
+struct DisplayFile {
+    std::vector<std::shared_ptr<GraphicObject>> objects;
 
-        void add(std::shared_ptr<GraphicObject> object);
+    void add(std::shared_ptr<GraphicObject> object);
 
-        void remove_from(int index);
+    void remove_from(int index);
 
-        void replace(int index, std::shared_ptr<GraphicObject> object);
+    void replace(int index, std::shared_ptr<GraphicObject> object);
 
-        std::shared_ptr<GraphicObject> at(int index);
+    std::shared_ptr<GraphicObject> operator[](int index) {
+        return objects.at(index);
+    }
 
-        int size();
-    };
+    int size();
+};
 
 }
 

@@ -1,7 +1,6 @@
 #------------------------------------------------------------------------------
 # The Rudolph Application itself
 #------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.8)
 project(app CXX)
 
 set(SOURCES
@@ -26,3 +25,7 @@ target_link_libraries(app
         rudolph
         ${GTKMM_LIBRARIES}
 )
+
+# Set C++20 standard
+target_compile_features(app PUBLIC cxx_std_20)
+set_target_properties(app PROPERTIES CXX_EXTENSIONS OFF)

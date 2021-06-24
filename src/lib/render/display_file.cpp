@@ -5,23 +5,20 @@ namespace rudolph {
 
 void DisplayFile::add(std::shared_ptr<GraphicObject> object) {
     std::cout << "Objeto adicionado" << std::endl;
-    this->objects.push_back(object);
+    objects.push_back(object);
 }
 
 void DisplayFile::remove_from(int index) {
-
+    (void)index;
 }
 
 void DisplayFile::replace(int index, std::shared_ptr<GraphicObject> object) {
-
-}
-
-std::shared_ptr<GraphicObject> DisplayFile::at(int index) {
-    return this->objects.at(index);
+    (void)index;
+    (void)object;
 }
 
 int DisplayFile::size() {
-    return this->objects.size();
+    return objects.size();
 }
 
 }
